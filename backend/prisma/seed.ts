@@ -13,6 +13,8 @@ const prisma = new PrismaClient({
 });
 
 async function main() {
+  console.log('🌱 Iniciando seed de usuários...');
+
   await prisma.user.upsert({
     where: { email: 'admin@kuhaku.local' },
     update: {},
@@ -21,6 +23,26 @@ async function main() {
       name: 'Admin Kuhaku',
     },
   });
+
+  await prisma.user.upsert({
+    where: { email: 'dev@kuhaku.local' },
+    update: {},
+    create: {
+      email: 'dev@kuhaku.local',
+      name: 'Desenvolvedor Kuhaku',
+    },
+  });
+
+  await prisma.user.upsert({
+    where: { email: 'user@kuhaku.local' },
+    update: {},
+    create: {
+      email: 'user@kuhaku.local',
+      name: 'Usuário Padrão',
+    },
+  });
+
+  console.log('✅ Seed concluído com sucesso!');
 }
 
 main()

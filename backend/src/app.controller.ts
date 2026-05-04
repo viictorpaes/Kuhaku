@@ -1,7 +1,7 @@
 import { Controller, Get, Inject } from '@nestjs/common';
 import { PrismaService } from './prisma/prisma.service';
 
-@Controller()
+@Controller('/api')
 export class AppController {
   constructor(@Inject(PrismaService) private readonly prismaService: PrismaService) {}
 
