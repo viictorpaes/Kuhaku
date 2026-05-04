@@ -1,0 +1,48 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: kuhaku
+      POSTGRES_PASSWORD: kuhaku
+      POSTGRES_DB: kuhaku
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kuhaku -d kuhaku"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: .
+    command: >
+      sh -c "npm run prisma:generate --workspace backend
+      && npm run prisma:migrate:deploy --workspace backend
+      && npm run prisma:seed --workspace backend
+      && npm exec --workspace backend tsx --watch src/main.ts"
+    env_file:
+      - ./backend/.env
+    environment:
+      PORT: 3001
+    ports:
+      - "3001:3001"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: .
+    command: npm run dev --workspace frontend -- --host 0.0.0.0
+    environment:
+      VITE_API_URL: http://localhost:3001
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
