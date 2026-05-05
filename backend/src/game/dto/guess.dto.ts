@@ -1,4 +1,5 @@
-export class GuessDto {
+export class GuessDto 
+{
   gameId!: string;
   value!: number;
 }

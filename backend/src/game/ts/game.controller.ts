@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { GameService } from './game.service';
-import { CreateGameDto } from './dto/create-game.dto';
-import { CreateUserDto } from './dto/user.dto';
-import { GuessDto } from './dto/guess.dto';
+import { CreateGameDto } from '../../game/dto/create-game.dto';
+import { CreateUserDto } from '..//dto/user.dto';
+import { GuessDto } from '../dto/guess.dto';
 
 @Controller('api')
 export class GameController 

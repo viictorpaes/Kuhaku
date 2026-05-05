@@ -1,9 +1,7 @@
-export type Difficulty = 'EASY' | 'MEDIUM' | 'HARD';
+export type Difficulty = 'FACIL' | 'MEDIO' | 'DIFICIL';
 
-export class CreateGameDto {
-  // optional user id (string)
+export class CreateGameDto 
+{
   userId?: string;
-
-  // difficulty must be one of: 'EASY' | 'MEDIUM' | 'HARD'
   difficulty!: Difficulty;
 }

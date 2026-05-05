@@ -221,3 +221,32 @@ npm run format
   <img src="https://img.shields.io/badge/tsx-4.20.5-000000?style=for-the-badge&logo=typescript&logoColor=white"/> <br>
   <img src="https://img.shields.io/badge/Docker-Engine-2496ED?style=for-the-badge&logo=docker&logoColor=white"/>
 </p>
+
+<h2 align="center">📂 Modularização SCM (Service, Module & Controller)<br>
+<img src="https://img.shields.io/badge/-NestJS-111827?style=flat&logo=nestjs&logoColor=E0234E" height="18"/>
+<img src="https://img.shields.io/badge/-Service-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>
+<img src="https://img.shields.io/badge/-Module-111827?style=flat&logo=typescript&logoColor=E0234E" height="18"/>
+<img src="https://img.shields.io/badge/-Controller-111827?style=flat&logo=typescript&logoColor=F7DF1E" height="18"/>
+</h2>
+ 
+### ![Controller](https://img.shields.io/badge/Controller-TypeScript-white?style=flat-square&logo=typescript) `.controller.ts`
+ 
+Camada de **entrada da API**. Recebe as requisições HTTP e define as rotas (`@Get`, `@Post`, `@Put`, `@Delete`). Não contém lógica de negócio — apenas delega ao Service. É aqui que os decorators do Swagger (`@ApiOperation`, `@ApiResponse`) são aplicados.
+ 
+**Arquivos neste projeto:** `app.controller.ts` `game.controller.ts`
+ 
+---
+ 
+### ![Service](https://img.shields.io/badge/Service-TypeScript-white?style=flat-square&logo=typescript) `.service.ts`
+ 
+Camada de **lógica de negócio**. Processa os dados recebidos do Controller, aplica as regras da aplicação (validações, hash de senha com `bcrypt`, geração de JWT) e comunica com o banco via Prisma. Injetado no Controller via `@Injectable()`.
+ 
+**Arquivos neste projeto:** `prisma.service.ts` `game.service.ts`
+ 
+---
+ 
+### ![Module](https://img.shields.io/badge/Module-TypeScript-white?style=flat-square&logo=typescript) `.module.ts`
+ 
+**Unidade de organização** do NestJS. Agrupa e registra o Controller e o Service de um domínio (`imports`, `providers`, `controllers`, `exports`). Permite que outros módulos reutilizem os providers via `exports`. O `AppModule` é o módulo raiz que importa todos os demais.
+ 
+**Arquivos neste projeto:** `app.module.ts` `game.module.ts`
