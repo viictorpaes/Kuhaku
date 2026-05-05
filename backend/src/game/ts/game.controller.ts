@@ -13,79 +13,77 @@ export class GameController
   @Post('users')
   async criarUsuario(@Body() dto: CreateUserDto) 
   {
-    return this.gameService.criarUsuario(dto.email, dto.name);
+    return this.gameService.createUser(dto.email, dto.name);
   }
 
   @Post('games')
   async criarJogo(@Body() dto: CreateGameDto) 
   {
-    return this.gameService.criarJogo(dto);
+    return this.gameService.createGame(dto);
   }
 
   @Post('games/:id/guess')
-  async fazerPalpite(@Param('id') id: string, @Body() dto: GuessDto) 
-  {
-    return this.gameService.fazerPalpite(id, dto.value);
+  async fazerPalpite(@Param('id') id: string, @Body() dto: GuessDto) {
+    return this.gameService.makeGuess(id, dto.value);
   }
 
   @Get('games/:id/history')
   async obterHistoricoDoJogo(@Param('id') id: string) 
   {
-    return this.gameService.obterHistoricoDoJogo(id);
+    return this.gameService.getGameHistory(id);
   }
 
   @Get('users/:id/games')
   async listarJogosDoUsuario(@Param('id') id: string) 
   {
-    return this.gameService.listarJogosDoUsuario(id);
+    return this.gameService.listUserGames(id);
   }
 
   @Get('users/:id/stats')
   async estatisticasDoUsuario(@Param('id') id: string) 
   {
-    return this.gameService.obterEstatisticasDoUsuario(id);
+    return this.gameService.getUserStats(id);
   }
 
   @Get('games/:id/summary')
   async resumoDoJogo(@Param('id') id: string) 
   {
-    return this.gameService.obterResumoDoJogo(id);
+    return this.gameService.getGameSummary(id);
   }
 
   @Get('users/:id/achievements')
   async conquistasDoUsuario(@Param('id') id: string) 
   {
-    return this.gameService.obterConquistasDoUsuario(id);
+    return this.gameService.getUserAchievements(id);
   }
 
   @Get('users/:id/summary')
   async resumoCompletoDoUsuario(@Param('id') id: string) 
   {
-    return this.gameService.obterResumoDoUsuario(id);
+    return this.gameService.getUserSummary(id);
   }
 
   @Get('ranking/global')
   async rankingGlobal(@Query('limit') limit?: string) 
   {
     const l = limit ? parseInt(limit, 10) : 10;
-    return this.gameService.obterRankingGlobal(l);
+    return this.gameService.getGlobalRanking(l);
   }
 
   @Get('ranking/user/:id')
   async rankingDoUsuario(@Param('id') id: string) 
   {
-    return this.gameService.obterRankingDoUsuario(id);
+    return this.gameService.getUserRanking(id);
   }
 
   @Put('users/:id')
-  async atualizarUsuario(@Param('id') id: string, @Body() dto: UpdateUserDto) 
-  {
-    return this.gameService.atualizarUsuario(id, dto);
+  async atualizarUsuario(@Param('id') id: string, @Body() dto: UpdateUserDto) {
+    return this.gameService.updateUser(id, dto as any);
   }
 
   @Delete('users/:id')
   async removerUsuario(@Param('id') id: string) 
   {
-    return this.gameService.removerUsuario(id);
+    return this.gameService.removeUser(id);
   }
 }

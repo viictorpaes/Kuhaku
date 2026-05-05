@@ -11,8 +11,7 @@ export class AppController
   {
     const usersCount = await this.prismaService.prisma.user.count();
 
-    return 
-    {
+    return {
       service: 'backend',
       status: 'ok',
       usersCount,

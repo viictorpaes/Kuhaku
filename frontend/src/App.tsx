@@ -1,17 +1,22 @@
 import { useEffect, useState } from 'react';
 
-type ApiStatus = {
+type ApiStatus = 
+{
   service: string;
   status: string;
   usersCount: number;
 };
 
-const highlights = ['Frontend em React + Vite', 'Backend em NestJS', 'Prisma com Postgres via Docker'];
+const highlights = 
 
-export function App() {
+['Frontend em React + Vite', 'Backend em NestJS', 'Prisma com Postgres via Docker'];
+
+export function App() 
+{
   const [status, setStatus] = useState<ApiStatus | null>(null);
 
-  useEffect(() => {
+  useEffect(() => 
+  {
     const apiUrl = (window as any).API_BASE_URL ?? 'http://localhost:3001';
 
     fetch(`${apiUrl}/api`)
@@ -29,7 +34,7 @@ export function App() {
             O Jogo que vai revolucionar o mundo dos games!
           </h1>
           <p className="mt-5 max-w-3xl text-base text-slate-300 sm:text-lg">
-          Estrutura inicial teste com React no frontend, NestJS no backend e Postgres via Prisma, tudo subindo com Docker Compose.
+          Estrutura inicial para teste: com React no frontend, NestJS no backend e Postgres via Prisma, tudo subindo com Docker Compose.
           </p>
 
           <div className="mt-7 flex flex-wrap items-center gap-3 rounded-[18px] border border-white/10 bg-white/5 px-4 py-4 sm:px-5">
