@@ -2,62 +2,88 @@
 
 <h2 align="center">💻⛏️ Tecnologias e Ferramentas Utilizadas: </h2>
 <p align="center">
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/vscode/vscode-original.svg" height="28"/><br>
-  <img src="https://img.shields.io/badge/Node.js-111827?style=flat&logo=nodedotjs&logoColor=339933" height="22" alt="Node.js"/>
-  <img src="https://img.shields.io/badge/NestJS-111827?style=flat&logo=nestjs&logoColor=E0234E" height="22" alt="NestJS"/>
-  <img src="https://img.shields.io/badge/TypeScript-111827?style=flat&logo=typescript&logoColor=3178C6" height="22" alt="TypeScript"/>
-  <img src="https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=61DAFB" height="22" alt="React"/>
-  <img src="https://img.shields.io/badge/Vite-111827?style=flat&logo=vite&logoColor=yellow" height="22" alt="Vite"/>
-  <img src="https://img.shields.io/badge/HTML5-111827?style=flat&logo=html5&logoColor=E34F26" height="22" alt="HTML5"/>
-  <img src="https://img.shields.io/badge/CSS3-111827?style=flat&logo=css3&logoColor=1572B6" height="22" alt="CSS3"/>
-  <img src="https://img.shields.io/badge/TailwindCSS-111827?style=flat&logo=tailwindcss&logoColor=06B6D4" height="22" alt="TailwindCSS"/>
-  <img src="https://img.shields.io/badge/Prisma-111827?style=flat&logo=prisma&logoColor=white" height="22" alt="Prisma"/>
-  <img src="https://img.shields.io/badge/Docker-111827?style=flat&logo=docker&logoColor=2496ed" height="22" alt="Docker"/>
-  <img src="https://img.shields.io/badge/Architecture-111827?style=flat-square&logo=instructure&logoColor=white"/> <br>
-  <img src="https://img.shields.io/badge/Git-111827?style=flat&logo=git&logoColor=F05032" height="22" alt="Git"/>
-  <img src="https://img.shields.io/badge/GitHub-111827?style=flat&logo=github&logoColor=white" height="22" alt="GitHub"/>
-  <img src="https://img.shields.io/badge/-GitHubDesktop-111827?style=flat&logo=github&logoColor=purple" height="22" alt="GitHub Desktop"/>
+  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/vscode/vscode-original.svg" height="40"/><br>
+  <img src="https://img.shields.io/badge/Node.js-111827?style=for-the-badge&logo=nodedotjs&logoColor=339933" height="30" alt="Node.js"/>
+  <img src="https://img.shields.io/badge/NestJS-111827?style=for-the-badge&logo=nestjs&logoColor=E0234E" height="30" alt="NestJS"/>
+  <img src="https://img.shields.io/badge/TypeScript-111827?style=for-the-badge&logo=typescript&logoColor=3178C6" height="30" alt="TypeScript"/>
+  <img src="https://img.shields.io/badge/React-111827?style=for-the-badge&logo=react&logoColor=61DAFB" height="30" alt="React"/>
+  <img src="https://img.shields.io/badge/Vite-111827?style=for-the-badge&logo=vite&logoColor=purple" height="30" alt="Vite"/>
+  <img src="https://img.shields.io/badge/HTML5-111827?style=for-the-badge&logo=html5&logoColor=E34F26" height="30" alt="HTML5"/>
+  <img src="https://img.shields.io/badge/CSS3-111827?style=for-the-badge&logo=css3&logoColor=1572B6" height="30" alt="CSS3"/>
+  <img src="https://img.shields.io/badge/TailwindCSS-111827?style=for-the-badge&logo=tailwindcss&logoColor=06B6D4" height="30" alt="TailwindCSS"/>
+  <img src="https://img.shields.io/badge/Prisma-111827?style=for-the-badge&logo=prisma&logoColor=5A67D8" height="30" alt="Prisma"/>
+  <img src="https://img.shields.io/badge/Docker-111827?style=for-the-badge&logo=docker&logoColor=2496ed" height="30" alt="Docker"/>
+  <img src="https://img.shields.io/badge/Architecture-111827?style=for-the-badge&logo=instructure&logoColor=white" height="30" alt="Architecture"/> <br>
+  <img src="https://img.shields.io/badge/Git-111827?style=for-the-badge&logo=git&logoColor=F05032" height="30" alt="Git"/>
+  <img src="https://img.shields.io/badge/GitHub-111827?style=for-the-badge&logo=github&logoColor=white" height="30" alt="GitHub"/>
+  <img src="https://img.shields.io/badge/GitHub_Desktop-111827?style=for-the-badge&logo=github&logoColor=purple" height="30" alt="GitHub Desktop"/>
 </p>
 
 
 <h2 align="center"> 🏰 Arquitetura do Projeto <br>
 <img src="https://img.shields.io/badge/Architecture-111827?style=flat-square&logo=instructure&logoColor=white"/></h2>
+
 <pre>
-Jogo da Adivinhação (Kuhaku)/ <img src="https://img.shields.io/badge/-Node.js-111827?style=flat&logo=nodedotjs&logoColor=339933" height="18"/><img src="https://img.shields.io/badge/-NestJS-111827?style=flat&logo=nestjs&logoColor=E0234E" height="18"/><img src="https://img.shields.io/badge/-TypeScript-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/><img src="https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=61DAFB" height="18" alt="React"/><img src="https://img.shields.io/badge/Vite-111827?style=flat&logo=vite&logoColor=yellow" height="18" alt="Vite"/><img src="https://img.shields.io/badge/HTML5-111827?style=flat&logo=html5&logoColor=E34F26" height="18" alt="HTML5"/><img src="https://img.shields.io/badge/CSS3-111827?style=flat&logo=css3&logoColor=1572B6" height="18" alt="CSS3"/>
-├── .vscode/
-│   └── settings.json <img src="https://img.shields.io/badge/-JSON-111827?style=flat-square&logo=json&logoColor=white" height="18"/>
-├── backend/ <img src="https://img.shields.io/badge/-Node.js-111827?style=flat&logo=nodedotjs&logoColor=339933" height="18"/><img src="https://img.shields.io/badge/-TypeScript-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/><img src="https://img.shields.io/badge/-NestJS-111827?style=flat&logo=nestjs&logoColor=E0234E" height="18"/>
-│   ├── prisma/ <img src="https://img.shields.io/badge/Prisma-111827?style=flat&logo=prisma&logoColor=green" height="18"/>
-│   ├── public/ <img src="https://img.shields.io/badge/🌐Public-blue?style=flat&logo=image&logoColor=white" height="18"/>
+Kuhaku/
+├── .vscode<img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/vscode/vscode-original.svg" height="18"/>/
+│   └── settings.json <img src="https://img.shields.io/badge/-JSON-111827?style=flat&logo=json&logoColor=white" height="18"/>
+|
+├── backend <img src="https://img.shields.io/badge/Node.js-111827?style=flat&logo=nodedotjs&logoColor=339933" height="18"/><img src="https://img.shields.io/badge/-NestJS-111827?style=flat&logo=nestjs&logoColor=E0234E" height="18"/><img src="https://img.shields.io/badge/-TypeScript-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>/
+│   ├── prisma <img src="https://img.shields.io/badge/-Prisma-111827?style=flat&logo=prisma&logoColor=5A67D8" height="18"/>/
+│   │   ├── migrations <img src="https://img.shields.io/badge/Migrations-111827?style=flat&logo=databricks&logoColor=FF3621" height="18"/>/
+│   │   ├── schema.prisma <img src="https://img.shields.io/badge/Prisma_Schema-111827?style=flat&logo=prisma&logoColor=5A67D8" height="18"/>
+│   │   └── seed.ts <img src="https://img.shields.io/badge/-TypeScript-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>
+│   ├── public/ <img src="https://img.shields.io/badge/Public-111827?style=flat&logo=files&logoColor=white" height="18"/>
+│   │   ├── assets/ <img src="https://img.shields.io/badge/Assets-111827?style=flat&logo=files&logoColor=yellow" height="18"/>
+│   │   └── index.html <img src="https://img.shields.io/badge/-HTML5-111827?style=flat&logo=html5&logoColor=E34F26" height="18"/>
 │   ├── src/ <img src="https://img.shields.io/badge/<>src-green?style=flat&logo=image&logoColor=white" height="18"/>
+│   │   ├── game <img src="https://img.shields.io/badge/-NestJS-111827?style=flat&logo=nestjs&logoColor=E0234E" height="18"/>/
+│   │   │   ├── dto <img src="https://img.shields.io/badge/DTO_Create-111827?style=flat&logo=typescript&logoColor=E0234E" height="18"/><img src="https://img.shields.io/badge/DTO_Update-111827?style=flat&logo=typescript&logoColor=yellow" height="18"/>/
+│   │   │   │   ├── create-game.dto.ts <img src="https://img.shields.io/badge/DTO_Create-111827?style=flat&logo=typescript&logoColor=E0234E" height="18"/>
+│   │   │   │   ├── guess.dto.ts <img src="https://img.shields.io/badge/DTO_Create-111827?style=flat&logo=typescript&logoColor=E0234E" height="18"/>
+│   │   │   │   ├── user_update.dto.ts <img src="https://img.shields.io/badge/DTO_Update-111827?style=flat&logo=typescript&logoColor=yellow" height="18"/>
+│   │   │   │   └── user.dto.ts <img src="https://img.shields.io/badge/DTO_Create-111827?style=flat&logo=typescript&logoColor=E0234E" height="18"/>
+│   │   │   └── ts <img src="https://img.shields.io/badge/-TypeScript-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>/
+│   │   │       ├── game.controller.ts <img src="https://img.shields.io/badge/-Controller-111827?style=flat&logo=typescript&logoColor=F7DF1E" height="18"/>
+│   │   │       ├── game.module.ts <img src="https://img.shields.io/badge/-Module-111827?style=flat&logo=typescript&logoColor=E0234E" height="18"/>
+│   │   │       └── game.service.ts <img src="https://img.shields.io/badge/-Service-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>
+│   │   └── prisma <img src="https://img.shields.io/badge/-Prisma-111827?style=flat&logo=prisma&logoColor=5A67D8" height="18"/>/
+│   │   │       └── prisma.service.ts <img src="https://img.shields.io/badge/-Service-111827?style=flat&logo=typescript&logoColor=3B82F6" height="18"/>
+│   │   ├── types <img src="https://img.shields.io/badge/-TypeScript-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>/
+│   │   │       └── globals.d.ts <img src="https://img.shields.io/badge/TypeScript-Global_Port-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>
+│   │   ├── app.controller.ts <img src="https://img.shields.io/badge/-Controller-111827?style=flat&logo=typescript&logoColor=F7DF1E" height="18"/>
+│   │   ├── app.module.ts <img src="https://img.shields.io/badge/-Module-111827?style=flat&logo=typescript&logoColor=E0234E" height="18"/>
+│   │   └── main.ts <img src="https://img.shields.io/badge/-Main_Entry_Point-111827?style=flat&logo=typescript&logoColor=purple" height="18"/>
 │   ├── nest-cli.json <img src="https://img.shields.io/badge/-NestJS-111827?style=flat&logo=nestjs&logoColor=E0234E" height="18"/>
 │   ├── package.json <img src="https://img.shields.io/badge/-NPM-111827?style=flat&logo=npm&logoColor=CB3837" height="18"/>
+│   ├── prisma.config.js <img src="https://img.shields.io/badge/-Prisma-111827?style=flat&logo=prisma&logoColor=5A67D8" height="18"/>
 │   ├── tsconfig.build.json <img src="https://img.shields.io/badge/TypeScript-Build-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>
 │   └── tsconfig.json <img src="https://img.shields.io/badge/TypeScript-Config-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>
-├── frontend/ <img src="https://img.shields.io/badge/-HTML5-111827?style=flat-square&logo=html5&logoColor=E34F26" height="18"/><img src="https://img.shields.io/badge/-CSS3-111827?style=flat-square&logo=css3&logoColor=1572B6"/><img src="https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=61DAFB" height="18"/><img src="https://img.shields.io/badge/-Vite-111827?style=flat&logo=vite&logoColor=yellow" height="18"/>
-│   ├── src/ <img src="https://img.shields.io/badge/<>src-green?style=flat&logo=image&logoColor=white" height="18"/>
+├── frontend <img src="https://img.shields.io/badge/HTML5-111827?style=flat&logo=html5&logoColor=E34F26" height="18" alt="HTML5"/><img src="https://img.shields.io/badge/-React-111827?style=flat&logo=react&logoColor=61DAFB" height="18"/><img src="https://img.shields.io/badge/-Vite-111827?style=flat&logo=vite&logoColor=purple" height="18"/><img src="https://img.shields.io/badge/-TailwindCSS-111827?style=flat&logo=tailwindcss&logoColor=06B6D4" height="18"/><img src="https://img.shields.io/badge/-TypeScript-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>/
+│   ├── src <img src="https://img.shields.io/badge/<>src-green?style=flat&logo=image&logoColor=white" height="18"/>/
+│   │   ├── App.tsx <img src="https://img.shields.io/badge/-React-111827?style=flat&logo=react&logoColor=61DAFB" height="18"/>
+│   │   ├── index.css <img src="https://img.shields.io/badge/-CSS3-111827?style=flat&logo=css3&logoColor=1572B6" height="18"/>
+│   │   ├── main.tsx <img src="https://img.shields.io/badge/-TypeScript-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>
 │   ├── index.html <img src="https://img.shields.io/badge/-HTML5-111827?style=flat&logo=html5&logoColor=E34F26" height="18"/>
-│   ├── package.json <img src="https://img.shields.io/badge/-NPM-111827?style=flat&logo=npm&logoColor=CB3837" height="18"/>
 │   ├── postcss.config.js <img src="https://img.shields.io/badge/-PostCSS-111827?style=flat&logo=postcss&logoColor=DD3A0A" height="18"/>
 │   ├── tailwind.config.js <img src="https://img.shields.io/badge/-TailwindCSS-111827?style=flat&logo=tailwindcss&logoColor=06B6D4" height="18"/>
 │   ├── tsconfig.json <img src="https://img.shields.io/badge/TypeScript-Config-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>
-│   └── vite.config.ts <img src="https://img.shields.io/badge/-Vite-111827?style=flat&logo=vite&logoColor=yellow" height="18"/>
+│   └── vite.config.js <img src="https://img.shields.io/badge/-Vite-111827?style=flat&logo=vite&logoColor=purple" height="18"/>
+│   └── vite.config.ts <img src="https://img.shields.io/badge/-Vite-111827?style=flat&logo=vite&logoColor=purple" height="18"/>
 ├── img/ <img src="https://img.shields.io/badge/Assets-green?style=flat&logo=image&logoColor=white" height="18"/>
-├── .dockerignore <img src="https://img.shields.io/badge/-DockerIgnore-111827?style=flat&logo=docker&logoColor=2496ed" height="18"/>
+├── .dockerignore <img src="https://img.shields.io/badge/-DockerIgnore-111827?style=flat&logo=docker&logoColor=2496ED" height="18"/>
 ├── .gitignore <img src="https://img.shields.io/badge/-GitIgnore-111827?style=flat&logo=git&logoColor=F05032" height="18"/>
-├── docker-compose.yml <img src="https://img.shields.io/badge/-Docker-111827?style=flat&logo=docker&logoColor=2496ed" height="18"/>
-├── Dockerfile <img src="https://img.shields.io/badge/-Docker-111827?style=flat&logo=docker&logoColor=2496ed" height="18"/>
-├── package-lock.json <img src="https://img.shields.io/badge/Package_Lock-111827?style=flat&logo=npm&logoColor=CB3837" height="18"/>
-├── package.json <img src="https://img.shields.io/badge/-NPM-111827?style=flat&logo=npm&logoColor=CB3837" height="18"/>
+├── docker-compose.yml <img src="https://img.shields.io/badge/-Docker_Compose-111827?style=flat&logo=docker&logoColor=2496ED" height="18"/>
+├── Dockerfile <img src="https://img.shields.io/badge/-Docker-111827?style=flat&logo=docker&logoColor=2496ED" height="18"/>
+├── LICENSE <img src="https://img.shields.io/badge/License-MIT-FF8C00?style=flat&logo=opensource&logoColor=white" height="18"/>
 ├── README.md <img src="https://img.shields.io/badge/-Markdown-111827?style=flat&logo=markdown&logoColor=white" height="18"/>
-└── tsconfig.base.json <img src="https://img.shields.io/badge/TypeScript-Build-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>
+└── tsconfig.base.json <img src="https://img.shields.io/badge/TypeScript-Base-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>
 </pre>
-
 
 <h2 align="center">🕹️ Comandos</h2>
  
 <p align="left">Clone o repositório via GitHub Desktop ou terminal: <br>
- <img src="https://img.shields.io/badge/-GitHubDesktop-111827?style=flat-square&logo=github&logoColor=purple"/>
+ <img src="https://img.shields.io/badge/-GitHub_Desktop-111827?style=flat-square&logo=github&logoColor=purple"/>
 </p>
  
 ```bash
@@ -194,7 +220,7 @@ cd frontend
 npm install
 
 # Inicia o servidor de desenvolvimento com hot reload (porta 5173)
-npm run dev
+npm run start:dev
 
 # Compila o projeto para produção (gera a pasta /dist)
 npm run build
@@ -214,7 +240,7 @@ npm run format
   <img src="https://img.shields.io/badge/NestJS-11.1.19-E0234E?style=for-the-badge&logo=nestjs&logoColor=white"/>
   <img src="https://img.shields.io/badge/TypeScript-5.8.0-3178C6?style=for-the-badge&logo=typescript&logoColor=white"/> <br>
   <img src="https://img.shields.io/badge/React-19.0.0-20232A?style=for-the-badge&logo=react&logoColor=61DAFB"/> 
-  <img src="https://img.shields.io/badge/Vite-6.2.0-111827?style=for-the-badge&logo=vite&logoColor=yellow"/> <br>
+  <img src="https://img.shields.io/badge/Vite-6.2.0-111827?style=for-the-badge&logo=vite&logoColor=purple"/> <br>
   <img src="https://img.shields.io/badge/Prisma-7.8.0-2D3748?style=for-the-badge&logo=prisma&logoColor=white"/>
   <img src="https://img.shields.io/badge/PostgreSQL-8.16.3-336791?style=for-the-badge&logo=postgresql&logoColor=white"/> <br>
   <img src="https://img.shields.io/badge/RxJS-7.8.1-B7178C?style=for-the-badge&logo=reactivex&logoColor=white"/>
@@ -250,3 +276,262 @@ Camada de **lógica de negócio**. Processa os dados recebidos do Controller, ap
 **Unidade de organização** do NestJS. Agrupa e registra o Controller e o Service de um domínio (`imports`, `providers`, `controllers`, `exports`). Permite que outros módulos reutilizem os providers via `exports`. O `AppModule` é o módulo raiz que importa todos os demais.
  
 **Arquivos neste projeto:** `app.module.ts` `game.module.ts`
+
+
+<h2 align="center"><b>Lógica do Jogo em</b>: <i>backend/src/game/</i> <br>
+<img src="https://img.shields.io/badge/<>src-green?style=flat&logo=image&logoColor=white" height="18"/><img src="https://img.shields.io/badge/-Game-111827?style=flat&logo=nestjs&logoColor=E0234E" height="18"/><img src="https://img.shields.io/badge/-TypeScript-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/><img src="https://img.shields.io/badge/DTO_Create-111827?style=flat&logo=typescript&logoColor=E0234E" height="18"/><img src="https://img.shields.io/badge/DTO_Update-111827?style=flat&logo=typescript&logoColor=yellow" height="18"/></h2>
+
+1. `backend/src/game/ts/` <img src="https://img.shields.io/badge/-Game-111827?style=flat&logo=nestjs&logoColor=E0234E" height="18"/><img src="https://img.shields.io/badge/-TypeScript-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>
+
+```ts
+// Arquivo: backend/src/game/ts/game.controller.ts
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { GameService } from './game.service';
+import { CreateGameDto } from '../../game/dto/create-game.dto';
+import { CreateUserDto } from '..//dto/user.dto';
+import { GuessDto } from '../dto/guess.dto';
+
+@Controller('api')
+export class GameController 
+{
+    constructor(private readonly gameService: GameService) {}
+
+    @Post('users')
+    async criarUsuario(@Body() dto: CreateUserDto) 
+    {
+        return this.gameService.criarUsuario(dto.email, dto.name);
+    }
+
+    @Post('games')
+    async criarJogo(@Body() dto: CreateGameDto) 
+    {
+        return this.gameService.criarJogo(dto);
+    }
+
+    @Post('games/:id/guess')
+    async fazerPalpite(@Param('id') id: string, @Body() dto: GuessDto) 
+    {
+        return this.gameService.fazerPalpite(id, dto.value);
+    }
+
+    @Get('games/:id/history')
+    async obterHistoricoDoJogo(@Param('id') id: string) 
+    {
+        return this.gameService.obterHistoricoDoJogo(id);
+    }
+
+    @Get('users/:id/games')
+    async listarJogosDoUsuario(@Param('id') id: string) 
+    {
+        return this.gameService.listarJogosDoUsuario(id);
+    }
+}
+```
+
+```ts
+// Arquivo: backend/src/game/ts/game.module.ts
+import { Module } from '@nestjs/common';
+import { GameService } from './game.service';
+import { GameController } from './game.controller';
+import { PrismaService } from '../../prisma/prisma.service';
+
+@Module({
+  controllers: [GameController],
+  providers: [GameService, PrismaService],
+})
+export class GameModule {}
+```
+
+```ts
+// Arquivo: backend/src/game/ts/game.service.ts
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from '../../prisma/prisma.service';
+import { CreateGameDto, Difficulty } from '../dto/create-game.dto';
+
+function obterLimitePorDificuldade(dificuldade: Difficulty | string): number 
+{
+  switch (dificuldade) 
+  {
+    case 'FACIL':
+      return 10;
+    case 'MEDIO':
+      return 50;
+    case 'DIFICIL':
+      return 100;
+    default:
+      return 50;
+  }
+}
+
+function obterFeedbackPorDiferenca(diff: number): string 
+{
+  if (diff === 0) 
+    return 'acertou ✅';
+  if (diff <= 2) 
+    return 'pegando fogo 🔥🔥🔥';
+  if (diff <= 5) 
+    return 'quente 🌡️';
+  if (diff <= 15) 
+    return 'morno ☔️';
+  return 'frio ❄️';
+}
+
+
+@Injectable()
+export class GameService 
+{
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async criarUsuario(email: string, name?: string) 
+  {
+    const usuarioExistente = await this.prismaService.prisma.user.findUnique({ where: { email } });
+    if (usuarioExistente) return usuarioExistente;
+    return this.prismaService.prisma.user.create({ data: { email, name } });
+  }
+
+  async criarJogo(dto: CreateGameDto) 
+  {
+    const limite = obterLimitePorDificuldade(dto.difficulty);
+    const alvo = Math.floor(Math.random() * limite) + 1;
+
+    if (dto.userId) {
+      const usuario = await this.prismaService.prisma.user.findUnique
+      ({ where: { id: dto.userId } });
+
+      if (!usuario) throw new NotFoundException('Usuário não encontrado');
+    }
+
+    const jogo = await this.prismaService.prisma.game.create({
+      data: {
+        userId: dto.userId ?? null,
+        difficulty: dto.difficulty,
+        target: alvo,
+        attempts: 0,
+        won: false,
+      },
+    });
+
+    return jogo;
+  }
+
+  async fazerPalpite(gameId: string, value: number): Promise<{ feedback: string; diff: number } | { message: string }> 
+  {
+    const jogo = await this.prismaService.prisma.game.findUnique({ where: { id: gameId } });
+
+    if (!jogo) throw new NotFoundException('Jogo não encontrado');
+
+    if (jogo.won) return { message: 'Jogo já foi concluído' };
+
+    const diff = Math.abs(jogo.target - value);
+    const feedback = obterFeedbackPorDiferenca(diff);
+
+    await this.prismaService.prisma.guess.create({ data: { gameId, value, feedback }});
+
+    await this.prismaService.prisma.game.update
+    (
+        {
+            where: { id: gameId },
+            data: 
+            {
+                attempts: { increment: 1 },
+                won: diff === 0 ? true : jogo.won,
+            },
+        }
+    );
+
+    return { feedback, diff };
+  }
+
+  async obterHistoricoDoJogo(gameId: string) 
+  {
+    return this.prismaService.prisma.guess.findMany({ where: { gameId }, orderBy: { createdAt: 'asc' } });
+  }
+
+  async listarJogosDoUsuario(userId: string) 
+  {
+    return this.prismaService.prisma.game.findMany({ where: { userId }, orderBy: { createdAt: 'desc' } });
+  }
+}
+```
+
+2. `backend/src/game/dto/` <img src="https://img.shields.io/badge/DTO_Create-111827?style=flat&logo=typescript&logoColor=E0234E" height="18"/><img src="https://img.shields.io/badge/DTO_Update-111827?style=flat&logo=typescript&logoColor=yellow" height="18"/>
+
+### DTOs (Data Transform Objects) usados pelo módulo de jogo — definem a forma dos dados esperados nas requisições.
+
+```ts
+// Arquivo: backend/src/game/dto/create-game.dto.ts
+// Define as opções para criar um jogo. `difficulty` é obrigatório.
+export type Difficulty = 'FACIL' | 'MEDIO' | 'DIFICIL';
+
+export class CreateGameDto 
+{
+  // Opcional: id do usuário (se o jogo for associado a um usuário)
+  userId?: string;
+  // Obrigatório: dificuldade do jogo
+  difficulty!: Difficulty;
+}
+```
+
+```ts
+// Arquivo: backend/src/game/dto/guess.dto.ts
+// Payload para submeter um palpite ao jogo.
+export class GuessDto 
+{
+  // Normalmente o controller recebe gameId via rota; mantemos campo aqui por compatibilidade
+  gameId!: string;
+  // Valor do palpite (número)
+  value!: number;
+}
+```
+
+```ts
+// Arquivo: backend/src/game/dto/user.dto.ts
+// DTO para criação de usuário simples (email obrigatório)
+export class CreateUserDto 
+{
+  email!: string;
+  name?: string;
+}
+```
+
+```ts
+// Arquivo: backend/src/game/dto/user_update.dto.ts
+// DTO para atualizações parciais de usuário (name e/ou email)
+export class UpdateUserDto 
+{
+  name?: string;
+  email?: string;
+}
+```
+
+
+<h2 align="center"><b>Visual do Jogo em</b>: <i>frontending/src/main.tsx</i> <br>
+<img src="https://img.shields.io/badge/React-111827?style=for-the-badge&logo=react&logoColor=61DAFB" height="25" alt="React"/> <img src="https://img.shields.io/badge/Vite-111827?style=for-the-badge&logo=vite&logoColor=purple" height="25" alt="Vite"/> <img src="https://img.shields.io/badge/HTML5-111827?style=for-the-badge&logo=html5&logoColor=E34F26" height="25" alt="HTML5"/> <img src="https://img.shields.io/badge/CSS3-111827?style=for-the-badge&logo=css3&logoColor=1572B6" height="25" alt="CSS3"/> <img src="https://img.shields.io/badge/TailwindCSS-111827?style=for-the-badge&logo=tailwindcss&logoColor=06B6D4" height="25" alt="TailwindCSS"/></h2>
+
+<h2 align="center"> License <br>
+<img src="https://img.shields.io/badge/License-MIT-orange?style=flat&logo=opensourceinitiative&logoColor=orange" height="18"/> <br>
+</h2>
+
+```license
+MIT License
+
+Copyright (c) 2026, Kuhaku
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
