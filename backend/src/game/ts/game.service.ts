@@ -272,7 +272,8 @@ export class GameService
         ? new Date(ultimo.createdAt).getTime() - new Date(primeiro.createdAt).getTime()
         : null;
 
-    return {
+    return 
+    {
       gameId: jogo.id,
       userId: jogo.userId,
       difficulty: jogo.difficulty,
@@ -308,7 +309,9 @@ export class GameService
       : null;
 
     const duracoesVitorias = vitorias
-      .map((g: any) => 
+      .map
+    (
+        (g: any) => 
       {
         const palpites = (g.guesses || []).sort
         (
@@ -324,7 +327,8 @@ export class GameService
         return primeiro && ultimo
           ? new Date(ultimo.createdAt).getTime() - new Date(primeiro.createdAt).getTime()
           : null;
-      })
+      }
+    )
       .filter(Boolean) as number[];
 
     const fastestWinTimeMs = duracoesVitorias.length ? Math.min(...duracoesVitorias) : null;
@@ -345,7 +349,8 @@ export class GameService
       if (current > bestStreak) bestStreak = current;
     }
 
-    return {
+    return 
+    {
       totalGames: jogos.length,
       totalWins: vitorias.length,
       fastestWinAttempts,
