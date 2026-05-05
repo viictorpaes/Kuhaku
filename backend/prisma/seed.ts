@@ -1,5 +1,4 @@
 import 'dotenv/config';
-
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
 import { Pool } from 'pg';
@@ -7,8 +6,8 @@ import { Pool } from 'pg';
 const pool = new Pool
 (
   {
-  connectionString: process.env.DATABASE_URL,
-}
+    connectionString: process.env.DATABASE_URL,
+  }
 );
 
 const adapter = new PrismaPg(pool);
@@ -27,7 +26,7 @@ async function main()
 
   for (const user of users) 
   {
-  await prismaClient.user.upsert
+    await prismaClient.user.upsert
     (
       {
         where:  { email: user.email },
@@ -53,7 +52,7 @@ main()
 (
   async () => 
   {
-  await prismaClient.$disconnect();
+    await prismaClient.$disconnect();
     await pool.end();
   }
 );

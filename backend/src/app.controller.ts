@@ -1,5 +1,4 @@
 import { Controller, Get, Inject } from '@nestjs/common';
-
 import { PrismaService } from './prisma/prisma.service';
 
 @Controller('/api')
@@ -12,7 +11,8 @@ export class AppController
   {
     const usersCount = await this.prismaService.prisma.user.count();
 
-    return {
+    return 
+    {
       service: 'backend',
       status: 'ok',
       usersCount,

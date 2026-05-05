@@ -4,54 +4,68 @@ import { PrismaClient } from '@prisma/client';
 import { Pool } from 'pg';
 
 @Injectable()
-export class PrismaService implements OnModuleInit, OnModuleDestroy {
+export class PrismaService implements OnModuleInit, OnModuleDestroy 
+{
   private readonly conexao?: Pool;
  
   readonly prisma: any;
 
-  constructor() {
+  constructor() 
+  {
     const databaseUrl = process.env.DATABASE_URL;
 
-    if (databaseUrl) {
-      this.conexao = new Pool({
-        connectionString: databaseUrl,
-      });
+    if (databaseUrl) 
+    {
+      this.conexao = new Pool
+      (
+        {
+          connectionString: databaseUrl,
+        }
+      );
 
       this.prisma = new PrismaClient({
         adapter: new PrismaPg(this.conexao),
       });
-    } else {
-      // Fallback: cria um PrismaClient sem adapter — útil para desenvolvimento
-      // quando a variável de ambiente não está definida.
+    } 
+    else 
+    {
       this.prisma = new PrismaClient();
     }
   }
 
-  async onModuleInit() {
-    try {
+  async onModuleInit() 
+  {
+    try 
+    {
       await this.prisma.$connect();
-    } catch (err) {
-      // Log de aviso — não deixamos a aplicação cair apenas por falha no connect
-      // para facilitar desenvolvimento local sem DB.
-      // eslint-disable-next-line no-console
-      console.warn('[PrismaService] falha ao conectar no banco:', err);
+    } 
+    catch (err) 
+    {
+      console.warn('[PrismaService] failed to connect to the database:', err);
     }
   }
 
-  async onModuleDestroy() {
-    try {
+  async onModuleDestroy() 
+  {
+    try 
+    {
       await this.prisma.$disconnect();
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.warn('[PrismaService] falha ao desconectar prisma:', err);
+    } 
+    catch (err) 
+    {
+      console.warn('[PrismaService] failed to disconnect prisma:', err);
     }
 
-    if (this.conexao) {
-      try {
+    if (this.conexao) 
+    {
+      try 
+      {
         await this.conexao.end();
-      } catch (err) {
-        // eslint-disable-next-line no-console
-        console.warn('[PrismaService] falha ao encerrar a conexão pg pool:', err);
+      } 
+      catch (err) 
+      {
+  
+        console.warn('[PrismaService] failed to end the pg pool connection:', err);
       }
     }
   }
