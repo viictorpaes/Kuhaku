@@ -4,3 +4,16 @@ dist
 .env
 .env.*
 coverage
+
+# TypeScript build info
+**/tsconfig.tsbuildinfo
+
+# Vite and other caches
+.vite
+.parcel-cache
+.turbo
+
+# OS and editor
+.DS_Store
+.vscode/
+*.log

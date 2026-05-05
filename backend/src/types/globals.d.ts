@@ -1,5 +1,7 @@
-declare const process: {
-  env: {
+declare const process: 
+{
+  env: 
+  {
     PORT?: string;
   };
 };

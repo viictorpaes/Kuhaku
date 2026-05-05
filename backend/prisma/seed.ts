@@ -4,53 +4,56 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
 import { Pool } from 'pg';
 
-const pool = new Pool({
+const pool = new Pool
+(
+  {
   connectionString: process.env.DATABASE_URL,
-});
+}
+);
 
-const prisma = new PrismaClient({
-  adapter: new PrismaPg(pool),
-});
+const adapter = new PrismaPg(pool);
+const prismaClient = new PrismaClient({ adapter });
 
-async function main() {
+const users = 
+[
+  { email: 'admin@kuhaku.local',  name: 'Admin Kuhaku'         },
+  { email: 'dev@kuhaku.local',    name: 'Desenvolvedor Kuhaku'  },
+  { email: 'user@kuhaku.local',   name: 'Usuário Padrão'        },
+];
+
+async function main() 
+{
   console.log('🌱 Iniciando seed de usuários...');
 
-  await prisma.user.upsert({
-    where: { email: 'admin@kuhaku.local' },
-    update: {},
-    create: {
-      email: 'admin@kuhaku.local',
-      name: 'Admin Kuhaku',
-    },
-  });
-
-  await prisma.user.upsert({
-    where: { email: 'dev@kuhaku.local' },
-    update: {},
-    create: {
-      email: 'dev@kuhaku.local',
-      name: 'Desenvolvedor Kuhaku',
-    },
-  });
-
-  await prisma.user.upsert({
-    where: { email: 'user@kuhaku.local' },
-    update: {},
-    create: {
-      email: 'user@kuhaku.local',
-      name: 'Usuário Padrão',
-    },
-  });
+  for (const user of users) 
+  {
+  await prismaClient.user.upsert
+    (
+      {
+        where:  { email: user.email },
+        update: {},
+        create: user,
+      }
+    );
+  }
 
   console.log('✅ Seed concluído com sucesso!');
 }
 
 main()
-  .catch((error) => {
+  .catch
+(
+    (error) => 
+  {
     console.error(error);
     process.exitCode = 1;
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
+  }
+)
+  .finally
+(
+  async () => 
+  {
+  await prismaClient.$disconnect();
     await pool.end();
-  });
+  }
+);
