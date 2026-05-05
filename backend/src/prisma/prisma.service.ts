@@ -6,7 +6,8 @@ import { Pool } from 'pg';
 @Injectable()
 export class PrismaService implements OnModuleInit, OnModuleDestroy {
   private readonly conexao?: Pool;
-  readonly prisma: PrismaClient;
+ 
+  readonly prisma: any;
 
   constructor() {
     const databaseUrl = process.env.DATABASE_URL;

@@ -1,15 +1,51 @@
-generator client {
+generator client 
+{
   provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
 }
 
-datasource db {
+datasource db 
+{
   provider = "postgresql"
 }
 
-model User {
+model User 
+{
   id        String   @id @default(cuid())
   email     String   @unique
   name      String?
+  createdAt DateTime @default(now())
+  games     Game[]
+}
+
+
+enum Difficulty 
+{
+  EASY
+  MEDIUM
+  HARD
+}
+
+model Game 
+{
+  id         String    @id @default(cuid())
+  userId     String?
+  user       User?     @relation(fields: [userId], references: [id])
+  difficulty Difficulty
+  target     Int
+  attempts   Int       @default(0)
+  won        Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  guesses    Guess[]
+}
+
+
+model Guess 
+{
+  id        String   @id @default(cuid())
+  gameId    String
+  game      Game     @relation(fields: [gameId], references: [id])
+  value     Int
+  feedback  String
   createdAt DateTime @default(now())
 }

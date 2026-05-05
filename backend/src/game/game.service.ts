@@ -2,85 +2,107 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateGameDto, Difficulty } from './dto/create-game.dto';
 
-function getRangeForDifficulty(difficulty: Difficulty | string): number {
-  switch (difficulty) {
-    case 'EASY':
+function obterLimitePorDificuldade(dificuldade: Difficulty | string): number 
+{
+  switch (dificuldade) 
+  {
+    case 'FACIL':
       return 10;
-    case 'MEDIUM':
+    case 'MEDIO':
       return 50;
-    case 'HARD':
+    case 'DIFICIL':
       return 100;
     default:
       return 50;
   }
 }
 
-function feedbackForDifference(diff: number): string {
-  if (diff === 0) return 'acertou ✅';
-  if (diff <= 2) return 'pegando fogo 🔥🔥🔥';
-  if (diff <= 5) return 'quente 🌡️';
-  if (diff <= 15) return 'morno ☔️';
+function obterFeedbackPorDiferenca(diff: number): string 
+{
+  if (diff === 0) 
+    return 'acertou ✅';
+  if (diff <= 2) 
+    return 'pegando fogo 🔥🔥🔥';
+  if (diff <= 5) 
+    return 'quente 🌡️';
+  if (diff <= 15) 
+    return 'morno ☔️';
   return 'frio ❄️';
 }
 
+
 @Injectable()
-export class GameService {
+export class GameService 
+{
   constructor(private readonly prismaService: PrismaService) {}
 
-  async createUser(email: string, name?: string) {
-    const existing = await this.prismaService.prisma.user.findUnique({ where: { email } });
-    if (existing) return existing;
+  async criarUsuario(email: string, name?: string) 
+  {
+    const usuarioExistente = await this.prismaService.prisma.user.findUnique({ where: { email } });
+    if (usuarioExistente) return usuarioExistente;
     return this.prismaService.prisma.user.create({ data: { email, name } });
   }
 
-  async createGame(dto: CreateGameDto) {
-    const range = getRangeForDifficulty(dto.difficulty);
-    const target = Math.floor(Math.random() * range) + 1;
+  async criarJogo(dto: CreateGameDto) 
+  {
+    const limite = obterLimitePorDificuldade(dto.difficulty);
+    const alvo = Math.floor(Math.random() * limite) + 1;
 
     if (dto.userId) {
-      const user = await this.prismaService.prisma.user.findUnique({ where: { id: dto.userId } });
-      if (!user) throw new NotFoundException('User not found');
+      const usuario = await this.prismaService.prisma.user.findUnique
+      ({ where: { id: dto.userId } });
+
+      if (!usuario) throw new NotFoundException('Usuário não encontrado');
     }
 
-    const game = await this.prismaService.prisma.game.create({
+    const jogo = await this.prismaService.prisma.game.create({
       data: {
         userId: dto.userId ?? null,
-        difficulty: dto.difficulty as any,
-        target,
+        difficulty: dto.difficulty,
+        target: alvo,
         attempts: 0,
         won: false,
       },
     });
 
-    return game;
+    return jogo;
   }
 
-  async makeGuess(gameId: string, value: number) {
-    const game = await this.prismaService.prisma.game.findUnique({ where: { id: gameId } });
-    if (!game) throw new NotFoundException('Game not found');
-    if (game.won) return { message: 'Game already won' };
+  async fazerPalpite(gameId: string, value: number): Promise<{ feedback: string; diff: number } | { message: string }> 
+  {
+    const jogo = await this.prismaService.prisma.game.findUnique({ where: { id: gameId } });
 
-    const diff = Math.abs(game.target - value);
-    const feedback = feedbackForDifference(diff);
+    if (!jogo) throw new NotFoundException('Jogo não encontrado');
 
-    await this.prismaService.prisma.guess.create({ data: { gameId, value, feedback } });
+    if (jogo.won) return { message: 'Jogo já foi concluído' };
 
-    await this.prismaService.prisma.game.update({
-      where: { id: gameId },
-      data: {
-        attempts: { increment: 1 },
-        won: diff === 0 ? true : game.won,
-      },
-    });
+    const diff = Math.abs(jogo.target - value);
+    const feedback = obterFeedbackPorDiferenca(diff);
+
+    await this.prismaService.prisma.guess.create({ data: { gameId, value, feedback }});
+
+    await this.prismaService.prisma.game.update
+    (
+        {
+            where: { id: gameId },
+            data: 
+            {
+                attempts: { increment: 1 },
+                won: diff === 0 ? true : jogo.won,
+            },
+        }
+    );
 
     return { feedback, diff };
   }
 
-  async getGameHistory(gameId: string) {
+  async obterHistoricoDoJogo(gameId: string) 
+  {
     return this.prismaService.prisma.guess.findMany({ where: { gameId }, orderBy: { createdAt: 'asc' } });
   }
 
-  async listUserGames(userId: string) {
+  async listarJogosDoUsuario(userId: string) 
+  {
     return this.prismaService.prisma.game.findMany({ where: { userId }, orderBy: { createdAt: 'desc' } });
   }
 }
