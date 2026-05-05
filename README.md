@@ -1,9 +1,4 @@
-<div align="center">
-  <img src="kuhaku_banner.svg" alt="Kuhaku Banner" width="680">
-</div>
-
 <h1 align="center">Jogo da Adivinhação (Kuhaku)</h1>
-
 
 <h2 align="center">💻⛏️ Tecnologias e Ferramentas Utilizadas: </h2>
 <p align="center">
@@ -137,44 +132,47 @@ docker system prune -f --volumes
 > ⚠️ Os comandos do Prisma devem ser rodados de dentro da pasta `backend/`
 
 ```bash
+# NOTA: rode estes comandos dentro da pasta `backend/`
+cd backend
+
 # Inicializa o Prisma no projeto (cria /prisma e schema.prisma)
-docker-compose exec api npx prisma init
+npx prisma init
 
 # Gera o Prisma Client (rode sempre após alterar o schema.prisma)
-docker-compose exec api npx prisma generate
+npx prisma generate
 
 # Cria e aplica uma nova migration em desenvolvimento
-docker-compose exec api npx prisma migrate dev --name init
+npx prisma migrate dev --name init
 
 # Aplica migrations em produção
-docker-compose exec api npx prisma migrate deploy
+npx prisma migrate deploy
 
 # Reseta o banco e reaplica todas as migrations
-docker-compose exec api npx prisma migrate reset
+npx prisma migrate reset
 
 # Mostra o status das migrations
-docker-compose exec api npx prisma migrate status
+npx prisma migrate status
 
 # Sincroniza o schema sem criar migration (útil em prototipagem)
-docker-compose exec api npx prisma db push
+npx prisma db push
 
 # Puxa o schema a partir de um banco existente
-docker-compose exec api npx prisma db pull
+npx prisma db pull
 
 # Roda o arquivo de seed
-docker-compose exec api npx prisma db seed
+npx prisma db seed
 
 # Abre o Prisma Studio no navegador (porta 5555)
-docker-compose exec api npx prisma studio
+npx prisma studio
 
 # Formata o schema.prisma
-docker-compose exec api npx prisma format
+npx prisma format
 
 # Valida o schema.prisma
-docker-compose exec api npx prisma validate
+npx prisma validate
 
 # Introspecta o banco existente
-docker-compose exec api npx prisma introspect
+npx prisma introspect
 ```
 
 
@@ -189,6 +187,9 @@ docker-compose exec api npx prisma introspect
 > ⚠️ Os comandos devem ser rodados de dentro da pasta `frontend/`
 
 ```bash
+# NOTA: rode estes comandos dentro da pasta `frontend/`
+cd frontend
+
 # Instala todas as dependências do package.json
 npm install
 
