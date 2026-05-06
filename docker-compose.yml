@@ -18,9 +18,6 @@ services:
   backend:
     build:
       context: .
-    # Caso precise de hot-reloading em desenvolvimento local, você pode descomentar a linha de volume abaixo
-    # volumes:
-    #   - .:/app
     command: >
       sh -c "npm run prisma:generate --workspace backend
       && npm run prisma:migrate:deploy --workspace backend
@@ -39,13 +36,8 @@ services:
   frontend:
     build:
       context: .
-    # Caso precise de hot-reloading em desenvolvimento local, você pode descomentar a linha de volume abaixo
-    # volumes:
-    #   - .:/app
     command: npm run dev --workspace frontend -- --host 0.0.0.0
     environment:
-      # Atenção: Se o seu frontend acessa a API a partir do navegador, 'http://backend:3001' pode causar erro de DNS. 
-      # Se for esse o caso, altere para http://localhost:3001. Se for SSR (Server-Side Rendering), mantenha http://backend:3001.
       VITE_API_URL: http://backend:3001 
     ports:
       - "5173:5173"
