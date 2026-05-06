@@ -4,7 +4,8 @@ import { PrismaService } from './prisma/prisma.service';
 @Controller('/api')
 export class AppController 
 {
-  constructor(@Inject(PrismaService) private readonly prismaService: PrismaService) {}
+  constructor(@Inject(PrismaService) private readonly prismaService: PrismaService) 
+  {}
 
   @Get()
   async getStatus() 

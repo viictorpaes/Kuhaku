@@ -13,7 +13,7 @@ const pool = new Pool
 const adapter = new PrismaPg(pool);
 const prismaClient = new PrismaClient({ adapter });
 
-const users = 
+const usuarios = 
 [
   { email: 'admin@kuhaku.local',  name: 'Admin Kuhaku'         },
   { email: 'dev@kuhaku.local',    name: 'Desenvolvedor Kuhaku'  },
@@ -24,14 +24,14 @@ async function main()
 {
   console.log('🌱 Iniciando seed de usuários...');
 
-  for (const user of users) 
+  for (const usuario of usuarios) 
   {
     await prismaClient.user.upsert
     (
       {
-        where:  { email: user.email },
+        where:  { email: usuario.email },
         update: {},
-        create: user,
+        create: usuario,
       }
     );
   }

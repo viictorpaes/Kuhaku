@@ -23,10 +23,15 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy
         }
       );
 
-      this.prisma = new PrismaClient({
-        adapter: new PrismaPg(this.conexao),
-      });
+      this.prisma = new PrismaClient
+      (
+        {
+          adapter: new PrismaPg(this.conexao),
+        }
+      );
+
     } 
+    
     else 
     {
       this.prisma = new PrismaClient();
