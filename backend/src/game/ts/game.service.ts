@@ -117,7 +117,8 @@ export class GameService
 
   async listUserGames(userId: string) 
   {
-    return this.prismaService.prisma.game.findMany({ where: { userId }, orderBy: { createdAt: 'desc' } });
+    return this.prismaService.prisma.game.findMany({ where: { userId }, orderBy: 
+      { createdAt: 'desc' } });
   }
   async listarJogosDoUsuario(userId: string) 
   {

@@ -180,11 +180,13 @@ docker system prune -f --volumes
 
 <h2 align="center">2. Prisma<br>
 <img src="https://img.shields.io/badge/Prisma-111827?style=flat-square&logo=prisma&logoColor=5A67D8"/>
+<img src="https://img.shields.io/badge/Prisma_Studio-4ade80?style=flat-square&logo=prisma&logoColor=white"/>
 </h2>
 
 > 📖 [Prisma Docs](https://www.prisma.io/docs)
 
-> ⚠️ Os comandos do Prisma devem ser rodados de dentro da pasta `backend/`
+> ⚠️ Os comandos do Prisma devem ser rodados de dentro da pasta `backend/`. <br>
+> 💡 **Atenção:** O Prisma Studio será iniciado por padrão na porta **5555** 🚪.
 
 ```bash
 # NOTA: rode estes comandos dentro da pasta `backend/`
@@ -217,8 +219,11 @@ npx prisma db pull
 # Roda o arquivo de seed
 npx prisma db seed
 
-# Abre o Prisma Studio no navegador (porta 5555)
+# Abre o Prisma Studio no navegador (roda na porta 5555)
 npx prisma studio
+
+# Abre o Prisma Studio sem abrir o navegador
+npx prisma studio --browser none
 
 # Formata o schema.prisma
 npx prisma format
@@ -229,7 +234,6 @@ npx prisma validate
 # Introspecta o banco existente
 npx prisma introspect
 ```
-
 
 <h2 align="center">3. Frontend<br>
 <img src="https://img.shields.io/badge/HTML5-111827?style=for-the-badge&logo=html5&logoColor=E34F26" height="22" alt="HTML5"/>
@@ -292,7 +296,7 @@ npm run format
  
 Camada de **entrada da API**. Recebe as requisições HTTP e define as rotas (`@Get`, `@Post`, `@Put`, `@Delete`). Não contém lógica de negócio — apenas delega ao Service. É aqui que os decorators do Swagger (`@ApiOperation`, `@ApiResponse`) são aplicados.
  
-**Arquivos neste projeto:** `app.controller.ts` `game.controller.ts`
+**Arquivos neste projeto:** `app.controller.ts` `game.controller.ts` `auth.controller.ts` `user.controller.ts`
  
 ---
  
@@ -300,7 +304,7 @@ Camada de **entrada da API**. Recebe as requisições HTTP e define as rotas (`@
  
 Camada de **lógica de negócio**. Processa os dados recebidos do Controller, aplica as regras da aplicação (validações, hash de senha com `bcrypt`, geração de JWT) e comunica com o banco via Prisma. Injetado no Controller via `@Injectable()`.
  
-**Arquivos neste projeto:** `prisma.service.ts` `game.service.ts`
+**Arquivos neste projeto:** `prisma.service.ts` `game.service.ts` `auth.service.ts` `user.service.ts`
  
 ---
  
@@ -308,7 +312,7 @@ Camada de **lógica de negócio**. Processa os dados recebidos do Controller, ap
  
 **Unidade de organização** do NestJS. Agrupa e registra o Controller e o Service de um domínio (`imports`, `providers`, `controllers`, `exports`). Permite que outros módulos reutilizem os providers via `exports`. O `AppModule` é o módulo raiz que importa todos os demais.
  
-**Arquivos neste projeto:** `app.module.ts` `game.module.ts`
+**Arquivos neste projeto:** `app.module.ts` `game.module.ts` `auth.module.ts`, `user.module.ts`
 
 
 <h2 align="center"><b>Lógica do Jogo em</b>: <i>backend/src/game/</i> <br>
@@ -913,6 +917,94 @@ export class UpdateUserDto
 3. Telas <br>
 <img src="https://img.shields.io/badge/Vite-111827?style=for-the-badge&logo=vite&logoColor=purple" height="25" alt="Vite"/>
 
+
+
+
+<h2 align="center">👤 Teste de Criação de Usuário<br>
+<img src="https://img.shields.io/badge/Test_User_Create-111827?style=flat&logo=typescript&logoColor=purple" height="18"/>
+</h2>
+ 
+```bash
+cd BACKEND
+npx tsx --env-file=.env prisma/test-user.ts
+```
+ 
+```ts
+
+import 'dotenv/config';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from '@prisma/client';
+import { Pool } from 'pg';
+import * as bcrypt from 'bcrypt';
+
+const pool = new Pool
+(
+  {
+    connectionString: process.env.DATABASE_URL,
+  }
+);
+
+const adapter = new PrismaPg(pool);
+const prismaClient = new PrismaClient({ adapter });
+
+const usuarios = 
+[
+  { email: 'admin@kuhaku.local', name: 'Admin Kuhaku', password: 'kuhaku-admin' },
+  { email: 'dev@kuhaku.local', name: 'Desenvolvedor Kuhaku', password: 'kuhaku-dev' },
+  { email: 'user@kuhaku.local', name: 'Usuário Padrão', password: 'kuhaku-user' },
+];
+
+async function main() 
+{
+  console.log('🌱 Iniciando seed de usuários de teste...');
+
+  try 
+  {
+    for (const usuario of usuarios) 
+    {
+      const senhaCriptografada = await bcrypt.hash(usuario.password, 10);
+
+      const result = await prismaClient.user.upsert
+      (
+        {
+          where: { email: usuario.email },
+          update: {},
+          create: 
+          (
+            {
+              name: usuario.name,
+              email: usuario.email,
+              password: senhaCriptografada,
+            } as any
+          ),
+        }
+      );
+
+      console.log(`Usuário processado: ${result.name} (${result.email})`);
+    }
+
+    console.log('✅ Seed de testes concluído com sucesso!');
+  } 
+  catch (error) 
+  {
+    console.error(`Erro ao processar usuários: ${error}`);
+  } 
+  finally 
+  {
+    await prismaClient.$disconnect();
+    await pool.end();
+  }
+}
+
+main().catch
+(
+  (error) => 
+  {
+    console.error(error);
+    process.exitCode = 1;
+  }
+);
+```
 
 <h2 align="center"> License <br>
 <img src="https://img.shields.io/badge/License-MIT-orange?style=flat&logo=opensourceinitiative&logoColor=orange" height="18"/> <br>
