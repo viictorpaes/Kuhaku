@@ -293,7 +293,8 @@ Camada de **lógica de negócio**. Processa os dados recebidos do Controller, ap
 <h2 align="center"><b>Lógica do Jogo em</b>: <i>backend/src/game/</i> <br>
 <img src="https://img.shields.io/badge/<>src-green?style=flat&logo=image&logoColor=white" height="18"/><img src="https://img.shields.io/badge/-Game-111827?style=flat&logo=nestjs&logoColor=E0234E" height="18"/><img src="https://img.shields.io/badge/-TypeScript-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/><img src="https://img.shields.io/badge/DTO_Create-111827?style=flat&logo=typescript&logoColor=E0234E" height="18"/><img src="https://img.shields.io/badge/DTO_Update-111827?style=flat&logo=typescript&logoColor=yellow" height="18"/></h2>
 
-1. `backend/src/game/ts/` <img src="https://img.shields.io/badge/-Game-111827?style=flat&logo=nestjs&logoColor=E0234E" height="18"/><img src="https://img.shields.io/badge/-TypeScript-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>
+1. `backend/src/game/ts/` <br>
+<img src="https://img.shields.io/badge/-Game-111827?style=flat&logo=nestjs&logoColor=E0234E" height="18"/><img src="https://img.shields.io/badge/-TypeScript-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>
 
 ```ts
 // Arquivo: backend/src/game/ts/game.controller.ts
@@ -797,7 +798,8 @@ async removerUsuario(userId: string)
   }
 ```
 
-2. `backend/src/game/dto/` <img src="https://img.shields.io/badge/DTO_Create-111827?style=flat&logo=typescript&logoColor=E0234E" height="18"/><img src="https://img.shields.io/badge/DTO_Update-111827?style=flat&logo=typescript&logoColor=yellow" height="18"/>
+2. `backend/src/game/dto/` <br>
+<img src="https://img.shields.io/badge/DTO_Create-111827?style=flat&logo=typescript&logoColor=E0234E" height="18"/><img src="https://img.shields.io/badge/DTO_Update-111827?style=flat&logo=typescript&logoColor=yellow" height="18"/>
 
 ### DTOs (Data Transform Objects) usados pelo módulo de jogo — definem a forma dos dados esperados nas requisições.
 
@@ -848,8 +850,16 @@ export class UpdateUserDto
 ```
 
 
-<h2 align="center"><b>Visual do Jogo em</b>: <i>frontending/src/</i> <br>
-<img src="https://img.shields.io/badge/HTML5-111827?style=for-the-badge&logo=html5&logoColor=E34F26" height="25" alt="HTML5"/><img src="https://img.shields.io/badge/CSS3-111827?style=for-the-badge&logo=css3&logoColor=1572B6" height="25" alt="CSS3"/><img src="https://img.shields.io/badge/TailwindCSS-111827?style=for-the-badge&logo=tailwindcss&logoColor=06B6D4" height="25" alt="TailwindCSS"/><img src="https://img.shields.io/badge/React-111827?style=for-the-badge&logo=react&logoColor=61DAFB" height="25" alt="React"/> <img src="https://img.shields.io/badge/Vite-111827?style=for-the-badge&logo=vite&logoColor=purple" height="25" alt="Vite"/><img src="https://img.shields.io/badge/TypeScript-111827?style=for-the-badge&logo=TypeScript&logoColor=blue" height="25" alt="Vite"/></h2>
+<h2 align="center">
+  <b>Visual do Jogo em</b>: <i>frontending/src/</i> <br><br>
+  <img src="https://img.shields.io/badge/<>src-green?style=flat&logo=image&logoColor=white" height="25" alt="Source"/>
+  <img src="https://img.shields.io/badge/HTML5-111827?style=for-the-badge&logo=html5&logoColor=E34F26" height="25" alt="HTML5"/>
+  <img src="https://img.shields.io/badge/CSS3-111827?style=for-the-badge&logo=css3&logoColor=1572B6" height="25" alt="CSS3"/>
+  <img src="https://img.shields.io/badge/TailwindCSS-111827?style=for-the-badge&logo=tailwindcss&logoColor=06B6D4" height="25" alt="TailwindCSS"/>
+  <img src="https://img.shields.io/badge/React-111827?style=for-the-badge&logo=react&logoColor=61DAFB" height="25" alt="React"/>
+  <img src="https://img.shields.io/badge/Vite-111827?style=for-the-badge&logo=vite&logoColor=purple" height="25" alt="Vite"/>
+  <img src="https://img.shields.io/badge/TypeScript-111827?style=for-the-badge&logo=TypeScript&logoColor=3178C6" height="25" alt="TypeScript"/>
+</h2>
 
 
 1. `frontending/src/main.tsx` <br>
@@ -879,7 +889,9 @@ export class UpdateUserDto
 
 ```
 
-3. Telas
+3. Telas <br>
+<img src="https://img.shields.io/badge/Vite-111827?style=for-the-badge&logo=vite&logoColor=purple" height="25" alt="Vite"/>
+
 
 <h2 align="center"> License <br>
 <img src="https://img.shields.io/badge/License-MIT-orange?style=flat&logo=opensourceinitiative&logoColor=orange" height="18"/> <br>
