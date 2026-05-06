@@ -852,7 +852,7 @@ export class UpdateUserDto
 ```
 
 <h2 align="center">
-  <b>Visual do Jogo em</b>: <i>frontending/src/</i> <br><br>
+  <b>Visual do Jogo em</b>: <i>frontending/src/</i> <br>
   <img src="https://img.shields.io/badge/<>src-green?style=flat&logo=image&logoColor=white" height="18" alt="Source"/>
   <img src="https://img.shields.io/badge/-HTML5-111827?style=flat&logo=html5&logoColor=E34F26" height="18" alt="HTML5"/>
   <img src="https://img.shields.io/badge/-CSS3-111827?style=flat&logo=css3&logoColor=1572B6" height="18" alt="CSS3"/>
