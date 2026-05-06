@@ -220,7 +220,7 @@ npx prisma db pull
 npx prisma db seed
 
 # Abre o Prisma Studio no navegador (roda na porta 5555)
-npx prisma studio
+npx prisma studio --port 5555
 
 # Abre o Prisma Studio sem abrir o navegador
 npx prisma studio --browser none
