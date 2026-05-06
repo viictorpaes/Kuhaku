@@ -6,7 +6,7 @@ import './index.css';
 document.documentElement.classList.add('h-full');
 document.body.className = 'min-h-screen bg-[#05070d] text-slate-100 antialiased';
 
-// Configure API URL
+
 const API_BASE_URL = 
   import.meta.env.VITE_API_URL || 
   (import.meta.env.MODE === 'development' ? 'http://localhost:3001' : '');
