@@ -40,6 +40,8 @@ Kuhaku/
 │   │   └── test-user.ts <img src="https://img.shields.io/badge/Test_User_Create-111827?style=flat&logo=typescript&logoColor=purple" height="18"/>
 │   ├── public/ <img src="https://img.shields.io/badge/Public-111827?style=flat&logo=files&logoColor=white" height="18"/>
 │   │   ├── assets/ <img src="https://img.shields.io/badge/Assets-111827?style=flat&logo=files&logoColor=yellow" height="18"/>
+│   │   │   ├── index-D7nSDayN.js <img src="https://img.shields.io/badge/JS-index--D7nSDayN.js-F7DF1E?style=flat&logo=javascript&logoColor=yellow" height="18"/>
+│   │   │   └── index-D7nSDayN.css <img src="https://img.shields.io/badge/CSS-index--D7nSDayN.css-1572B6?style=flat&logo=css3&logoColor=white" height="18"/>
 │   │   └── index.html <img src="https://img.shields.io/badge/-HTML5-111827?style=flat&logo=html5&logoColor=E34F26" height="18"/>
 │   ├── src <img src="https://img.shields.io/badge/src-8B0000?style=flat&logo=nestjs&logoColor=FF0000" height="18"/>/
 │   │   ├── auth <img src="https://img.shields.io/badge/-Auth-111827?style=flat&logo=nestjs&logoColor=E0234E" height="18"/>/
@@ -238,6 +240,7 @@ npx prisma introspect
 <h2 align="center">3. Frontend<br>
 <img src="https://img.shields.io/badge/HTML5-111827?style=for-the-badge&logo=html5&logoColor=E34F26" height="22" alt="HTML5"/>
 <img src="https://img.shields.io/badge/CSS3-111827?style=for-the-badge&logo=css3&logoColor=1572B6" height="22" alt="CSS3"/>
+  <img src="https://img.shields.io/badge/TailwindCSS-111827?style=for-the-badge&logo=tailwindcss&logoColor=06B6D4" height=22" alt="TailwindCSS"/>
 <img src="https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=61DAFB" height="22" alt="React"/>
 <img src="https://img.shields.io/badge/-Vite-111827?style=flat-square&logo=vite&logoColor=purple"/>
 <img src="https://img.shields.io/badge/-NPM-111827?style=flat-square&logo=npm&logoColor=CB3837"/>
@@ -274,12 +277,13 @@ npm run format
 <p align="center">
   <img src="https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=black" alt="HTML5">
   <img src="https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3">
+  <img src="https://img.shields.io/badge/Tailwind_CSS-4.0.0-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=38B2AC"/>
   <img src="https://img.shields.io/badge/NestJS-11.1.19-E0234E?style=for-the-badge&logo=nestjs&logoColor=red"/>
   <img src="https://img.shields.io/badge/TypeScript-5.8.0-3178C6?style=for-the-badge&logo=typescript&logoColor=blue"/> <br>
   <img src="https://img.shields.io/badge/React-19.0.0-cyan?style=for-the-badge&logo=react&logoColor=cyan"/> 
   <img src="https://img.shields.io/badge/Vite-6.2.0-purple?style=for-the-badge&logo=vite&logoColor=purple"/> <br>
   <img src="https://img.shields.io/badge/Prisma-7.8.0-5A67D8?style=for-the-badge&logo=prisma&logoColor=5A67D8"/>
-  <img src="https://img.shields.io/badge/PostgreSQL-8.16.3-336791?style=for-the-badge&logo=postgresql&logoColor=336791"/> <br>
+  <img src="https://img.shields.io/badge/PostgreSQL-8.16.3-336791?style=for-the-badge&logo=postgresql&logoColor=white"/> <br>
   <img src="https://img.shields.io/badge/RxJS-7.8.1-B7178C?style=for-the-badge&logo=reactivex&logoColor=purple"/>
   <img src="https://img.shields.io/badge/tsx-4.20.5-yellow?style=for-the-badge&logo=typescript&logoColor=yellow"/> <br>
   <img src="https://img.shields.io/badge/Docker-Engine-2496ED?style=for-the-badge&logo=docker&logoColor=2496ED"/>
@@ -920,10 +924,81 @@ export class UpdateUserDto
 
 
 
-<h2 align="center">👤 Teste de Criação de Usuário<br>
-<img src="https://img.shields.io/badge/Test_User_Create-111827?style=flat&logo=typescript&logoColor=purple" height="18"/>
+<h2 align="center">👤🌱 Teste de Criação de Usuário / Seed<br>
+<img src="https://img.shields.io/badge/Test_User_Create-111827?style=flat&logo=typescript&logoColor=purple" height="18"/><img src="https://img.shields.io/badge/-Seed-111827?style=flat&logo=typescript&logoColor=2E8B57" height="18"/>
 </h2>
- 
+
+<b>1</b>. `backend/prisma/seed.ts` <br>
+<img src="https://img.shields.io/badge/-Seed-111827?style=flat&logo=typescript&logoColor=2E8B57" height="18"/>
+
+```bash
+npx prisma db seed
+```
+
+```ts
+import 'dotenv/config';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from '@prisma/client';
+import { Pool } from 'pg';
+
+const pool = new Pool
+(
+  {
+    connectionString: process.env.DATABASE_URL,
+  }
+);
+
+const adapter = new PrismaPg(pool);
+const prismaClient = new PrismaClient({ adapter });
+
+const usuarios = 
+[
+  { email: 'admin@kuhaku.local',  name: 'Admin Kuhaku'         },
+  { email: 'dev@kuhaku.local',    name: 'Desenvolvedor Kuhaku'  },
+  { email: 'user@kuhaku.local',   name: 'Usuário Padrão'        },
+];
+
+async function main() 
+{
+  console.log('🌱 Iniciando seed de usuários...');
+
+  for (const usuario of usuarios) 
+  {
+    await prismaClient.user.upsert
+    (
+      {
+        where:  { email: usuario.email },
+        update: {},
+        create: usuario,
+      }
+    );
+  }
+
+  console.log('✅ Seed concluído com sucesso!');
+}
+
+main()
+  .catch
+(
+    (error) => 
+  {
+    console.error(error);
+    process.exitCode = 1;
+  }
+)
+  .finally
+(
+  async () => 
+  {
+    await prismaClient.$disconnect();
+    await pool.end();
+  }
+);
+```
+
+<b>2</b>. `backend/prisma/test_user.ts` <br>
+<img src="https://img.shields.io/badge/Test_User_Create-111827?style=flat&logo=typescript&logoColor=purple" height="18"/>
+
 ```bash
 cd BACKEND
 npx tsx --env-file=.env prisma/test-user.ts
