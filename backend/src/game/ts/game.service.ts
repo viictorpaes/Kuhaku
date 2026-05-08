@@ -2,20 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateGameDto, Difficulty } from '../dto/create-game.dto';
 
-function getLimitByDifficulty(difficulty: Difficulty | string): number {
-  const d = typeof difficulty === 'string' ? difficulty.toUpperCase() : difficulty;
-  switch (d) {
-    case 'FACIL':
-    case 'EASY':
-      return 10;
-    case 'MEDIO':
-    case 'MEDIUM':
-      return 50;
-    case 'DIFICIL':
-    case 'HARD':
-      return 100;
-    default:
-      return 50;
+function getLimitByDifficulty(difficulty: Difficulty): number {
+  switch (difficulty) {
+    case 'EASY':   return 10;
+    case 'MEDIUM': return 50;
+    case 'HARD':   return 100;
   }
 }
 
@@ -96,8 +87,16 @@ export class GameService
     const diff = Math.abs(game.target - value);
     const feedback = getFeedbackByDifference(diff);
 
+    const isWon = diff === 0;
     await this.prismaService.prisma.guess.create({ data: { gameId, value, feedback } });
-    await this.prismaService.prisma.game.update({ where: { id: gameId }, data: { attempts: { increment: 1 }, won: diff === 0 ? true : game.won } });
+    await this.prismaService.prisma.game.update({
+      where: { id: gameId },
+      data: {
+        attempts: { increment: 1 },
+        won: isWon ? true : game.won,
+        endedAt: isWon ? new Date() : undefined,
+      },
+    });
 
     return { feedback, diff };
   }

@@ -35,15 +35,13 @@ async function main()
       (
         {
           where: { email: usuario.email },
-          update: {},
-          create: 
-          (
-            {
-              name: usuario.name,
-              email: usuario.email,
-              password: senhaCriptografada,
-            } as any
-          ),
+          update: { password: senhaCriptografada },
+          create:
+          {
+            name: usuario.name,
+            email: usuario.email,
+            password: senhaCriptografada,
+          },
         }
       );
 

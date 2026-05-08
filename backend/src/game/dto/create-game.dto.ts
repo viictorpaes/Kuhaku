@@ -1,4 +1,4 @@
-export type Difficulty = 'FACIL' | 'MEDIO' | 'DIFICIL';
+export type Difficulty = 'EASY' | 'MEDIUM' | 'HARD';
 
 export class CreateGameDto 
 {
