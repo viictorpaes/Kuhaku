@@ -1,19 +1,24 @@
 import type { Modo } from '../types';
 
-interface HomeProps {
+interface HomeProps 
+{
   onSelectMode: (modo: Modo) => void;
   onOpenRanking: () => void;
 }
 
-export function Home({ onSelectMode, onOpenRanking }: HomeProps) {
+export function Home({ onSelectMode, onOpenRanking }: HomeProps) 
+{
   return (
     <div
       className="min-h-screen text-white flex flex-col items-center justify-center px-4 py-12 relative overflow-hidden"
-      style={{
-        background:
-          'radial-gradient(ellipse at 50% 10%, rgba(99,102,241,0.13) 0%, transparent 55%), linear-gradient(180deg, #0d1b2e 0%, #09111e 100%)',
-        fontFamily: "'Inter', system-ui, sans-serif",
-      }}
+      style=
+    {
+        {
+          background:
+            'radial-gradient(ellipse at 50% 10%, rgba(99,102,241,0.13) 0%, transparent 55%), linear-gradient(180deg, #0d1b2e 0%, #09111e 100%)',
+          fontFamily: "'Inter', system-ui, sans-serif",
+        }
+    }
     >
       {/* Decorative background numbers */}
       <span className="pointer-events-none select-none absolute left-4 top-1/3 text-[160px] font-black text-white/[0.03] leading-none">42</span>
@@ -114,7 +119,7 @@ export function Home({ onSelectMode, onOpenRanking }: HomeProps) {
         onClick={onOpenRanking}
         className="mt-10 z-10 flex items-center gap-2 border border-white/15 bg-white/5 hover:bg-white/10 text-white px-6 py-3 rounded-full font-semibold text-sm transition"
       >
-        🏆 Ver Ranking Global &nbsp;🏆
+        🏆 Ver Ranking Global &nbsp;
       </button>
 
       <p className="mt-6 z-10 text-slate-600 text-xs">Inspirado em Kahoot &amp; Baamboozle</p>

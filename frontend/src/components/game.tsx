@@ -31,7 +31,7 @@ function direcaoLabel(d: Direcao): string
 {
   if (d === 'higher') return '↑ Muito maior!';
   if (d === 'lower')  return '↓ Muito menor!';
-  return '✓ Acertou!';
+  return '✅ Acertou!';
 }
 
 function feedbackLabel(fb: string): string 
@@ -92,7 +92,7 @@ function GameHeader({ onBack, onOpenRanking }: { onBack: () => void; onOpenRanki
         onClick={onOpenRanking}
         className="flex items-center gap-1.5 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 text-sm font-medium px-4 py-2 rounded-full transition"
       >
-        🏆 Ranking
+        🏆 Ranking Jogadores
       </button>
     </header>
   );
@@ -115,16 +115,20 @@ function VsGame({ gameId, dificuldade, p1, p2, round, score, apiUrl, onBack, onO
   const nomeAtual = jogadorAtual === 1 ? p1 : p2;
   const corAtual = jogadorAtual === 1 ? P1_COLOR : P2_COLOR;
 
-  useEffect(() => 
+  useEffect
+(() => 
     {
-    if (!roundOver) inputRef.current?.focus();
-  }, [jogadorAtual, roundOver]);
+      if (!roundOver) 
+          inputRef.current?.focus();
+    }, [jogadorAtual, roundOver]
+);
 
   const enviarPalpite = async (e: React.FormEvent) => {
     e.preventDefault();
     const valor = parseInt(palpite, 10);
     const max = RANGE_MAX[dificuldade];
-    if (isNaN(valor) || valor < 1 || valor > max) 
+    if 
+      (isNaN(valor) || valor < 1 || valor > max) 
     {
       setErro(`Digite um número entre 1 e ${max}`);
       return;
@@ -134,14 +138,14 @@ function VsGame({ gameId, dificuldade, p1, p2, round, score, apiUrl, onBack, onO
 
     try 
     {
-      const res = await fetch(`${apiUrl}/api/games/${gameId}/guess`, 
+      const resposta = await fetch(`${apiUrl}/api/games/${gameId}/guess`, 
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ value: valor }),
       }
     );
-      const dados = await res.json();
+      const dados = await resposta.json();
       if (dados.message) { setErro(dados.message); setLoading(false); return; }
 
       const novo: Palpite = 
@@ -157,13 +161,13 @@ function VsGame({ gameId, dificuldade, p1, p2, round, score, apiUrl, onBack, onO
       setPalpite('');
 
       if (dados.direction === 'correct') 
-        {
+      {
         setRoundOver({ winner: jogadorAtual, advancing: false });
         return;
       }
 
       if (novoHistorico.length >= maxTentativas) 
-        {
+      {
         setRoundOver({ winner: null, advancing: false });
         return;
       }
@@ -182,7 +186,7 @@ function VsGame({ gameId, dificuldade, p1, p2, round, score, apiUrl, onBack, onO
   };
 
   const handleAvançar = async () => 
-    {
+  {
     if (!roundOver || roundOver.advancing) return;
     setRoundOver((r) => r ? { ...r, advancing: true } : r);
     await onRoundEnd(roundOver.winner);
@@ -309,7 +313,8 @@ function VsGame({ gameId, dificuldade, p1, p2, round, score, apiUrl, onBack, onO
         {erro && <p className="text-red-400 text-xs text-center">{erro}</p>}
 
         {/* Historical */}
-        {historico.length > (lastPalpite && !isRoundOver ? 1 : 0) && (
+        {historico.length > (lastPalpite && !isRoundOver ? 1 : 0) && 
+        (
           <div>
             <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-2">Histórico</p>
             <div className="flex flex-wrap gap-2">

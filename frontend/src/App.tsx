@@ -26,12 +26,12 @@ export function App() {
   const [p1, setP1] = useState('Jogador 1');
   const [p2, setP2] = useState('Jogador 2');
 
-  // VS round tracking
   const [round, setRound] = useState(1);
   const [score, setScore] = useState({ p1: 0, p2: 0 });
   const [finalScore, setFinalScore] = useState<{ p1: number; p2: number } | null>(null);
 
-  const iniciarJogo = useCallback(async (config: ConfigJogo) => {
+  const iniciarJogo = useCallback(async (config: ConfigJogo) => 
+  {
     setDificuldade(config.dificuldade);
     setP1(config.p1 || 'Jogador 1');
     setP2(config.p2 || 'Jogador 2');
@@ -43,30 +43,36 @@ export function App() {
     setTela('game');
   }, []);
 
-  // Called when a VS round ends (winner = null if draw/max attempts)
-  const onRoundEnd = useCallback(async (winner: 1 | 2 | null) => {
+  const onRoundEnd = useCallback(async (winner: 1 | 2 | null) => 
+  {
     const newScore = { ...score };
     if (winner === 1) newScore.p1++;
     if (winner === 2) newScore.p2++;
     setScore(newScore);
 
-    if (round >= TOTAL_ROUNDS_VS) {
+    if (round >= TOTAL_ROUNDS_VS) 
+    {
       setFinalScore(newScore);
       setTela('result');
-    } else {
+    } 
+    
+    else 
+    {
       setRound((r) => r + 1);
       const id = await criarJogo(dificuldade!);
       setGameId(id);
     }
   }, [round, score, dificuldade]);
 
-  // Restart solo game with same difficulty
-  const novoJogoSolo = useCallback(async () => {
+
+  const novoJogoSolo = useCallback(async () => 
+  {
     const id = await criarJogo(dificuldade!);
     setGameId(id);
   }, [dificuldade]);
 
-  const voltarParaHome = () => {
+  const voltarParaHome = () => 
+  {
     setTela('home');
     setModo(null);
     setDificuldade(null);
@@ -76,11 +82,13 @@ export function App() {
     setFinalScore(null);
   };
 
-  if (tela === 'ranking') {
+  if (tela === 'ranking') 
+  {
     return <Ranking onBack={() => setTela('home')} apiUrl={API_URL} />;
   }
 
-  if (tela === 'result') {
+  if (tela === 'result') 
+  {
     const vencedor =
       finalScore!.p1 > finalScore!.p2 ? p1 :
       finalScore!.p2 > finalScore!.p1 ? p2 : null;
@@ -120,7 +128,7 @@ export function App() {
               onClick={voltarParaHome}
               className="w-full bg-white/5 hover:bg-white/10 border border-white/10 py-3 rounded-xl font-semibold text-sm text-slate-300 transition"
             >
-              🏠 Menu
+              🏠 Menu Principal
             </button>
           </div>
         </div>
@@ -128,7 +136,8 @@ export function App() {
     );
   }
 
-  if (tela === 'setup') {
+  if (tela === 'setup') 
+  {
     return (
       <Setup
         modo={modo!}
@@ -139,7 +148,8 @@ export function App() {
     );
   }
 
-  if (tela === 'game') {
+  if (tela === 'game') 
+  {
     return (
       <Game
         gameId={gameId!}

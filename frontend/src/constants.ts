@@ -24,13 +24,15 @@ export const DIF_LABEL: Record<Dificuldade, string> =
   HARD: 'Difícil',
 };
 
-export const RANGE_MAX: Record<Dificuldade, number> = {
+export const RANGE_MAX: Record<Dificuldade, number> = 
+{
   EASY: 10,
   MEDIUM: 50,
   HARD: 100,
 };
 
-export const DIF_COLOR: Record<Dificuldade, { bg: string; hover: string; btn: string }> = {
+export const DIF_COLOR: Record<Dificuldade, { bg: string; hover: string; btn: string }> = 
+{
   EASY:   { bg: 'bg-green-600',  hover: 'hover:bg-green-500',  btn: 'bg-green-500 hover:bg-green-400' },
   MEDIUM: { bg: 'bg-amber-500',  hover: 'hover:bg-amber-400',  btn: 'bg-amber-500 hover:bg-amber-400' },
   HARD:   { bg: 'bg-red-600',    hover: 'hover:bg-red-500',    btn: 'bg-red-600   hover:bg-red-500'   },

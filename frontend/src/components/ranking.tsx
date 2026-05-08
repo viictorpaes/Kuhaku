@@ -66,10 +66,12 @@ export function Ranking({ onBack, apiUrl }: RankingProps)
 
         {/* List */}
         <div className="w-full bg-[#131d31] border border-white/10 rounded-2xl overflow-hidden">
-          {loading && (
+          {loading && 
+          (
             <div className="p-16 text-center text-slate-500 text-sm">Carregando...</div>
           )}
-          {erro && !loading && (
+          {erro && !loading && 
+          (
             <div className="p-16 text-center text-red-400 text-sm">
               Erro ao carregar. Verifique a conexão.
             </div>
