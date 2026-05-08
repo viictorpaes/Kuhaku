@@ -2,8 +2,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateGameDto, Difficulty } from '../dto/create-game.dto';
 
-function getLimitByDifficulty(difficulty: Difficulty): number {
-  switch (difficulty) {
+function getLimitByDifficulty(difficulty: Difficulty): number 
+{
+  switch (difficulty) 
+  {
     case 'EASY':   return 10;
     case 'MEDIUM': return 50;
     case 'HARD':   return 100;
@@ -76,7 +78,7 @@ export class GameService
     return this.createGame(dto);
   }
 
-  async makeGuess(gameId: string, value: number): Promise<{ feedback: string; diff: number } | { message: string }> 
+  async makeGuess(gameId: string, value: number): Promise<{ feedback: string; diff: number; direction: 'higher' | 'lower' | 'correct' } | { message: string }>
   {
     const game = await this.prismaService.prisma.game.findUnique({ where: { id: gameId } });
     if (!game)
@@ -98,7 +100,9 @@ export class GameService
       },
     });
 
-    return { feedback, diff };
+    const direction: 'higher' | 'lower' | 'correct' =
+      diff === 0 ? 'correct' : game.target > value ? 'higher' : 'lower';
+    return { feedback, diff, direction };
   }
   async fazerPalpite(gameId: string, value: number) 
   {

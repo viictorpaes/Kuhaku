@@ -1,15 +1,17 @@
-// src/types.ts
-export type ModoJogo = 'vs' | 'guess' | 'memory';
-export type Dificuldade = 'facil' | 'medio' | 'dificil';
+export type Tela = 'home' | 'setup' | 'game' | 'result' | 'ranking';
+export type Modo = 'solo' | 'vs';
+export type Dificuldade = 'EASY' | 'MEDIUM' | 'HARD';
+export type Direcao = 'higher' | 'lower' | 'correct';
 
-export interface EstadoJogo 
-{
-  telaAtual: 'home' | 'setup' | 'game';
-  modo: ModoJogo | null;
-  dificuldade: Dificuldade | null;
-  nomeJogador1: string;
-  nomeJogador2: string;
-  jogadorAtual: number;
-  tentativasRestantes: number;
-  numeroSecreto: number | null;
+export interface Palpite {
+  valor: number;
+  feedback: string;
+  direcao: Direcao;
+  jogador: 1 | 2;
+}
+
+export interface ConfigJogo {
+  dificuldade: Dificuldade;
+  p1: string;
+  p2: string;
 }

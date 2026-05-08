@@ -10,6 +10,7 @@
     "dev:frontend": "npm run dev --workspace frontend",
     "dev:backend": "npm run start:dev --workspace backend",
     "dev": "npm run dev:backend",
+    "start:dev": "npm run dev:backend & npm run dev:frontend",
     "build": "npm run build --workspace frontend && npm run build --workspace backend",
     "typecheck": "npm run typecheck --workspace backend && npm run typecheck --workspace frontend",
     "docker:up": "docker compose up --build",
