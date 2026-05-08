@@ -3,8 +3,6 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient, Difficulty } from '@prisma/client';
 import { Pool } from 'pg';
 
-// ── card helpers ──────────────────────────────────────────────────────────────
-
 const SUITS    = ['SPADES', 'HEARTS', 'DIAMONDS', 'CLUBS'] as const;
 const SYMBOLS  = ['♠', '♥', '♦', '♣'] as const;
 const LABELS   = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'] as const;
@@ -152,8 +150,7 @@ async function seedCardGameForUser(userId: string, difficulty: Difficulty)
     else                               high = mid - 1;
   }
 
-  // if value was found but suit is wrong, try remaining suits available in the deck
-  const lastDirection = cardFeedback(target, guesses[guesses.length - 1].value).direction;
+ const lastDirection = cardFeedback(target, guesses[guesses.length - 1].value).direction;
   if (lastDirection === 'wrong_suit')
   {
     const suitsInDeck = SUITS.slice(0, limit / 13) as CardSuit[];
