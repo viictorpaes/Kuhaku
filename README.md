@@ -36,8 +36,9 @@ Kuhaku/
 │   ├── prisma <img src="https://img.shields.io/badge/-Prisma-111827?style=flat&logo=prisma&logoColor=5A67D8" height="18"/>/
 │   │   ├── migrations <img src="https://img.shields.io/badge/Migrations-111827?style=flat&logo=databricks&logoColor=FF3621" height="18"/>/
 │   │   ├── schema.prisma <img src="https://img.shields.io/badge/Prisma_Schema-111827?style=flat&logo=prisma&logoColor=5A67D8" height="18"/>
-│   │   └── seed.ts <img src="https://img.shields.io/badge/-Seed-111827?style=flat&logo=typescript&logoColor=2E8B57" height="18"/>
-│   │   └── test-user.ts <img src="https://img.shields.io/badge/Test_User_Create-111827?style=flat&logo=typescript&logoColor=purple" height="18"/>
+│   │   ├── seed.ts <img src="https://img.shields.io/badge/-Seed-111827?style=flat&logo=typescript&logoColor=2E8B57" height="18"/>
+│   │   ├── test-user.ts <img src="https://img.shields.io/badge/Test_User_Create-111827?style=flat&logo=typescript&logoColor=purple" height="18"/>
+│   │   └── test-game.ts <img src="https://img.shields.io/badge/Test_Game_Create-111827?style=flat&logo=typescript&logoColor=orange" height="18"/>
 │   ├── public/ <img src="https://img.shields.io/badge/Public-111827?style=flat&logo=files&logoColor=white" height="18"/>
 │   │   ├── assets/ <img src="https://img.shields.io/badge/Assets-111827?style=flat&logo=files&logoColor=yellow" height="18"/>
 │   │   │   ├── index-D7nSDayN.js <img src="https://img.shields.io/badge/JS-index--D7nSDayN.js-F7DF1E?style=flat&logo=javascript&logoColor=yellow" height="18"/>
@@ -923,9 +924,8 @@ export class UpdateUserDto
 
 
 
-
 <h2 align="center">👤🌱 Teste de Criação de Usuário / Seed<br>
-<img src="https://img.shields.io/badge/Test_User_Create-111827?style=flat&logo=typescript&logoColor=purple" height="18"/><img src="https://img.shields.io/badge/-Seed-111827?style=flat&logo=typescript&logoColor=2E8B57" height="18"/>
+<img src="https://img.shields.io/badge/Test_User_Create-111827?style=flat&logo=typescript&logoColor=purple" height="18"/><img src="https://img.shields.io/badge/-Seed-111827?style=flat&logo=typescript&logoColor=2E8B57" height="18"/><img src="https://img.shields.io/badge/-Guess-111827?style=flat&logo=typescript&logoColor=orange" height="18"/>
 </h2>
 
 <b>1</b>. `backend/prisma/seed.ts` <br>
@@ -1074,6 +1074,154 @@ async function main()
 main().catch
 (
   (error) => 
+  {
+    console.error(error);
+    process.exitCode = 1;
+  }
+);
+```
+
+<b>3</b>. `backend/prisma/test-game.ts` <br>
+<img src="https://img.shields.io/badge/Test_Game_Create-111827?style=flat&logo=typescript&logoColor=blue" height="18"/><img src="https://img.shields.io/badge/-Guess-111827?style=flat&logo=typescript&logoColor=orange" height="18"/>
+
+```bash
+cd BACKEND
+npx tsx --env-file=.env prisma/test-game.ts
+```
+
+```ts
+import 'dotenv/config';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient, Difficulty } from '@prisma/client';
+import { Pool } from 'pg';
+
+const pool = new Pool
+(
+  {
+    connectionString: process.env.DATABASE_URL,
+  }
+);
+
+const adapter = new PrismaPg(pool);
+const prismaClient = new PrismaClient({ adapter });
+
+function randomInt(min: number, max: number)
+{
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function limitByDifficulty(d: Difficulty)
+{
+  if (d === 'EASY')   return 10;
+  if (d === 'MEDIUM') return 50;
+  return 100;
+}
+
+function feedbackByDiff(diff: number)
+{
+  if (diff === 0)  return 'acertou ✅';
+  if (diff <= 2)   return 'pegando fogo 🔥🔥🔥';
+  if (diff <= 5)   return 'quente 🌡️';
+  if (diff <= 15)  return 'morno ☔️';
+  return 'frio ❄️';
+}
+
+async function seedGameForUser(userId: string, difficulty: Difficulty)
+{
+  const limit = limitByDifficulty(difficulty);
+  const target = randomInt(1, limit);
+
+  const game = await prismaClient.game.create
+  (
+    {
+      data: { userId, difficulty, target, attempts: 0, won: false },
+    }
+  );
+
+  let current = randomInt(1, limit);
+  let attempts = 0;
+  const guessHistory: number[] = [];
+
+  while (current !== target && attempts < 7)
+  {
+    guessHistory.push(current);
+    const diff = Math.abs(target - current);
+    const feedback = feedbackByDiff(diff);
+
+    await prismaClient.guess.create
+    (
+      {
+        data: { gameId: game.id, value: current, feedback },
+      }
+    );
+    attempts++;
+
+    const step = Math.max(1, Math.ceil((Math.abs(target - current)) / 2));
+    current = current < target ? current + step : current - step;
+  }
+
+  guessHistory.push(target);
+  await prismaClient.guess.create
+  (
+    {
+      data: { gameId: game.id, value: target, feedback: 'acertou ✅' },
+    }
+  );
+  attempts++;
+
+  await prismaClient.game.update
+  (
+    {
+      where: { id: game.id },
+      data: { attempts, won: true, endedAt: new Date() },
+    }
+  );
+
+  return { gameId: game.id, difficulty, target, attempts };
+}
+
+async function main()
+{
+  console.log('🎮 Iniciando seed de games e guesses...');
+
+  try
+  {
+    const users = await prismaClient.user.findMany();
+    if (users.length === 0)
+    {
+      console.error('❌ Nenhum usuário encontrado. Rode test-user.ts primeiro.');
+      return;
+    }
+
+    const difficulties: Difficulty[] = ['EASY', 'MEDIUM', 'HARD'];
+
+    for (const user of users)
+    {
+      console.log(`\n👤 ${user.name ?? user.email}`);
+
+      for (const difficulty of difficulties)
+      {
+        const result = await seedGameForUser(user.id, difficulty);
+        console.log(`  ✅ ${difficulty}: target=${result.target}, tentativas=${result.attempts} (game: ${result.gameId})`);
+      }
+    }
+
+    console.log('\n✅ Seed de games concluído com sucesso!');
+  }
+  catch (error)
+  {
+    console.error(`Erro: ${error}`);
+  }
+  finally
+  {
+    await prismaClient.$disconnect();
+    await pool.end();
+  }
+}
+
+main().catch
+(
+  (error) =>
   {
     console.error(error);
     process.exitCode = 1;
