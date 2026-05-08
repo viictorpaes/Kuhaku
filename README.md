@@ -42,25 +42,26 @@ Kuhaku/
 │   ├── public/ <img src="https://img.shields.io/badge/Public-111827?style=flat&logo=files&logoColor=white" height="18"/>
 │   │   ├── assets/ <img src="https://img.shields.io/badge/Assets-111827?style=flat&logo=files&logoColor=yellow" height="18"/>
 │   │   │   ├── index-D7nSDayN.js <img src="https://img.shields.io/badge/JS-index--D7nSDayN.js-F7DF1E?style=flat&logo=javascript&logoColor=yellow" height="18"/>
-│   │   │   └── index-D7nSDayN.css <img src="https://img.shields.io/badge/CSS-index--D7nSDayN.css-1572B6?style=flat&logo=css3&logoColor=white" height="18"/>
+│   │   │   └── index-DbxskrSv.css <img src="https://img.shields.io/badge/CSS-index--DbxskrSv.css-1572B6?style=flat&logo=css3&logoColor=white" height="18"/>
 │   │   └── index.html <img src="https://img.shields.io/badge/-HTML5-111827?style=flat&logo=html5&logoColor=E34F26" height="18"/>
 │   ├── src <img src="https://img.shields.io/badge/src-8B0000?style=flat&logo=nestjs&logoColor=FF0000" height="18"/>/
 │   │   ├── auth <img src="https://img.shields.io/badge/-Auth-111827?style=flat&logo=nestjs&logoColor=E0234E" height="18"/>/
 │   │   │   ├── dto <img src="https://img.shields.io/badge/-Data_Transform_Object_(DTO)-111827?style=flat&logo=typescript&logoColor=orange" height="18" alt="DTO"/>/
 │   │   │   │   ├── login.dto.ts <img src="https://img.shields.io/badge/DTO_Create-111827?style=flat&logo=typescript&logoColor=E0234E" height="18"/>
 │   │   │   │   └── login_update.dto.ts <img src="https://img.shields.io/badge/DTO_Update-111827?style=flat&logo=typescript&logoColor=yellow" height="18"/>
-│   │   │   ├── auth.controller.ts <img src="https://img.shields.io/badge/-Controller-111827?style=flat&logo=typescript&logoColor=F7DF1E" height="18"/>
-│   │   │   ├── auth.service.ts <img src="https://img.shields.io/badge/-Service-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>
-│   │   │   ├── auth.module.ts <img src="https://img.shields.io/badge/Module-111827?style=flat&logo=typescript&logoColor=E0234E" height="18"/>
-│   │   │   └── jwt.strategy.ts <img src="https://img.shields.io/badge/Password_Criptography_Method-111827?style=flat&logo=typescript&logoColor=purple" height="18"/> <img src="https://img.shields.io/badge/bcrypt-111827?style=flat&logo=letsencrypt&logoColor=white" height="18"/>
+│   │   │   └── ts <img src="https://img.shields.io/badge/-TypeScript-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>/
+│   │   │       ├── auth.controller.ts <img src="https://img.shields.io/badge/-Controller-111827?style=flat&logo=typescript&logoColor=F7DF1E" height="18"/>
+│   │   │       ├── auth.service.ts <img src="https://img.shields.io/badge/-Service-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>
+│   │   │       ├── auth.module.ts <img src="https://img.shields.io/badge/Module-111827?style=flat&logo=typescript&logoColor=E0234E" height="18"/>
+│   │   │       └── jwt.strategy.ts <img src="https://img.shields.io/badge/Password_Criptography_Method-111827?style=flat&logo=typescript&logoColor=purple" height="18"/> <img src="https://img.shields.io/badge/bcrypt-111827?style=flat&logo=letsencrypt&logoColor=white" height="18"/>
 │   │   ├── users <img src="https://img.shields.io/badge/-Users-111827?style=flat&logo=nestjs&logoColor=E0234E" height="18"/>/
 │   │   │   ├── dto <img src="https://img.shields.io/badge/-Data_Transform_Object_(DTO)-111827?style=flat&logo=typescript&logoColor=orange" height="18" alt="DTO"/>/
-│   │   │   │   ├── user.dto.ts <img src="https://img.shields.io/badge/DTO_Create-111827?style=flat&logo=typescript&logoColor=E0234E" height="18"/>
+│   │   │   │   ├── user_dto.ts <img src="https://img.shields.io/badge/DTO_Create-111827?style=flat&logo=typescript&logoColor=E0234E" height="18"/>
 │   │   │   │   └── user_update.dto.ts <img src="https://img.shields.io/badge/DTO_Update-111827?style=flat&logo=typescript&logoColor=yellow" height="18"/>
 │   │   │   └── ts <img src="https://img.shields.io/badge/-TypeScript-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>/
-│   │   │       ├── users.controller.ts <img src="https://img.shields.io/badge/-Controller-111827?style=flat&logo=typescript&logoColor=F7DF1E" height="18"/>
-│   │   │       ├── users.service.ts <img src="https://img.shields.io/badge/-Service-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>
-│   │   │       └── users.module.ts <img src="https://img.shields.io/badge/-Module-111827?style=flat&logo=typescript&logoColor=E0234E" height="18"/>
+│   │   │       ├── user.controller.ts <img src="https://img.shields.io/badge/-Controller-111827?style=flat&logo=typescript&logoColor=F7DF1E" height="18"/>
+│   │   │       ├── user.service.ts <img src="https://img.shields.io/badge/-Service-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>
+│   │   │       └── user.module.ts <img src="https://img.shields.io/badge/-Module-111827?style=flat&logo=typescript&logoColor=E0234E" height="18"/>
 │   │   ├── game <img src="https://img.shields.io/badge/-Game-111827?style=flat&logo=nestjs&logoColor=E0234E" height="18"/>/
 │   │   │   ├── dto <img src="https://img.shields.io/badge/-Data_Transform_Object_(DTO)-111827?style=flat&logo=typescript&logoColor=orange" height="18" alt="DTO"/>/
 │   │   │   │   ├── create-game.dto.ts <img src="https://img.shields.io/badge/DTO_Create-111827?style=flat&logo=typescript&logoColor=E0234E" height="18"/>
@@ -80,7 +81,7 @@ Kuhaku/
 │   │   └── main.ts <img src="https://img.shields.io/badge/-Main_Entry_Point-111827?style=flat&logo=typescript&logoColor=purple" height="18"/>
 │   ├── nest-cli.json <img src="https://img.shields.io/badge/-NestJS-111827?style=flat&logo=nestjs&logoColor=E0234E" height="18"/>
 │   ├── package.json <img src="https://img.shields.io/badge/-NPM-111827?style=flat&logo=npm&logoColor=CB3837" height="18"/>
-│   ├── prisma.config.js <img src="https://img.shields.io/badge/-Prisma-111827?style=flat&logo=prisma&logoColor=5A67D8" height="18"/>
+│   ├── prisma.config.ts <img src="https://img.shields.io/badge/-Prisma-111827?style=flat&logo=prisma&logoColor=5A67D8" height="18"/>
 │   ├── tsconfig.build.json <img src="https://img.shields.io/badge/TypeScript-Build-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>
 │   └── tsconfig.json <img src="https://img.shields.io/badge/TypeScript-Config-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>
 │
@@ -89,14 +90,19 @@ Kuhaku/
 │   │   ├── components <img src="https://img.shields.io/badge/components-2B2D42?style=flat&logo=react&logoColor=61DAFB" height="18"/>/
 │   │   │   ├── home.tsx <img src="https://img.shields.io/badge/-Home-111827?style=flat&logo=react&logoColor=61DAFB" height="18"/>
 │   │   │   ├── game.tsx <img src="https://img.shields.io/badge/-Game-111827?style=flat&logo=react&logoColor=61DAFB" height="18"/>
+│   │   │   ├── ranking.tsx <img src="https://img.shields.io/badge/-Ranking-111827?style=flat&logo=react&logoColor=61DAFB" height="18"/>
 │   │   │   └── setup.tsx <img src="https://img.shields.io/badge/-Setup-111827?style=flat&logo=react&logoColor=61DAFB" height="18"/>
 │   │   ├── App.tsx <img src="https://img.shields.io/badge/-React-111827?style=flat&logo=react&logoColor=61DAFB" height="18"/>
+│   │   ├── constants.ts <img src="https://img.shields.io/badge/-Constants-111827?style=flat&logo=typescript&logoColor=red" height="18"/>
 │   │   ├── index.css <img src="https://img.shields.io/badge/-CSS3-111827?style=flat&logo=css3&logoColor=1572B6" height="18"/>
-│   │   └── main.tsx <img src="https://img.shields.io/badge/-TypeScript-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>
+│   │   ├── main.tsx <img src="https://img.shields.io/badge/-Main-111827?style=flat&logo=react&logoColor=61DAFB" height="18"/>
+│   │   ├── types.ts <img src="https://img.shields.io/badge/-Types-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>
 │   ├── index.html <img src="https://img.shields.io/badge/-HTML5-111827?style=flat&logo=html5&logoColor=E34F26" height="18"/>
-│   ├── postcss.config.js <img src="https://img.shields.io/badge/-PostCSS-111827?style=flat&logo=postcss&logoColor=DD3A0A" height="18"/>
-│   ├── tailwind.config.js <img src="https://img.shields.io/badge/-TailwindCSS-111827?style=flat&logo=tailwindcss&logoColor=06B6D4" height="18"/>
+│   ├── postcss.config.cts <img src="https://img.shields.io/badge/-PostCSS-111827?style=flat&logo=postcss&logoColor=DD3A0A" height="18"/>
+│   ├── tailwind.config.cts <img src="https://img.shields.io/badge/-TailwindCSS-111827?style=flat&logo=tailwindcss&logoColor=06B6D4" height="18"/>
 │   ├── tsconfig.json <img src="https://img.shields.io/badge/TypeScript-Config-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>
+│   ├── tsconfig.node.json <img src="https://img.shields.io/badge/TypeScript-Node_Config-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>
+│   ├── vite.config.d.ts <img src="https://img.shields.io/badge/Vite-Types-111827?style=flat&logo=vite&logoColor=purple" height="18"/>
 │   ├── vite.config.js <img src="https://img.shields.io/badge/-Vite_JS-111827?style=flat&logo=vite&logoColor=purple" height="18"/>
 │   └── vite.config.ts <img src="https://img.shields.io/badge/-Vite_TS-111827?style=flat&logo=vite&logoColor=purple" height="18"/>
 │
@@ -238,7 +244,39 @@ npx prisma validate
 npx prisma introspect
 ```
 
-<h2 align="center">3. Frontend<br>
+<h2 align="center">3. NPM Scripts<br>
+<img src="https://img.shields.io/badge/-NPM-111827?style=flat-square&logo=npm&logoColor=CB3837"/>
+</h2>
+
+> ⚠️ Os comandos abaixo devem ser rodados na **raiz** do projeto.
+
+```bash
+# Inicia o backend e o frontend juntos (modo desenvolvimento)
+npm run start:dev
+
+# Inicia apenas o frontend (porta 5173)
+npm run dev:frontend
+
+# Inicia apenas o backend (porta 3000)
+npm run dev:backend
+
+# Compila frontend e backend para produção
+npm run build
+
+# Verifica tipos TypeScript em todo o projeto
+npm run typecheck
+
+# Sobe os containers Docker com rebuild
+npm run docker:up
+
+# Para e remove os containers Docker
+npm run docker:down
+
+# Abre o Prisma Studio no navegador (porta 5555)
+npm run studio
+```
+
+<h2 align="center">4. Frontend<br>
 <img src="https://img.shields.io/badge/HTML5-111827?style=for-the-badge&logo=html5&logoColor=E34F26" height="22" alt="HTML5"/>
 <img src="https://img.shields.io/badge/CSS3-111827?style=for-the-badge&logo=css3&logoColor=1572B6" height="22" alt="CSS3"/>
   <img src="https://img.shields.io/badge/TailwindCSS-111827?style=for-the-badge&logo=tailwindcss&logoColor=06B6D4" height=22" alt="TailwindCSS"/>
@@ -448,36 +486,22 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateGameDto, Difficulty } from '../dto/create-game.dto';
 
-function obterLimitePorDificuldade(dificuldade: Difficulty | string): number 
+function getLimitByDifficulty(difficulty: Difficulty): number 
 {
-  const difflevel = typeof dificuldade === 'string' ? dificuldade.toUpperCase(): dificuldade;
-
-  switch (difflevel) 
+  switch (difficulty) 
   {
-    case 'FACIL':
-    case 'EASY':
-      return 10;
-    case 'MEDIO':
-    case 'MEDIUM':
-      return 50;
-    case 'DIFICIL':
-    case 'HARD':
-      return 100;
-    default:
-      return 50;
+    case 'EASY':   return 10;
+    case 'MEDIUM': return 50;
+    case 'HARD':   return 100;
   }
 }
 
-function obterFeedbackPorDiferenca(difflevel: number): string 
+function getFeedbackByDifference(diff: number): string 
 {
-  if (difflevel === 0) 
-    return 'acertou ✅';
-  if (difflevel <= 2) 
-    return 'pegando fogo 🔥🔥🔥';
-  if (difflevel <= 5) 
-    return 'quente 🌡️';
-  if (difflevel <= 15) 
-    return 'morno ☔️';
+  if (diff === 0)   return 'acertou ✅';
+  if (diff <= 2)    return 'pegando fogo 🔥🔥🔥';
+  if (diff <= 5)    return 'quente 🌡️';
+  if (diff <= 15)   return 'morno ☔️';
   return 'frio ❄️';
 }
 
@@ -486,346 +510,177 @@ export class GameService
 {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async criarUsuario(email: string, name?: string) 
+  // ── Usuários ──────────────────────────────────────────────────────────────
+
+  async createUser(email: string, name?: string) 
   {
-    const usuarioExistente = await this.prismaService.prisma.user.findUnique
-    (
-      {
-        where: { email },
-      }
-    );
-
-    if (usuarioExistente) 
-      return usuarioExistente;
-
+    const existing = await this.prismaService.prisma.user.findUnique({ where: { email } });
+    if (existing) return existing;
     return this.prismaService.prisma.user.create({ data: { email, name } });
   }
+  async criarUsuario(email: string, name?: string) { return this.createUser(email, name); }
 
-  async criarJogo(dto: CreateGameDto) 
+  async updateUser(userId: string, dto: { name?: string; email?: string }) 
   {
-    const limite = obterLimitePorDificuldade(dto.difficulty);
-    const alvo = Math.floor(Math.random() * limite) + 1;
+    return this.prismaService.prisma.user.update({ where: { id: userId }, data: dto });
+  }
+
+  async removeUser(userId: string) 
+  {
+    const user = await this.prismaService.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new NotFoundException('Usuário não encontrado');
+    return this.prismaService.prisma.user.delete({ where: { id: userId } });
+  }
+
+  // ── Jogos ─────────────────────────────────────────────────────────────────
+
+  async createGame(dto: CreateGameDto) 
+  {
+    const limit = getLimitByDifficulty(dto.difficulty);
+    const target = Math.floor(Math.random() * limit) + 1;
 
     if (dto.userId) 
     {
-      const usuario = await this.prismaService.prisma.user.findUnique
-      (
-        {
-          where: { id: dto.userId },
-        }
-      );
-
-      if (!usuario) 
-        throw new NotFoundException('Usuário não encontrado');
+      const user = await this.prismaService.prisma.user.findUnique({ where: { id: dto.userId } });
+      if (!user) throw new NotFoundException('Usuário não encontrado');
     }
 
-    const jogo = await this.prismaService.prisma.game.create
-    (
-      {
-        data: 
-        {
-          userId: dto.userId ?? null,
-          difficulty: dto.difficulty,
-          target: alvo,
-          attempts: 0,
-          won: false,
-        },
-      }
-    );
+    return this.prismaService.prisma.game.create
+    ({
+      data: { userId: dto.userId ?? null, difficulty: dto.difficulty, target, attempts: 0, won: false },
+    });
+  }
+  async criarJogo(dto: CreateGameDto) { return this.createGame(dto); }
 
-    return jogo;
+  async makeGuess(gameId: string, value: number):
+    Promise<{ feedback: string; diff: number; direction: 'higher' | 'lower' | 'correct' } | { message: string }> 
+  {
+    const game = await this.prismaService.prisma.game.findUnique({ where: { id: gameId } });
+    if (!game) throw new NotFoundException('Jogo não encontrado ❌');
+    if (game.won) return { message: 'Jogo já foi concluído ✅' };
+
+    const diff = Math.abs(game.target - value);
+    const feedback = getFeedbackByDifference(diff);
+    const isWon = diff === 0;
+
+    await this.prismaService.prisma.guess.create({ data: { gameId, value, feedback } });
+    await this.prismaService.prisma.game.update({
+      where: { id: gameId },
+      data: { attempts: { increment: 1 }, won: isWon ? true : game.won, endedAt: isWon ? new Date() : undefined },
+    });
+
+    const direction: 'higher' | 'lower' | 'correct' =
+      diff === 0 ? 'correct' : game.target > value ? 'higher' : 'lower';
+    return { feedback, diff, direction };
+  }
+  async fazerPalpite(gameId: string, value: number) { return this.makeGuess(gameId, value); }
+
+  // ── Consultas ─────────────────────────────────────────────────────────────
+
+  async getGameHistory(gameId: string) 
+  {
+    return this.prismaService.prisma.guess.findMany({ where: { gameId }, orderBy: { createdAt: 'asc' } });
   }
 
-  async fazerPalpite(
-    gameId: string,
-    value: number,
-  ): Promise<{ feedback: string; diff: number } | { message: string }> 
+  async listUserGames(userId: string) 
   {
-    const jogo = await this.prismaService.prisma.game.findUnique
-    (
-      {
-        where: { id: gameId },
-      }
-    );
-
-    if (!jogo) 
-      throw new NotFoundException('Jogo não encontrado ❌');
-
-    if (jogo.won) 
-      return { message: 'Jogo já foi concluído ✅' };
-
-    const diff = Math.abs(jogo.target - value);
-    const feedback = obterFeedbackPorDiferenca(diff);
-
-    await this.prismaService.prisma.guess.create
-    (
-      {
-        data: { gameId, value, feedback },
-      }
-    );
-
-    await this.prismaService.prisma.game.update
-    (
-      {
-        where: { id: gameId },
-        data: 
-        {
-          attempts: { increment: 1 },
-          won: diff === 0 ? true : jogo.won,
-        },
-      }
-    );
-
-    return { feedback, diff };
+    return this.prismaService.prisma.game.findMany({ where: { userId }, orderBy: { createdAt: 'desc' } });
   }
 
-  async obterHistoricoDoJogo(gameId: string) 
+  async getUserStats(userId: string) 
   {
-    return this.prismaService.prisma.guess.findMany
-    (
-      {
-        where: { gameId },
-        orderBy: { createdAt: 'asc' },
-      }
-    );
+    const games = await this.prismaService.prisma.game.findMany({ where: { userId, won: true } });
+    const total = games.length;
+    if (total === 0) return { total: 0, averageAttempts: 0, best: null, worst: null };
+
+    const attempts: number[] = games.map((g: any) => Number(g.attempts ?? 0));
+    const avg = attempts.reduce((a, b) => a + b, 0) / attempts.length;
+    return { total, averageAttempts: avg, best: Math.min(...attempts), worst: Math.max(...attempts) };
   }
 
-  async listarJogosDoUsuario(userId: string) 
+  async getGlobalRanking(limit = 10) 
   {
-    return this.prismaService.prisma.game.findMany
-    (
-      {
-        where: { userId },
-        orderBy: { createdAt: 'desc' },
-      }
-    );
-  }
-
-  async obterEstatisticasDoUsuario(userId: string) 
-  {
-    const jogos = await this.prismaService.prisma.game.findMany
-    (
-      {
-        where: { userId, won: true },
-      }
-    );
-
-    const total = jogos.length;
-
-    if (total === 0) 
-    {
-      return { total: 0, averageAttempts: 0, best: null, worst: null };
-    }
-
-    const tentativas: number[] = jogos.map((g: any) => Number(g.attempts ?? 0));
-
-    const totalTentativas: number = tentativas.reduce
-    (
-      (a: number, b: number) => a + b, 0
-    );
-
-    const mediaTentativas = totalTentativas / tentativas.length;
-    const melhor = Math.min(...tentativas);
-    const pior = Math.max(...tentativas);
-
-    return { total, averageAttempts: mediaTentativas, best: melhor, worst: pior };
-  }
-
-  async obterRankingGlobal(limit = 10) 
-  {
-    const usuarios = await this.prismaService.prisma.user.findMany
-    (
-      {
-        include: { games: true },
-      }
-    );
-
-    const ranking = usuarios
-      .map
-      (
-        (u: any) => 
-        {
-          const wins = (u.games || [])
-            .filter((g: any) => g.won)
-            .map((g: any) => Number(g.attempts ?? 0));
-          
-          if (wins.length === 0) return null;
-          
-          const avg = wins.reduce((a: number, b: number) => a + b, 0) / wins.length;
-
-          return {
-            userId: u.id,
-            name: u.name ?? u.email,
-            averageAttempts: avg,
-            wins: wins.length,
-          };
-        }
-      )
+    const users = await this.prismaService.prisma.user.findMany({ include: { games: true } });
+    return users
+      .map((u: any) => {
+        const wins = (u.games || []).filter((g: any) => g.won).map((g: any) => Number(g.attempts ?? 0));
+        if (wins.length === 0) return null;
+        const avg = wins.reduce((a: number, b: number) => a + b, 0) / wins.length;
+        return { userId: u.id, name: u.name ?? u.email, averageAttempts: avg, wins: wins.length };
+      })
       .filter(Boolean)
       .sort((a: any, b: any) => a.averageAttempts - b.averageAttempts)
       .slice(0, limit);
-
-    return ranking;
   }
 
-  async obterRankingDoUsuario(userId: string) 
+  async getUserRanking(userId: string) 
   {
-    const ranking = await this.obterRankingGlobal(1000);
+    const ranking = await this.getGlobalRanking(1000);
     const index = ranking.findIndex((r: any) => r.userId === userId);
-
-    if (index === -1) 
-      return { position: null, total: ranking.length };
-
+    if (index === -1) return { position: null, total: ranking.length };
     return { position: index + 1, total: ranking.length, entry: ranking[index] };
   }
 
-  async atualizarUsuario(userId: string, dto: { name?: string; email?: string }) 
+  async getGameSummary(gameId: string) 
   {
-    return this.prismaService.prisma.user.update
-    (
-      {
-        where: { id: userId },
-        data: dto,
-      }
+    const game = await this.prismaService.prisma.game.findUnique({ where: { id: gameId }, include: { guesses: true } });
+    if (!game) throw new NotFoundException('Jogo não encontrado ❌');
+
+    const guesses = (game.guesses || []).sort(
+      (a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
     );
-  }
-
-  async obterResumoDoJogo(gameId: string) 
-  {
-    const jogo = await this.prismaService.prisma.game.findUnique
-    (
-      {
-        where: { id: gameId },
-        include: { guesses: true },
-      }
-    );
-
-    if (!jogo) 
-      throw new NotFoundException('Jogo não encontrado ❌');
-
-    const palpites = (jogo.guesses || []).sort
-    (
-      (a: any, b: any) =>
-        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-    );
-
-    const primeiro = palpites[0];
-    const ultimo = palpites[palpites.length - 1];
-    const durationMs =
-      primeiro && ultimo
-        ? new Date(ultimo.createdAt).getTime() - new Date(primeiro.createdAt).getTime()
-        : null;
+    const first = guesses[0];
+    const last  = guesses[guesses.length - 1];
+    const durationMs = first && last ? new Date(last.createdAt).getTime() - new Date(first.createdAt).getTime() : null;
 
     return {
-      gameId: jogo.id,
-      userId: jogo.userId,
-      difficulty: jogo.difficulty,
-      target: jogo.won ? jogo.target : null,
-      attempts: jogo.attempts,
-      won: jogo.won,
-      guesses: palpites.map((g: any) => (
-        {
-          value: g.value,
-          feedback: g.feedback,
-          createdAt: g.createdAt,
-        }
-      )),
+      gameId: game.id, userId: game.userId, difficulty: game.difficulty,
+      target: game.won ? game.target : null, attempts: game.attempts, won: game.won,
+      guesses: guesses.map((g: any) => ({ value: g.value, feedback: g.feedback, createdAt: g.createdAt })),
       durationMs,
     };
   }
 
-  async obterConquistasDoUsuario(userId: string) 
+  async getUserAchievements(userId: string) 
   {
-    const jogos = await this.prismaService.prisma.game.findMany
-    (
-      {
-        where: { userId },
-        include: { guesses: true },
-        orderBy: { createdAt: 'asc' },
-      }
+    const games = await this.prismaService.prisma.game.findMany(
+      { where: { userId }, include: { guesses: true }, orderBy: { createdAt: 'asc' } }
     );
+    const wins = games.filter((g: any) => g.won);
+    const fastestWinAttempts = wins.length ? Math.min(...wins.map((g: any) => g.attempts)) : null;
 
-    const vitorias = jogos.filter((g: any) => g.won);
-
-    const fastestWinAttempts = vitorias.length
-      ? Math.min(...vitorias.map((g: any) => g.attempts))
-      : null;
-
-    const duracoesVitorias = vitorias
-      .map((g: any) => 
-      {
-        const palpites = (g.guesses || []).sort
-        (
-          (a: any, b: any) =>
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-        );
-
-        if (palpites.length < 1) return null;
-
-        const primeiro = palpites[0];
-        const ultimo = palpites[palpites.length - 1];
-
-        return primeiro && ultimo
-          ? new Date(ultimo.createdAt).getTime() - new Date(primeiro.createdAt).getTime()
-          : null;
+    const winDurations = wins
+      .map((g: any) => {
+        const gs = (g.guesses || []).sort((a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+        if (gs.length < 1) return null;
+        return new Date(gs[gs.length - 1].createdAt).getTime() - new Date(gs[0].createdAt).getTime();
       })
       .filter(Boolean) as number[];
 
-    const fastestWinTimeMs = duracoesVitorias.length ? Math.min(...duracoesVitorias) : null;
-
-    let bestStreak = 0;
-    let current = 0;
-    for (const g of jogos) 
+    let bestStreak = 0, current = 0;
+    for (const g of games) 
     {
-      if (g.won) 
-      {
-        current += 1;
-      } 
-      else 
-      {
-        current = 0;
-      }
-
+      current = g.won ? current + 1 : 0;
       if (current > bestStreak) bestStreak = current;
     }
 
     return {
-      totalGames: jogos.length,
-      totalWins: vitorias.length,
-      fastestWinAttempts,
-      fastestWinTimeMs,
+      totalGames: games.length, totalWins: wins.length,
+      fastestWinAttempts, fastestWinTimeMs: winDurations.length ? Math.min(...winDurations) : null,
       bestStreak,
     };
   }
 
-  async obterResumoDoUsuario(userId: string) 
+  async getUserSummary(userId: string) 
   {
-    const status = await this.obterEstatisticasDoUsuario(userId);
-    const conquistas = await this.obterConquistasDoUsuario(userId);
-    const rankingUsuario = await this.obterRankingDoUsuario(userId);
-    return { stats: status, achievements: conquistas, ranking: rankingUsuario };
+    const [stats, achievements, ranking] = await Promise.all([
+      this.getUserStats(userId),
+      this.getUserAchievements(userId),
+      this.getUserRanking(userId),
+    ]);
+    return { stats, achievements, ranking };
   }
 }
-
-async removerUsuario(userId: string) 
-  {
-    const usuario = await this.prismaService.prisma.user.findUnique
-    (
-      {
-        where: { id: userId },
-      }
-    );
-
-    if (!usuario) 
-      throw new NotFoundException('Usuário não encontrado');
-
-    return this.prismaService.prisma.user.delete
-    (
-      {
-        where: { id: userId },
-      }
-    );
-  }
 ```
 
 2. `backend/src/game/dto/` <br>
@@ -881,7 +736,7 @@ export class UpdateUserDto
 ```
 
 <h2 align="center">
-  <b>Visual do Jogo em</b>: <i>frontending/src/</i> <br>
+  <b>Visual do Jogo em</b>: <i>frontend/src/</i> <br>
   <img src="https://img.shields.io/badge/<>src-green?style=flat&logo=image&logoColor=white" height="18" alt="Source"/>
   <img src="https://img.shields.io/badge/-HTML5-111827?style=flat&logo=html5&logoColor=E34F26" height="18" alt="HTML5"/>
   <img src="https://img.shields.io/badge/-CSS3-111827?style=flat&logo=css3&logoColor=1572B6" height="18" alt="CSS3"/>
@@ -891,35 +746,242 @@ export class UpdateUserDto
   <img src="https://img.shields.io/badge/-TypeScript-111827?style=flat&logo=TypeScript&logoColor=3178C6" height="18" alt="TypeScript"/>
 </h2>
 
+1. `frontend/src/types.ts` + `frontend/src/constants.ts` <br>
+<img src="https://img.shields.io/badge/Types-111827?style=flat&logo=typescript&logoColor=3178C6" height="18" alt="types"/>
 
-1. `frontending/src/main.tsx` <br>
+```ts
+// frontend/src/types.ts
+export type Tela = 'home' | 'setup' | 'game' | 'result' | 'ranking';
+export type Modo = 'solo' | 'vs';
+export type Dificuldade = 'EASY' | 'MEDIUM' | 'HARD';
+export type Direcao = 'higher' | 'lower' | 'correct';
+
+export interface Palpite {
+  valor: number;
+  feedback: string;
+  direcao: Direcao;
+  jogador: 1 | 2;
+}
+
+export interface ConfigJogo {
+  dificuldade: Dificuldade;
+  p1: string;
+  p2: string;
+}
+```
+
+```ts
+// frontend/src/constants.ts
+import type { Dificuldade } from './types';
+
+export const TOTAL_ROUNDS_VS = 3;
+export const MAX_TENTATIVAS_VS = 12;
+
+export const MAX_TENTATIVAS_SOLO: Record<Dificuldade, number> = {
+  EASY: 5,
+  MEDIUM: 8,
+  HARD: 10,
+};
+
+export const RANGE_LABEL: Record<Dificuldade, string> = {
+  EASY: '1 a 10',
+  MEDIUM: '1 a 50',
+  HARD: '1 a 100',
+};
+
+export const RANGE_MAX: Record<Dificuldade, number> = {
+  EASY: 10,
+  MEDIUM: 50,
+  HARD: 100,
+};
+
+export const DIF_LABEL: Record<Dificuldade, string> = {
+  EASY: 'Fácil',
+  MEDIUM: 'Médio',
+  HARD: 'Difícil',
+};
+
+export const DIF_COLOR: Record<Dificuldade, { bg: string; hover: string; btn: string }> = {
+  EASY:   { bg: 'bg-green-600', hover: 'hover:bg-green-500', btn: 'bg-green-500 hover:bg-green-400' },
+  MEDIUM: { bg: 'bg-amber-500', hover: 'hover:bg-amber-400', btn: 'bg-amber-500 hover:bg-amber-400' },
+  HARD:   { bg: 'bg-red-600',   hover: 'hover:bg-red-500',   btn: 'bg-red-600   hover:bg-red-500'   },
+};
+```
+
+2. `frontend/src/main.tsx` <br>
 <img src="https://img.shields.io/badge/Main-61DAFB?style=flat&logo=react&logoColor=black" height="18" alt="src"/>
 
 ```ts
+// frontend/src/main.tsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { App } from './App';
+import './index.css';
 
+document.documentElement.classList.add('h-full');
+document.body.className = 'min-h-screen bg-[#0d1b2e] text-slate-100 antialiased';
 
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL ||
+  (import.meta.env.MODE === 'development' ? 'http://localhost:3001' : '');
+(window as any).API_BASE_URL = API_BASE_URL;
+
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+);
 ```
 
-2. `frontend/src/components/` <br>
+3. `frontend/src/App.tsx` <br>
+<img src="https://img.shields.io/badge/App-61DAFB?style=flat&logo=react&logoColor=black" height="18" alt="App"/>
+
+```ts
+// frontend/src/App.tsx
+import { useState, useCallback } from 'react';
+import { Home } from './components/home';
+import { Setup } from './components/setup';
+import { Game } from './components/game';
+import { Ranking } from './components/ranking';
+import type { Tela, Modo, Dificuldade, ConfigJogo } from './types';
+import { TOTAL_ROUNDS_VS } from './constants';
+
+const API_URL = (window as any).API_BASE_URL ?? 'http://localhost:3001';
+
+async function criarJogo(dificuldade: Dificuldade): Promise<string> {
+  const res = await fetch(`${API_URL}/api/games`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ difficulty: dificuldade }),
+  });
+  const game = await res.json();
+  return game.id;
+}
+
+export function App() {
+  const [tela, setTela] = useState<Tela>('home');
+  const [modo, setModo] = useState<Modo | null>(null);
+  const [dificuldade, setDificuldade] = useState<Dificuldade | null>(null);
+  const [gameId, setGameId] = useState<string | null>(null);
+  const [p1, setP1] = useState('Jogador 1');
+  const [p2, setP2] = useState('Jogador 2');
+  const [round, setRound] = useState(1);
+  const [score, setScore] = useState({ p1: 0, p2: 0 });
+  const [finalScore, setFinalScore] = useState<{ p1: number; p2: number } | null>(null);
+
+  const iniciarJogo = useCallback(async (config: ConfigJogo) => {
+    setDificuldade(config.dificuldade);
+    setP1(config.p1 || 'Jogador 1');
+    setP2(config.p2 || 'Jogador 2');
+    setRound(1);
+    setScore({ p1: 0, p2: 0 });
+    setFinalScore(null);
+    const id = await criarJogo(config.dificuldade);
+    setGameId(id);
+    setTela('game');
+  }, []);
+
+  const onRoundEnd = useCallback(async (winner: 1 | 2 | null) => {
+    const newScore = { ...score };
+    if (winner === 1) newScore.p1++;
+    if (winner === 2) newScore.p2++;
+    setScore(newScore);
+
+    if (round >= TOTAL_ROUNDS_VS) {
+      setFinalScore(newScore);
+      setTela('result');
+    } else {
+      setRound((r) => r + 1);
+      const id = await criarJogo(dificuldade!);
+      setGameId(id);
+    }
+  }, [round, score, dificuldade]);
+
+  const novoJogoSolo = useCallback(async () => {
+    const id = await criarJogo(dificuldade!);
+    setGameId(id);
+  }, [dificuldade]);
+
+  const voltarParaHome = () => {
+    setTela('home'); setModo(null); setDificuldade(null);
+    setGameId(null); setRound(1); setScore({ p1: 0, p2: 0 }); setFinalScore(null);
+  };
+
+  if (tela === 'ranking') return <Ranking onBack={() => setTela('home')} apiUrl={API_URL} />;
+
+  if (tela === 'result') { /* ... tela de resultado final VS ... */ }
+
+  if (tela === 'setup') {
+    return <Setup modo={modo!} onStart={iniciarJogo} onBack={() => setTela('home')} onOpenRanking={() => setTela('ranking')} />;
+  }
+
+  if (tela === 'game') {
+    return <Game gameId={gameId!} modo={modo!} dificuldade={dificuldade!} p1={p1} p2={p2}
+      round={round} score={score} apiUrl={API_URL} onBack={voltarParaHome}
+      onOpenRanking={() => setTela('ranking')} onRoundEnd={onRoundEnd} onNovoJogo={novoJogoSolo} />;
+  }
+
+  return <Home onSelectMode={(m) => { setModo(m); setTela('setup'); }} onOpenRanking={() => setTela('ranking')} />;
+}
+```
+
+4. `frontend/src/components/` <br>
 <img src="https://img.shields.io/badge/components-2B2D42?style=flat&logo=react&logoColor=61DAFB" height="18" alt="components"/>
 
 ```ts
-// components/home.tsx
+// components/home.tsx — tela inicial com seleção de modo de jogo
+export function Home({ onSelectMode, onOpenRanking }) {
+  return (
+    <div className="min-h-screen text-white flex flex-col items-center justify-center px-4 py-12">
+      {/* Logo */}
+      <h1 className="text-5xl font-black">Kuha<span style={{ color: '#f97316' }}>ku</span></h1>
 
+      {/* Botão VS Adivinhação — destaque full width */}
+      <button onClick={() => onSelectMode('vs')} className="w-full rounded-3xl p-6 ..." style={{ background: 'linear-gradient(135deg, #6366f1, #ec4899, #f97316)' }}>
+        ⚔️ VS Adivinhação — 2 jogadores · 3 rodadas
+      </button>
+
+      {/* Botão Solo */}
+      <button onClick={() => onSelectMode('solo')} className="rounded-3xl p-6 ...">
+        # Adivinhe o Número — Solo · dicas quente/frio
+      </button>
+
+      {/* Jogo da Memória — em breve */}
+      <div className="opacity-60 cursor-not-allowed rounded-3xl p-6 ...">
+        🧠 Jogo da Memória — Em breve
+      </div>
+
+      <button onClick={onOpenRanking}>🏆 Ver Ranking Global</button>
+    </div>
+  );
+}
 ```
 
 ```ts
-// components/setup.tsx
-
+// components/setup.tsx — configuração antes de iniciar (nome dos jogadores + dificuldade)
+// VsSetup: campos de texto para Jogador 1 / Jogador 2 + seletor de dificuldade
+// SoloSetup: cards de dificuldade diretos (Fácil / Médio / Difícil) com emoji + range
+export function Setup({ modo, onStart, onBack, onOpenRanking }: SetupProps) {
+  return modo === 'vs' ? <VsSetup {...} /> : <SoloSetup {...} />;
+}
 ```
-
 
 ```ts
-// components/game.tsx
-
+// components/game.tsx — tela de jogo com input validado por dificuldade
+// Validação: rejeita valores fora do range antes de enviar ao backend
+const max = RANGE_MAX[dificuldade]; // EASY=10, MEDIUM=50, HARD=100
+if (isNaN(valor) || valor < 1 || valor > max) {
+  setErro(`Digite um número entre 1 e ${max}`);
+  return;
+}
+// VsGame: alternância de turnos entre p1/p2, histórico de palpites, placar por rodada
+// SoloGame: barra de progresso de tentativas, feedback visual quente/frio, novo jogo
+export function Game(props: GameProps) {
+  return props.modo === 'vs' ? <VsGame {...props} /> : <SoloGame {...props} />;
+}
 ```
 
-3. Telas <br>
+5. Telas <br>
 <img src="https://img.shields.io/badge/Vite-111827?style=for-the-badge&logo=vite&logoColor=purple" height="25" alt="Vite"/>
 
 

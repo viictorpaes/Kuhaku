@@ -4,7 +4,7 @@ import { App } from './App';
 import './index.css';
 
 document.documentElement.classList.add('h-full');
-document.body.className = 'min-h-screen bg-[#05070d] text-slate-100 antialiased';
+document.body.className = 'min-h-screen bg-[#0d1b2e] text-slate-100 antialiased';
 
 
 const API_BASE_URL = 
