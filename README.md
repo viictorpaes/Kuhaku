@@ -261,7 +261,7 @@ npm run start:dev
 # Inicia apenas o frontend (porta 5173)
 npm run dev:frontend
 
-# Inicia apenas o backend (porta 3000)
+# Inicia apenas o backend (porta 3001)
 npm run dev:backend
 
 # Compila frontend e backend para produção
@@ -279,6 +279,23 @@ npm run docker:down
 # Abre o Prisma Studio no navegador (porta 5555)
 npm run studio
 ```
+
+> ### Ordem recomendada para rodar localmente
+>
+> ```bash
+> # 1. Sobe o banco Postgres
+> docker compose up db -d
+>
+> # 2. Entra no backend e prepara o banco
+> cd backend
+> npm run prisma:generate          # gera o Prisma Client
+> npm run prisma:migrate:deploy    # cria as tabelas
+> npm run prisma:seed              # popula dados iniciais
+> cd ..
+>
+> # 3. Sobe backend (:3001) + frontend (:5173)
+> npm run start:dev
+> ```
 
 <h2 align="center">4. Frontend<br>
 <img src="https://img.shields.io/badge/HTML5-111827?style=for-the-badge&logo=html5&logoColor=E34F26" height="22" alt="HTML5"/>
@@ -362,14 +379,17 @@ Camada de **lógica de negócio**. Processa os dados recebidos do Controller, ap
 **Arquivos neste projeto:** `app.module.ts` `game.module.ts` `auth.module.ts`, `user.module.ts`
 
 
-<h2 align="center">🎮 Tipos de Jogo (GameType)</h2>
+<h2 align="center">🎮 Modos de Jogo</h2>
 
-| GameType | Descrição | Dificuldade → Intervalo |
-|---|---|---|
-| `NUMBER_GUESS` | Adivinhe o número secreto com dicas quente/frio | EASY 1–10 · MEDIUM 1–50 · HARD 1–100 |
-| `CARD_GUESS` | Adivinhe a carta do baralho (naipe + valor) | EASY ♠ (13) · MEDIUM ♠♥ (26) · HARD deck completo (52) |
+| Modo | Tipo | Descrição | Dificuldade |
+|---|---|---|---|
+| **VS Adivinhação** | `NUMBER_GUESS` (backend) | 2 jogadores adivinham o mesmo número. Turno alternado — quem acertar primeiro vence a rodada. 3 rodadas. | EASY 1–10 · MEDIUM 1–50 · HARD 1–100 |
+| **Adivinhe o Número** | `NUMBER_GUESS` (backend) | Solo. Feedback quente/frio proporcional ao range. | EASY (5 tent.) · MEDIUM (8 tent.) · HARD (10 tent.) |
+| **Jogo da Memória** | Frontend-only | Solo. Grid de pares de números para virar e combinar. Cronômetro + contador de erros. | EASY 4×4 (8 pares) · MEDIUM 4×5 (10 pares) · HARD 6×6 (18 pares) |
 
-**Máximo de tentativas por dificuldade:** EASY → 5 · MEDIUM → 7 · HARD → 10
+**GameTypes do backend (Prisma):** `NUMBER_GUESS` · `CARD_GUESS`
+
+**Máximo de tentativas por dificuldade (NUMBER_GUESS):** EASY → 5 · MEDIUM → 7 · HARD → 10
 
 **Endpoints novos:**
 | Método | Rota | Descrição |
@@ -671,7 +691,7 @@ export class UpdateUserDto
 ```ts
 // frontend/src/types.ts
 export type Tela = 'home' | 'setup' | 'game' | 'result' | 'ranking';
-export type Modo = 'solo' | 'vs';
+export type Modo = 'solo' | 'vs' | 'memoria';   // 'memoria' = Jogo da Memória (frontend-only)
 export type Dificuldade = 'EASY' | 'MEDIUM' | 'HARD';
 export type Direcao = 'higher' | 'lower' | 'correct';
 
@@ -724,6 +744,13 @@ export const DIF_COLOR: Record<Dificuldade, { bg: string; hover: string; btn: st
   EASY:   { bg: 'bg-green-600', hover: 'hover:bg-green-500', btn: 'bg-green-500 hover:bg-green-400' },
   MEDIUM: { bg: 'bg-amber-500', hover: 'hover:bg-amber-400', btn: 'bg-amber-500 hover:bg-amber-400' },
   HARD:   { bg: 'bg-red-600',   hover: 'hover:bg-red-500',   btn: 'bg-red-600   hover:bg-red-500'   },
+};
+
+// Grid do Jogo da Memória por dificuldade
+export const MEMORIA_GRID: Record<Dificuldade, { cols: number; rows: number; label: string; pairs: number }> = {
+  EASY:   { cols: 4, rows: 4, label: '4×4', pairs: 8  },
+  MEDIUM: { cols: 4, rows: 5, label: '4×5', pairs: 10 },
+  HARD:   { cols: 6, rows: 6, label: '6×6', pairs: 18 },
 };
 ```
 
@@ -795,10 +822,15 @@ export function App() {
     setRound(1);
     setScore({ p1: 0, p2: 0 });
     setFinalScore(null);
-    const id = await criarJogo(config.dificuldade);
-    setGameId(id);
+    // Jogo da Memória é puramente frontend — não cria jogo no backend
+    if (modo !== 'memoria') {
+      const id = await criarJogo(config.dificuldade);
+      setGameId(id);
+    } else {
+      setGameId('local');
+    }
     setTela('game');
-  }, []);
+  }, [modo]);
 
   const onRoundEnd = useCallback(async (winner: 1 | 2 | null) => {
     const newScore = { ...score };
@@ -817,9 +849,10 @@ export function App() {
   }, [round, score, dificuldade]);
 
   const novoJogoSolo = useCallback(async () => {
+    if (modo === 'memoria') return;   // Memória reinicia o estado internamente
     const id = await criarJogo(dificuldade!);
     setGameId(id);
-  }, [dificuldade]);
+  }, [dificuldade, modo]);
 
   const voltarParaHome = () => {
     setTela('home'); setModo(null); setDificuldade(null);
@@ -860,14 +893,17 @@ export function Home({ onSelectMode, onOpenRanking }) {
         ⚔️ VS Adivinhação — 2 jogadores · 3 rodadas
       </button>
 
-      {/* Botão Solo */}
-      <button onClick={() => onSelectMode('solo')} className="rounded-3xl p-6 ...">
-        # Adivinhe o Número — Solo · dicas quente/frio
-      </button>
+      {/* Grid inferior — 2 jogos */}
+      <div className="grid grid-cols-2 gap-4">
+        {/* Botão Solo */}
+        <button onClick={() => onSelectMode('solo')} className="rounded-3xl p-6 ...">
+          # Adivinhe o Número — Solo · dicas quente/frio
+        </button>
 
-      {/* Jogo da Memória — em breve */}
-      <div className="opacity-60 cursor-not-allowed rounded-3xl p-6 ...">
-        🧠 Jogo da Memória — Em breve
+        {/* Jogo da Memória — clicável */}
+        <button onClick={() => onSelectMode('memoria')} className="rounded-3xl p-6 ...">
+          🧠 Jogo da Memória — pares de números · 4×4 / 4×5 / 6×6
+        </button>
       </div>
 
       <button onClick={onOpenRanking}>🏆 Ver Ranking Global</button>
@@ -877,26 +913,36 @@ export function Home({ onSelectMode, onOpenRanking }) {
 ```
 
 ```ts
-// components/setup.tsx — configuração antes de iniciar (nome dos jogadores + dificuldade)
-// VsSetup: campos de texto para Jogador 1 / Jogador 2 + seletor de dificuldade
-// SoloSetup: cards de dificuldade diretos (Fácil / Médio / Difícil) com emoji + range
+// components/setup.tsx — configuração antes de iniciar
+// VsSetup:      campos de texto para Jogador 1 / Jogador 2 + seletor de dificuldade
+// SoloSetup:    cards de dificuldade (Fácil / Médio / Difícil) com emoji + range
+// MemoriaSetup: cards de tamanho de tabuleiro (4×4 / 4×5 / 6×6) com nº de pares
 export function Setup({ modo, onStart, onBack, onOpenRanking }: SetupProps) {
-  return modo === 'vs' ? <VsSetup {...} /> : <SoloSetup {...} />;
+  if (modo === 'vs')      return <VsSetup {...} />;
+  if (modo === 'memoria') return <MemoriaSetup {...} />;
+  return <SoloSetup {...} />;
 }
 ```
 
 ```ts
-// components/game.tsx — tela de jogo com input validado por dificuldade
-// Validação: rejeita valores fora do range antes de enviar ao backend
+// components/game.tsx — tela de jogo (3 modos)
+//
+// VsGame:      alternância de turnos entre p1/p2, histórico de palpites, placar por rodada
+// SoloGame:    barra de progresso de tentativas, feedback visual quente/frio, novo jogo
+// MemoriaGame: grid de cartas (flip), detecção de pares, cronômetro, contador de erros
+//              — 100% frontend, sem chamada de API
+//
+// Validação nos modos de número:
 const max = RANGE_MAX[dificuldade]; // EASY=10, MEDIUM=50, HARD=100
 if (isNaN(valor) || valor < 1 || valor > max) {
   setErro(`Digite um número entre 1 e ${max}`);
   return;
 }
-// VsGame: alternância de turnos entre p1/p2, histórico de palpites, placar por rodada
-// SoloGame: barra de progresso de tentativas, feedback visual quente/frio, novo jogo
+
 export function Game(props: GameProps) {
-  return props.modo === 'vs' ? <VsGame {...props} /> : <SoloGame {...props} />;
+  if (props.modo === 'vs')      return <VsGame {...props} />;
+  if (props.modo === 'memoria') return <MemoriaGame {...props} />;
+  return <SoloGame {...props} />;
 }
 ```
 
