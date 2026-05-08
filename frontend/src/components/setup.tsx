@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Modo, Dificuldade, ConfigJogo } from '../types';
-import { RANGE_LABEL, DIF_LABEL, MAX_TENTATIVAS_SOLO } from '../constants';
+import { RANGE_LABEL, DIF_LABEL, MAX_TENTATIVAS_SOLO, MEMORIA_GRID } from '../constants';
 
 interface SetupProps {
   modo: Modo;
@@ -185,6 +185,65 @@ function SoloSetup({ onStart, onBack, onOpenRanking }: SetupProps) {
   );
 }
 
+/** Jogo da Memória setup — escolha do tamanho do tabuleiro */
+function MemoriaSetup({ onStart, onBack, onOpenRanking }: SetupProps) {
+  const [loading, setLoading] = useState<Dificuldade | null>(null);
+
+  const handleStart = async (dif: Dificuldade) => {
+    setLoading(dif);
+    try {
+      await onStart({ dificuldade: dif, p1: 'Jogador 1', p2: '' });
+    } finally {
+      setLoading(null);
+    }
+  };
+
+  const cards: { dif: Dificuldade; bg: string; shadow: string }[] = [
+    { dif: 'EASY',   bg: '#0f766e', shadow: 'rgba(15,118,110,0.4)'  },
+    { dif: 'MEDIUM', bg: '#0e7490', shadow: 'rgba(14,116,144,0.4)'  },
+    { dif: 'HARD',   bg: '#1d4ed8', shadow: 'rgba(29,78,216,0.4)'   },
+  ];
+
+  return (
+    <div className="min-h-screen text-white flex flex-col" style={{ background: BG, fontFamily: "'Inter', system-ui, sans-serif" }}>
+      <GameHeader onBack={onBack} onOpenRanking={onOpenRanking} />
+
+      <div className="flex-1 flex flex-col items-center justify-center px-4 py-8">
+        <div className="w-20 h-20 rounded-full flex items-center justify-center text-3xl mb-5 shadow-lg"
+          style={{ background: 'linear-gradient(135deg, #0f766e, #14b8a6)' }}>
+          🧠
+        </div>
+
+        <h1 className="text-3xl font-black text-white mb-1">Jogo da Memória</h1>
+        <p className="text-slate-400 text-sm mb-10">Escolha o tamanho do tabuleiro</p>
+
+        <div className="grid grid-cols-3 gap-4 w-full max-w-lg">
+          {cards.map(({ dif, bg, shadow }) => {
+            const { label, pairs } = MEMORIA_GRID[dif];
+            return (
+              <button
+                key={dif}
+                onClick={() => handleStart(dif)}
+                disabled={loading !== null}
+                className="rounded-2xl p-5 flex flex-col items-center justify-center gap-1 transition-all duration-200 hover:scale-105 hover:shadow-xl active:scale-95 disabled:opacity-70"
+                style={{ background: bg, boxShadow: `0 8px 24px ${shadow}` }}
+              >
+                <span className="font-black text-white text-2xl">{label}</span>
+                <span className="font-bold text-white text-base mt-1">
+                  {loading === dif ? '...' : DIF_LABEL[dif]}
+                </span>
+                <span className="text-white/75 text-[11px]">{pairs} pares</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function Setup(props: SetupProps) {
-  return props.modo === 'vs' ? <VsSetup {...props} /> : <SoloSetup {...props} />;
+  if (props.modo === 'vs') return <VsSetup {...props} />;
+  if (props.modo === 'memoria') return <MemoriaSetup {...props} />;
+  return <SoloSetup {...props} />;
 }

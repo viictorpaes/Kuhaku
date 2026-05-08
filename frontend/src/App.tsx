@@ -30,7 +30,7 @@ export function App() {
   const [score, setScore] = useState({ p1: 0, p2: 0 });
   const [finalScore, setFinalScore] = useState<{ p1: number; p2: number } | null>(null);
 
-  const iniciarJogo = useCallback(async (config: ConfigJogo) => 
+  const iniciarJogo = useCallback(async (config: ConfigJogo) =>
   {
     setDificuldade(config.dificuldade);
     setP1(config.p1 || 'Jogador 1');
@@ -38,10 +38,14 @@ export function App() {
     setRound(1);
     setScore({ p1: 0, p2: 0 });
     setFinalScore(null);
-    const id = await criarJogo(config.dificuldade);
-    setGameId(id);
+    if (modo !== 'memoria') {
+      const id = await criarJogo(config.dificuldade);
+      setGameId(id);
+    } else {
+      setGameId('local');
+    }
     setTela('game');
-  }, []);
+  }, [modo]);
 
   const onRoundEnd = useCallback(async (winner: 1 | 2 | null) => 
   {
@@ -65,11 +69,12 @@ export function App() {
   }, [round, score, dificuldade]);
 
 
-  const novoJogoSolo = useCallback(async () => 
+  const novoJogoSolo = useCallback(async () =>
   {
+    if (modo === 'memoria') return;
     const id = await criarJogo(dificuldade!);
     setGameId(id);
-  }, [dificuldade]);
+  }, [dificuldade, modo]);
 
   const voltarParaHome = () => 
   {

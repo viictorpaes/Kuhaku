@@ -43,7 +43,11 @@ export function Home({ onSelectMode, onOpenRanking }: HomeProps)
         <button
           onClick={() => onSelectMode('vs')}
           className="w-full text-left rounded-3xl overflow-hidden transition-all duration-200 hover:scale-[1.02] hover:shadow-2xl active:scale-[0.99]"
-          style={{ background: 'linear-gradient(135deg, #6366f1 0%, #a855f7 35%, #ec4899 65%, #f97316 100%)' }}
+          style=
+          {
+            { background: 'linear-gradient(135deg, #6366f1 0%, #a855f7 35%, #ec4899 65%, #f97316 100%)' 
+            }
+          }
         >
           <div className="p-6 flex gap-4 items-start">
             {/* Icon */}
@@ -92,9 +96,10 @@ export function Home({ onSelectMode, onOpenRanking }: HomeProps)
             </div>
           </button>
 
-          {/* Jogo da Memória — em breve */}
-          <div
-            className="text-left rounded-3xl overflow-hidden p-6 relative opacity-60 cursor-not-allowed"
+          {/* Jogo da Memória */}
+          <button
+            onClick={() => onSelectMode('memoria')}
+            className="text-left rounded-3xl overflow-hidden p-6 transition-all duration-200 hover:scale-[1.02] hover:shadow-xl active:scale-[0.99]"
             style={{ background: '#0f766e' }}
           >
             <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-lg mb-4">
@@ -107,10 +112,7 @@ export function Home({ onSelectMode, onOpenRanking }: HomeProps)
                 ⭐ Pontuação por velocidade
               </span>
             </div>
-            <div className="absolute inset-0 flex items-end justify-center pb-4">
-              <span className="bg-black/50 text-white/80 text-[10px] font-bold px-3 py-1 rounded-full">Em breve</span>
-            </div>
-          </div>
+          </button>
         </div>
       </div>
 

@@ -3,6 +3,7 @@ import type { Dificuldade, Modo, Palpite, Direcao } from '../types';
 import {
   RANGE_LABEL, DIF_LABEL, DIF_COLOR,
   MAX_TENTATIVAS_SOLO, MAX_TENTATIVAS_VS, TOTAL_ROUNDS_VS, RANGE_MAX,
+  MEMORIA_GRID,
 } from '../constants';
 
 interface GameProps 
@@ -342,7 +343,7 @@ function VsGame({ gameId, dificuldade, p1, p2, round, score, apiUrl, onBack, onO
 
 // ─── SOLO GAME ────────────────────────────────────────────────────────────────
 
-function SoloGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, onNovoJogo }: GameProps) {
+function SoloGame({ gameId, dificuldade, apiUrl, onBack, onOpenRanking, onNovoJogo }: GameProps) {
   const [palpite, setPalpite] = useState('');
   const [historico, setHistorico] = useState<Palpite[]>([]);
   const [loading, setLoading] = useState(false);
@@ -556,9 +557,190 @@ function SoloGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, onNo
   );
 }
 
+// ─── MEMORIA GAME ─────────────────────────────────────────────────────────────
+
+function MemoriaGame({ dificuldade, p1, onBack, onOpenRanking, onNovoJogo }: GameProps) {
+  const { cols, rows, label, pairs: totalPairs } = MEMORIA_GRID[dificuldade];
+  const totalCards = cols * rows;
+
+  const gerarCartas = () => {
+    const nums = Array.from({ length: totalPairs }, (_, i) => i + 1);
+    const pares = [...nums, ...nums];
+    for (let i = pares.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pares[i], pares[j]] = [pares[j], pares[i]];
+    }
+    return pares;
+  };
+
+  const [cartas, setCartas] = useState<number[]>(() => gerarCartas());
+  const [reveladas, setReveladas] = useState<Set<number>>(new Set());
+  const [viradas, setViradas] = useState<number[]>([]);
+  const [erros, setErros] = useState(0);
+  const [bloqueado, setBloqueado] = useState(false);
+  const [ganhou, setGanhou] = useState(false);
+  const [tempo, setTempo] = useState(0);
+  const [iniciou, setIniciou] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
+
+  useEffect(() => {
+    if (iniciou && !ganhou) {
+      timerRef.current = setInterval(() => setTempo((t) => t + 1), 1000);
+    }
+    return () => clearInterval(timerRef.current);
+  }, [iniciou, ganhou]);
+
+  const paresEncontrados = reveladas.size / 2;
+
+  const handleClique = (idx: number) => {
+    if (bloqueado || viradas.includes(idx) || reveladas.has(idx) || ganhou) return;
+    if (!iniciou) setIniciou(true);
+
+    const novasViradas = [...viradas, idx];
+    setViradas(novasViradas);
+
+    if (novasViradas.length === 2) {
+      setBloqueado(true);
+      const [a, b] = novasViradas;
+      if (cartas[a] === cartas[b]) {
+        const novasReveladas = new Set(reveladas);
+        novasReveladas.add(a);
+        novasReveladas.add(b);
+        setReveladas(novasReveladas);
+        setViradas([]);
+        setBloqueado(false);
+        if (novasReveladas.size === totalCards) {
+          setGanhou(true);
+          clearInterval(timerRef.current);
+        }
+      } else {
+        setErros((e) => e + 1);
+        setTimeout(() => {
+          setViradas([]);
+          setBloqueado(false);
+        }, 900);
+      }
+    }
+  };
+
+  const handleNovo = async () => {
+    clearInterval(timerRef.current);
+    setCartas(gerarCartas());
+    setReveladas(new Set());
+    setViradas([]);
+    setErros(0);
+    setBloqueado(false);
+    setGanhou(false);
+    setTempo(0);
+    setIniciou(false);
+    await onNovoJogo();
+  };
+
+  const formatTempo = (s: number) => {
+    const m = Math.floor(s / 60);
+    const sec = s % 60;
+    return `${m}:${sec.toString().padStart(2, '0')}`;
+  };
+
+  return (
+    <div className="min-h-screen text-white flex flex-col" style={{ background: BG, fontFamily: "'Inter', system-ui, sans-serif" }}>
+      <GameHeader onBack={onBack} onOpenRanking={onOpenRanking} />
+
+      {/* Stats bar */}
+      <div className="flex items-center gap-2 px-5 py-3 flex-wrap">
+        <span className="bg-white/10 text-slate-300 text-xs font-bold px-3 py-1.5 rounded-full">
+          ⏱ {formatTempo(tempo)}
+        </span>
+        <span className="text-xs font-bold px-3 py-1.5 rounded-full border"
+          style={{ background: 'rgba(20,184,166,0.15)', borderColor: 'rgba(20,184,166,0.4)', color: '#2dd4bf' }}>
+          🧩 {paresEncontrados}/{totalPairs} pares
+        </span>
+        <span className="text-xs font-bold px-3 py-1.5 rounded-full border"
+          style={erros > 0
+            ? { background: 'rgba(239,68,68,0.12)', borderColor: 'rgba(239,68,68,0.35)', color: '#f87171' }
+            : { background: 'rgba(255,255,255,0.05)', borderColor: 'rgba(255,255,255,0.1)', color: '#94a3b8' }}>
+          ❌ {erros} erro{erros !== 1 ? 's' : ''}
+        </span>
+        <span className="bg-white/5 border border-white/10 text-slate-400 text-xs font-bold px-3 py-1.5 rounded-full ml-auto">
+          {label}
+        </span>
+      </div>
+
+      {/* Win banner */}
+      {ganhou && (
+        <div className="mx-4 mb-2 rounded-2xl p-5 text-center border"
+          style={{ background: 'rgba(16,185,129,0.1)', borderColor: 'rgba(16,185,129,0.35)' }}>
+          <p className="text-3xl mb-2">🎉</p>
+          <p className="font-black text-lg text-emerald-400">Parabéns, {p1}!</p>
+          <p className="text-slate-400 text-sm mt-1">
+            {formatTempo(tempo)} &nbsp;·&nbsp; {erros} erro{erros !== 1 ? 's' : ''} &nbsp;·&nbsp; {totalPairs} pares
+          </p>
+          <button
+            onClick={handleNovo}
+            className="mt-4 px-6 py-2.5 rounded-xl font-bold text-white text-sm transition hover:opacity-90"
+            style={{ background: 'linear-gradient(135deg, #0f766e, #14b8a6)' }}
+          >
+            🔄 Jogar novamente
+          </button>
+        </div>
+      )}
+
+      {/* Grid */}
+      <main className="flex-1 px-4 pb-8 flex items-start justify-center pt-2">
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: `repeat(${cols}, 1fr)`,
+            gap: cols >= 6 ? '6px' : '10px',
+            maxWidth: cols >= 6 ? '480px' : '380px',
+            width: '100%',
+          }}
+        >
+          {cartas.map((num, idx) => {
+            const isVirada = viradas.includes(idx);
+            const isRevelada = reveladas.has(idx);
+            const mostrar = isVirada || isRevelada;
+            return (
+              <button
+                key={idx}
+                onClick={() => handleClique(idx)}
+                className="transition-all duration-150 active:scale-90 rounded-xl flex items-center justify-center font-black select-none"
+                style={{
+                  aspectRatio: '1',
+                  fontSize: cols >= 6 ? '13px' : '18px',
+                  background: isRevelada
+                    ? 'rgba(16,185,129,0.22)'
+                    : isVirada
+                    ? 'rgba(99,102,241,0.35)'
+                    : '#1a2d45',
+                  border: isRevelada
+                    ? '1.5px solid rgba(16,185,129,0.5)'
+                    : isVirada
+                    ? '1.5px solid rgba(99,102,241,0.6)'
+                    : '1.5px solid rgba(255,255,255,0.07)',
+                  color: isRevelada ? '#4ade80' : isVirada ? '#a5b4fc' : 'transparent',
+                  cursor: isRevelada || ganhou ? 'default' : 'pointer',
+                  transform: mostrar ? 'scale(1)' : 'scale(1)',
+                }}
+              >
+                {mostrar
+                  ? num
+                  : <span style={{ color: 'rgba(255,255,255,0.12)', fontSize: cols >= 6 ? '11px' : '14px' }}>?</span>
+                }
+              </button>
+            );
+          })}
+        </div>
+      </main>
+    </div>
+  );
+}
+
 // ─── EXPORT ───────────────────────────────────────────────────────────────────
 
-export function Game(props: GameProps) 
+export function Game(props: GameProps)
 {
-  return props.modo === 'vs' ? <VsGame {...props} /> : <SoloGame {...props} />;
+  if (props.modo === 'vs')      return <VsGame {...props} />;
+  if (props.modo === 'memoria') return <MemoriaGame {...props} />;
+  return <SoloGame {...props} />;
 }

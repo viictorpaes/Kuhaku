@@ -64,6 +64,7 @@ Kuhaku/
 │   │   │       └── user.module.ts <img src="https://img.shields.io/badge/-Module-111827?style=flat&logo=typescript&logoColor=E0234E" height="18"/>
 │   │   ├── game <img src="https://img.shields.io/badge/-Game-111827?style=flat&logo=nestjs&logoColor=E0234E" height="18"/>/
 │   │   │   ├── dto <img src="https://img.shields.io/badge/-Data_Transform_Object_(DTO)-111827?style=flat&logo=typescript&logoColor=orange" height="18" alt="DTO"/>/
+│   │   │   │   ├── card-guess.dto.ts <img src="https://img.shields.io/badge/DTO_CardGuess-111827?style=flat&logo=typescript&logoColor=4ade80" height="18"/>
 │   │   │   │   ├── create-game.dto.ts <img src="https://img.shields.io/badge/DTO_Create-111827?style=flat&logo=typescript&logoColor=E0234E" height="18"/>
 │   │   │   │   ├── guess.dto.ts <img src="https://img.shields.io/badge/DTO_Create-111827?style=flat&logo=typescript&logoColor=E0234E" height="18"/>
 │   │   │   │   ├── user_update.dto.ts <img src="https://img.shields.io/badge/DTO_Update-111827?style=flat&logo=typescript&logoColor=yellow" height="18"/>
@@ -209,6 +210,9 @@ npx prisma generate
 
 # Cria e aplica uma nova migration em desenvolvimento
 npx prisma migrate dev --name init
+
+# Após adicionar GameType ao schema (necessário para o jogo de cartas):
+npx prisma migrate dev --name add-game-type
 
 # Aplica migrations em produção
 npx prisma migrate deploy
@@ -358,6 +362,42 @@ Camada de **lógica de negócio**. Processa os dados recebidos do Controller, ap
 **Arquivos neste projeto:** `app.module.ts` `game.module.ts` `auth.module.ts`, `user.module.ts`
 
 
+<h2 align="center">🎮 Tipos de Jogo (GameType)</h2>
+
+| GameType | Descrição | Dificuldade → Intervalo |
+|---|---|---|
+| `NUMBER_GUESS` | Adivinhe o número secreto com dicas quente/frio | EASY 1–10 · MEDIUM 1–50 · HARD 1–100 |
+| `CARD_GUESS` | Adivinhe a carta do baralho (naipe + valor) | EASY ♠ (13) · MEDIUM ♠♥ (26) · HARD deck completo (52) |
+
+**Máximo de tentativas por dificuldade:** EASY → 5 · MEDIUM → 7 · HARD → 10
+
+**Endpoints novos:**
+| Método | Rota | Descrição |
+|---|---|---|
+| `POST` | `/api/games/:id/card-guess` | Palpite de carta `{ suit, value }` |
+| `POST` | `/api/games/:id/finish` | Salva/encerra a partida — revela o target |
+
+**Feedback de número (proporcional ao intervalo):**
+
+| Diferença | Feedback |
+|---|---|
+| 0 | acertou ✅ |
+| ≤ 10% do range | pegando fogo 🔥🔥🔥 |
+| ≤ 20% do range | quente 🌡️ |
+| ≤ 40% do range | morno ☔️ |
+| > 40% do range | frio ❄️ |
+
+**Feedback de carta:**
+
+| Situação | Feedback |
+|---|---|
+| Naipe e valor corretos | acertou ✅ |
+| Valor correto, naipe errado | valor certo, naipe errado 🎯 |
+| Target tem valor maior | valor maior ⬆️ |
+| Target tem valor menor | valor menor ⬇️ |
+
+---
+
 <h2 align="center"><b>Lógica do Jogo em</b>: <i>backend/src/game/</i> <br>
 <img src="https://img.shields.io/badge/<>src-green?style=flat&logo=image&logoColor=white" height="18"/><img src="https://img.shields.io/badge/-Game-111827?style=flat&logo=nestjs&logoColor=E0234E" height="18"/><img src="https://img.shields.io/badge/-TypeScript-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/><img src="https://img.shields.io/badge/DTO_Create-111827?style=flat&logo=typescript&logoColor=E0234E" height="18"/><img src="https://img.shields.io/badge/DTO_Update-111827?style=flat&logo=typescript&logoColor=yellow" height="18"/></h2>
 
@@ -367,96 +407,91 @@ Camada de **lógica de negócio**. Processa os dados recebidos do Controller, ap
 ```ts
 // Arquivo: backend/src/game/ts/game.controller.ts
 
-import { Body, Controller, Get, Param, Post, Put, Delete, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { GameService } from './game.service';
 import { CreateGameDto } from '../../game/dto/create-game.dto';
 import { CreateUserDto } from '../dto/user.dto';
 import { GuessDto } from '../dto/guess.dto';
 import { UpdateUserDto } from '../dto/user_update.dto';
+import { CardGuessDto } from '../dto/card-guess.dto';
 
 @Controller('api')
-export class GameController 
+export class GameController
 {
   constructor(private readonly gameService: GameService) {}
 
+  // ── usuários ──────────────────────────────────────
+
   @Post('users')
-  async criarUsuario(@Body() dto: CreateUserDto) 
-  {
-    return this.gameService.criarUsuario(dto.email, dto.name);
-  }
-
-  @Post('games')
-  async criarJogo(@Body() dto: CreateGameDto) 
-  {
-    return this.gameService.criarJogo(dto);
-  }
-
-  @Post('games/:id/guess')
-  async fazerPalpite(@Param('id') id: string, @Body() dto: GuessDto) 
-  {
-    return this.gameService.fazerPalpite(id, dto.value);
-  }
-
-  @Get('games/:id/history')
-  async obterHistoricoDoJogo(@Param('id') id: string) 
-  {
-    return this.gameService.obterHistoricoDoJogo(id);
-  }
-
-  @Get('users/:id/games')
-  async listarJogosDoUsuario(@Param('id') id: string) 
-  {
-    return this.gameService.listarJogosDoUsuario(id);
-  }
-
-  @Get('users/:id/stats')
-  async estatisticasDoUsuario(@Param('id') id: string) 
-  {
-    return this.gameService.obterEstatisticasDoUsuario(id);
-  }
-
-  @Get('games/:id/summary')
-  async resumoDoJogo(@Param('id') id: string) 
-  {
-    return this.gameService.obterResumoDoJogo(id);
-  }
-
-  @Get('users/:id/achievements')
-  async conquistasDoUsuario(@Param('id') id: string) 
-  {
-    return this.gameService.obterConquistasDoUsuario(id);
-  }
-
-  @Get('users/:id/summary')
-  async resumoCompletoDoUsuario(@Param('id') id: string) 
-  {
-    return this.gameService.obterResumoDoUsuario(id);
-  }
-
-  @Get('ranking/global')
-  async rankingGlobal(@Query('limit') limit?: string) 
-  {
-    const l = limit ? parseInt(limit, 10) : 10;
-    return this.gameService.obterRankingGlobal(l);
-  }
-
-  @Get('ranking/user/:id')
-  async rankingDoUsuario(@Param('id') id: string) 
-  {
-    return this.gameService.obterRankingDoUsuario(id);
-  }
+  async criarUsuario(@Body() dto: CreateUserDto)
+  { return this.gameService.createUser(dto.email, dto.name); }
 
   @Put('users/:id')
-  async atualizarUsuario(@Param('id') id: string, @Body() dto: UpdateUserDto) 
-  {
-    return this.gameService.atualizarUsuario(id, dto);
-  }
+  async atualizarUsuario(@Param('id') id: string, @Body() dto: UpdateUserDto)
+  { return this.gameService.updateUser(id, dto as any); }
 
   @Delete('users/:id')
-  async removerUsuario(@Param('id') id: string) 
-  {
-    return this.gameService.removerUsuario(id);
-  }
+  async removerUsuario(@Param('id') id: string)
+  { return this.gameService.removeUser(id); }
+
+  // ── jogos ─────────────────────────────────────────
+
+  @Post('games')
+  async criarJogo(@Body() dto: CreateGameDto)
+  { return this.gameService.createGame(dto); }
+
+  // Palpite: jogo de números (NUMBER_GUESS)
+  @Post('games/:id/guess')
+  async fazerPalpite(@Param('id') id: string, @Body() dto: GuessDto)
+  { return this.gameService.makeGuess(id, dto.value); }
+
+  // Palpite: jogo de cartas (CARD_GUESS) — { suit: 'SPADES'|'HEARTS'|'DIAMONDS'|'CLUBS', value: 1-13 }
+  @Post('games/:id/card-guess')
+  async fazerPalpiteCarta(@Param('id') id: string, @Body() dto: CardGuessDto)
+  { return this.gameService.makeCardGuess(id, dto.suit, dto.value); }
+
+  // Salvar/encerrar partida (vitória ou desistência) — revela o target
+  @Post('games/:id/finish')
+  async encerrarJogo(@Param('id') id: string)
+  { return this.gameService.finishGame(id); }
+
+  // ── consultas de jogo ─────────────────────────────
+
+  @Get('games/:id/history')
+  async obterHistoricoDoJogo(@Param('id') id: string)
+  { return this.gameService.getGameHistory(id); }
+
+  @Get('games/:id/summary')
+  async resumoDoJogo(@Param('id') id: string)
+  { return this.gameService.getGameSummary(id); }
+
+  // ── consultas de usuário ──────────────────────────
+
+  @Get('users/:id/games')
+  async listarJogosDoUsuario(@Param('id') id: string)
+  { return this.gameService.listUserGames(id); }
+
+  @Get('users/:id/stats')
+  async estatisticasDoUsuario(@Param('id') id: string)
+  { return this.gameService.getUserStats(id); }
+
+  @Get('users/:id/achievements')
+  async conquistasDoUsuario(@Param('id') id: string)
+  { return this.gameService.getUserAchievements(id); }
+
+  @Get('users/:id/summary')
+  async resumoCompletoDoUsuario(@Param('id') id: string)
+  { return this.gameService.getUserSummary(id); }
+
+  // ── ranking ───────────────────────────────────────
+
+  @Get('ranking/global')
+  async rankingGlobal(@Query('limit') limit?: string)
+  { return this.gameService.getGlobalRanking(limit ? parseInt(limit, 10) : 10); }
+
+  @Get('ranking/user/:id')
+  async rankingDoUsuario(@Param('id') id: string)
+  { return this.gameService.getUserRanking(id); }
 }
 ```
 
@@ -482,204 +517,80 @@ export class GameModule {}
 ```ts
 // Arquivo: backend/src/game/ts/game.service.ts
 
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { CreateGameDto, Difficulty } from '../dto/create-game.dto';
+import { CreateGameDto, Difficulty, GameType } from '../dto/create-game.dto';
+import { CardSuit } from '../dto/card-guess.dto';
 
-function getLimitByDifficulty(difficulty: Difficulty): number 
-{
-  switch (difficulty) 
-  {
-    case 'EASY':   return 10;
-    case 'MEDIUM': return 50;
-    case 'HARD':   return 100;
-  }
-}
+// ── helpers de número ──────────────────────────────────────────────────────
 
-function getFeedbackByDifference(diff: number): string 
-{
-  if (diff === 0)   return 'acertou ✅';
-  if (diff <= 2)    return 'pegando fogo 🔥🔥🔥';
-  if (diff <= 5)    return 'quente 🌡️';
-  if (diff <= 15)   return 'morno ☔️';
-  return 'frio ❄️';
-}
+// Intervalos por dificuldade: EASY 1-10 | MEDIUM 1-50 | HARD 1-100
+function getLimitByDifficulty(difficulty: Difficulty): number { ... }
+
+// Máximo de tentativas por dificuldade: EASY 5 | MEDIUM 7 | HARD 10
+function getMaxAttempts(difficulty: Difficulty): number { ... }
+
+// Feedback proporcional ao intervalo (evita que limiares fixos sejam inúteis no EASY):
+//   ≤10% do range → pegando fogo 🔥🔥🔥 | ≤20% → quente 🌡️ | ≤40% → morno ☔️ | >40% → frio ❄️
+function getNumberFeedback(diff: number, limit: number): string { ... }
+
+// ── helpers de carta ───────────────────────────────────────────────────────
+
+// Deck por dificuldade: EASY → ♠ (13) | MEDIUM → ♠+♥ (26) | HARD → baralho completo (52)
+function getCardLimitByDifficulty(difficulty: Difficulty): number { ... }
+
+// Codificação: suit×13 + value  (1-52).  Ex: 5♥ = 1×13+5 = 18
+function encodeCard(suit: CardSuit, value: number): number { ... }
+function decodeCard(encoded: number): { suit: CardSuit; value: number; display: string } { ... }
+
+// Feedback de carta: acertou ✅ | valor certo, naipe errado 🎯 | valor maior ⬆️ | valor menor ⬇️
+function getCardFeedback(target: number, guess: number) { ... }
+
+// ── service ────────────────────────────────────────────────────────────────
 
 @Injectable()
-export class GameService 
+export class GameService
 {
   constructor(private readonly prismaService: PrismaService) {}
 
-  // ── Usuários ──────────────────────────────────────────────────────────────
+  // createUser / updateUser / removeUser  (sem alterações)
 
-  async createUser(email: string, name?: string) 
+  async createGame(dto: CreateGameDto)
   {
-    const existing = await this.prismaService.prisma.user.findUnique({ where: { email } });
-    if (existing) return existing;
-    return this.prismaService.prisma.user.create({ data: { email, name } });
-  }
-  async criarUsuario(email: string, name?: string) { return this.createUser(email, name); }
-
-  async updateUser(userId: string, dto: { name?: string; email?: string }) 
-  {
-    return this.prismaService.prisma.user.update({ where: { id: userId }, data: dto });
-  }
-
-  async removeUser(userId: string) 
-  {
-    const user = await this.prismaService.prisma.user.findUnique({ where: { id: userId } });
-    if (!user) throw new NotFoundException('Usuário não encontrado');
-    return this.prismaService.prisma.user.delete({ where: { id: userId } });
-  }
-
-  // ── Jogos ─────────────────────────────────────────────────────────────────
-
-  async createGame(dto: CreateGameDto) 
-  {
-    const limit = getLimitByDifficulty(dto.difficulty);
+    const gameType: GameType = dto.gameType ?? 'NUMBER_GUESS';
+    // target gerado dentro do intervalo correto (número ou carta)
+    const limit  = gameType === 'CARD_GUESS' ? getCardLimitByDifficulty(dto.difficulty) : getLimitByDifficulty(dto.difficulty);
     const target = Math.floor(Math.random() * limit) + 1;
-
-    if (dto.userId) 
-    {
-      const user = await this.prismaService.prisma.user.findUnique({ where: { id: dto.userId } });
-      if (!user) throw new NotFoundException('Usuário não encontrado');
-    }
-
-    return this.prismaService.prisma.game.create
-    ({
-      data: { userId: dto.userId ?? null, difficulty: dto.difficulty, target, attempts: 0, won: false },
-    });
+    // persiste com gameType, difficulty, target
   }
-  async criarJogo(dto: CreateGameDto) { return this.createGame(dto); }
 
-  async makeGuess(gameId: string, value: number):
-    Promise<{ feedback: string; diff: number; direction: 'higher' | 'lower' | 'correct' } | { message: string }> 
+  async makeGuess(gameId: string, value: number): Promise<any>
   {
-    const game = await this.prismaService.prisma.game.findUnique({ where: { id: gameId } });
-    if (!game) throw new NotFoundException('Jogo não encontrado ❌');
-    if (game.won) return { message: 'Jogo já foi concluído ✅' };
-
-    const diff = Math.abs(game.target - value);
-    const feedback = getFeedbackByDifference(diff);
-    const isWon = diff === 0;
-
-    await this.prismaService.prisma.guess.create({ data: { gameId, value, feedback } });
-    await this.prismaService.prisma.game.update({
-      where: { id: gameId },
-      data: { attempts: { increment: 1 }, won: isWon ? true : game.won, endedAt: isWon ? new Date() : undefined },
-    });
-
-    const direction: 'higher' | 'lower' | 'correct' =
-      diff === 0 ? 'correct' : game.target > value ? 'higher' : 'lower';
-    return { feedback, diff, direction };
+    // 1. valida intervalo: rejeita value fora de [1, limit] com BadRequestException
+    // 2. calcula feedback proporcional via getNumberFeedback(diff, limit)
+    // 3. ao atingir maxAttempts sem acertar: endedAt = now(), retorna { gameOver, target }
+    // 4. retorna { feedback, diff, direction, attemptsLeft, won? }
   }
-  async fazerPalpite(gameId: string, value: number) { return this.makeGuess(gameId, value); }
 
-  // ── Consultas ─────────────────────────────────────────────────────────────
-
-  async getGameHistory(gameId: string) 
+  async makeCardGuess(gameId: string, suit: CardSuit, value: number): Promise<any>
   {
-    return this.prismaService.prisma.guess.findMany({ where: { gameId }, orderBy: { createdAt: 'asc' } });
+    // 1. valida gameType === 'CARD_GUESS'
+    // 2. valida naipe permitido para a dificuldade (ex: EASY só aceita SPADES)
+    // 3. valida value ∈ [1,13]
+    // 4. codifica guess, obtém feedback via getCardFeedback
+    // 5. ao atingir maxAttempts: endedAt = now(), retorna { gameOver, targetCard }
+    // 6. retorna { feedback, direction, guessedCard, attemptsLeft, won?, targetCard? }
   }
 
-  async listUserGames(userId: string) 
-  {
-    return this.prismaService.prisma.game.findMany({ where: { userId }, orderBy: { createdAt: 'desc' } });
-  }
+  // Salva/encerra a partida (vitória ou desistência).
+  // Se endedAt ainda não foi setado, seta agora (= desistência).
+  // Sempre revela target e, para cartas, targetCard.
+  async finishGame(gameId: string): Promise<any> { ... }
 
-  async getUserStats(userId: string) 
-  {
-    const games = await this.prismaService.prisma.game.findMany({ where: { userId, won: true } });
-    const total = games.length;
-    if (total === 0) return { total: 0, averageAttempts: 0, best: null, worst: null };
-
-    const attempts: number[] = games.map((g: any) => Number(g.attempts ?? 0));
-    const avg = attempts.reduce((a, b) => a + b, 0) / attempts.length;
-    return { total, averageAttempts: avg, best: Math.min(...attempts), worst: Math.max(...attempts) };
-  }
-
-  async getGlobalRanking(limit = 10) 
-  {
-    const users = await this.prismaService.prisma.user.findMany({ include: { games: true } });
-    return users
-      .map((u: any) => {
-        const wins = (u.games || []).filter((g: any) => g.won).map((g: any) => Number(g.attempts ?? 0));
-        if (wins.length === 0) return null;
-        const avg = wins.reduce((a: number, b: number) => a + b, 0) / wins.length;
-        return { userId: u.id, name: u.name ?? u.email, averageAttempts: avg, wins: wins.length };
-      })
-      .filter(Boolean)
-      .sort((a: any, b: any) => a.averageAttempts - b.averageAttempts)
-      .slice(0, limit);
-  }
-
-  async getUserRanking(userId: string) 
-  {
-    const ranking = await this.getGlobalRanking(1000);
-    const index = ranking.findIndex((r: any) => r.userId === userId);
-    if (index === -1) return { position: null, total: ranking.length };
-    return { position: index + 1, total: ranking.length, entry: ranking[index] };
-  }
-
-  async getGameSummary(gameId: string) 
-  {
-    const game = await this.prismaService.prisma.game.findUnique({ where: { id: gameId }, include: { guesses: true } });
-    if (!game) throw new NotFoundException('Jogo não encontrado ❌');
-
-    const guesses = (game.guesses || []).sort(
-      (a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-    );
-    const first = guesses[0];
-    const last  = guesses[guesses.length - 1];
-    const durationMs = first && last ? new Date(last.createdAt).getTime() - new Date(first.createdAt).getTime() : null;
-
-    return {
-      gameId: game.id, userId: game.userId, difficulty: game.difficulty,
-      target: game.won ? game.target : null, attempts: game.attempts, won: game.won,
-      guesses: guesses.map((g: any) => ({ value: g.value, feedback: g.feedback, createdAt: g.createdAt })),
-      durationMs,
-    };
-  }
-
-  async getUserAchievements(userId: string) 
-  {
-    const games = await this.prismaService.prisma.game.findMany(
-      { where: { userId }, include: { guesses: true }, orderBy: { createdAt: 'asc' } }
-    );
-    const wins = games.filter((g: any) => g.won);
-    const fastestWinAttempts = wins.length ? Math.min(...wins.map((g: any) => g.attempts)) : null;
-
-    const winDurations = wins
-      .map((g: any) => {
-        const gs = (g.guesses || []).sort((a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-        if (gs.length < 1) return null;
-        return new Date(gs[gs.length - 1].createdAt).getTime() - new Date(gs[0].createdAt).getTime();
-      })
-      .filter(Boolean) as number[];
-
-    let bestStreak = 0, current = 0;
-    for (const g of games) 
-    {
-      current = g.won ? current + 1 : 0;
-      if (current > bestStreak) bestStreak = current;
-    }
-
-    return {
-      totalGames: games.length, totalWins: wins.length,
-      fastestWinAttempts, fastestWinTimeMs: winDurations.length ? Math.min(...winDurations) : null,
-      bestStreak,
-    };
-  }
-
-  async getUserSummary(userId: string) 
-  {
-    const [stats, achievements, ranking] = await Promise.all([
-      this.getUserStats(userId),
-      this.getUserAchievements(userId),
-      this.getUserRanking(userId),
-    ]);
-    return { stats, achievements, ranking };
-  }
+  // getGameHistory: para CARD_GUESS decoda cada guess.value → card display
+  // getGameSummary: inclui gameType, targetCard (se over e CARD_GUESS)
+  // getUserStats:   retorna totalGames, wins, losses, averageAttempts, best, worst
+  // getUserSummary: Promise.all([stats, achievements, ranking])
 }
 ```
 
@@ -690,47 +601,55 @@ export class GameService
 <img src="https://img.shields.io/badge/-Data_Transform_Object_(DTO)-111827?style=flat&logo=typescript&logoColor=orange" height="18" alt="DTO"/>
 
 ```ts
-// Arquivo: backend/src/game/dto/create-game.dto.ts
-// Define as opções para criar um jogo. `difficulty` é obrigatório.
-export type Difficulty = 'FACIL' | 'MEDIO' | 'DIFICIL';
+// Arquivo: backend/src/game/dto/card-guess.dto.ts
+// Payload para palpite no jogo de cartas.
+export type CardSuit = 'SPADES' | 'HEARTS' | 'DIAMONDS' | 'CLUBS';
 
-export class CreateGameDto 
+export class CardGuessDto
 {
-  // Opcional: id do usuário (se o jogo for associado a um usuário)
-  userId?: string;
-  // Obrigatório: dificuldade do jogo
-  difficulty!: Difficulty;
+  suit!: CardSuit;   // naipe da carta
+  value!: number;    // valor: 1=A, 2-10, 11=J, 12=Q, 13=K
+}
+```
+
+```ts
+// Arquivo: backend/src/game/dto/create-game.dto.ts
+// Define as opções para criar um jogo.
+export type Difficulty = 'EASY' | 'MEDIUM' | 'HARD';
+export type GameType   = 'NUMBER_GUESS' | 'CARD_GUESS';
+
+export class CreateGameDto
+{
+  userId?:    string;     // opcional: associa a um usuário
+  difficulty!: Difficulty; // obrigatório
+  gameType?:  GameType;   // padrão: NUMBER_GUESS
 }
 ```
 
 ```ts
 // Arquivo: backend/src/game/dto/guess.dto.ts
-// Payload para submeter um palpite ao jogo.
-export class GuessDto 
+// Payload para submeter um palpite no jogo de números.
+export class GuessDto
 {
-  // Normalmente o controller recebe gameId via rota; mantemos campo aqui por compatibilidade
   gameId!: string;
-  // Valor do palpite (número)
-  value!: number;
+  value!:  number;  // inteiro dentro do intervalo da dificuldade
 }
 ```
 
 ```ts
 // Arquivo: backend/src/game/dto/user.dto.ts
-// DTO para criação de usuário simples (email obrigatório)
-export class CreateUserDto 
+export class CreateUserDto
 {
-  email!: string;
-  name?: string;
+  email!:  string;
+  name?:   string;
 }
 ```
 
 ```ts
 // Arquivo: backend/src/game/dto/user_update.dto.ts
-// DTO para atualizações parciais de usuário (name e/ou email)
-export class UpdateUserDto 
+export class UpdateUserDto
 {
-  name?: string;
+  name?:  string;
   email?: string;
 }
 ```
