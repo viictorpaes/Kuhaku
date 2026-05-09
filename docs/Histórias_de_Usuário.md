@@ -108,7 +108,6 @@
 
 | # | História |
 |---|---|
-| US-F08 | Como **jogador**, quero jogar o modo "Jogo das Cartas" diretamente pela interface do frontend, para que eu possa adivinhar naipe e valor de uma carta do baralho. *(Backend CARD_GUESS implementado, frontend pendente)* |
 | US-F09 | Como **jogador**, quero receber efeitos sonoros e animações ao acertar ou errar, para que a experiência de jogo seja mais imersiva. |
 | US-F10 | Como **jogador no modo VS**, quero jogar online contra outro astronauta em tempo real via WebSocket, para que a Batalha de Sinais seja disputada remotamente. |
 | US-F11 | Como **jogador**, quero ver um modo torneio com chaveamento eliminatório, para que grupos de astronautas possam competir em campeonatos. |

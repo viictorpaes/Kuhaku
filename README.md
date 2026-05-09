@@ -61,7 +61,6 @@ Kuhaku/
 │   │   │       └── user.module.ts <img src="https://img.shields.io/badge/-Module-111827?style=flat&logo=typescript&logoColor=E0234E" height="18"/>
 │   │   ├── game <img src="https://img.shields.io/badge/-Game-111827?style=flat&logo=nestjs&logoColor=E0234E" height="18"/>/
 │   │   │   ├── dto <img src="https://img.shields.io/badge/-Data_Transform_Object_(DTO)-111827?style=flat&logo=typescript&logoColor=orange" height="18" alt="DTO"/>/
-│   │   │   │   ├── card-guess.dto.ts <img src="https://img.shields.io/badge/DTO_CardGuess-111827?style=flat&logo=typescript&logoColor=4ade80" height="18"/>
 │   │   │   │   ├── create-game.dto.ts <img src="https://img.shields.io/badge/DTO_Create-111827?style=flat&logo=typescript&logoColor=E0234E" height="18"/>
 │   │   │   │   ├── guess.dto.ts <img src="https://img.shields.io/badge/DTO_Create-111827?style=flat&logo=typescript&logoColor=E0234E" height="18"/>
 │   │   │   │   ├── user_update.dto.ts <img src="https://img.shields.io/badge/DTO_Update-111827?style=flat&logo=typescript&logoColor=yellow" height="18"/>
@@ -146,12 +145,12 @@ git clone https://github.com/viictorpaes/Kuhaku
 > # 2. Entra no backend e prepara o banco
 > cd backend
 > npm run prisma:generate # gera o Prisma Client
-> npm run prisma:migrate:deploy # cria as tabelas (inclui GameType: NUMBER_GUESS | VS_GUESS | CARD_GUESS)
+> npm run prisma:migrate:deploy # cria as tabelas (inclui GameType: NUMBER_GUESS | VS_GUESS)
 > npm run prisma:seed # popula usuários iniciais (admin, dev, user)
 >
 > # OPCIONAL: popula dados de teste com usuários e partidas
 > npx tsx --env-file=.env prisma/test-user.ts # cria usuários de teste com senha (bcrypt)
-> npx tsx --env-file=.env prisma/test-game.ts # cria partidas NUMBER_GUESS e CARD_GUESS
+> npx tsx --env-file=.env prisma/test-game.ts # cria partidas NUMBER_GUESS
 > cd ..
 >
 > # 3. Sobe backend (:3001) + frontend (:5173)
@@ -243,7 +242,6 @@ npx prisma generate
 # Cria e aplica uma nova migration em desenvolvimento
 npx prisma migrate dev --name init
 
-# Após adicionar GameType ao schema (necessário para o jogo de cartas):
 npx prisma migrate dev --name add-vs-guess-gametype
 
 # Aplica migrations em produção
@@ -403,19 +401,17 @@ Camada de **lógica de negócio**. Processa os dados recebidos do Controller, ap
 | **Operação Resgate** | `NUMBER_GUESS` (backend) | Solo. Feedback de sinal proporcional ao range. | Cadete (5 tent.) · Piloto (7 tent.) · Comandante (10 tent.) |
 | **Mapas Estelares** | `NUMBER_GUESS` (backend) | Solo. Grid de pares de coordenadas para virar e combinar. Cronômetro + contador de erros. Salva no ranking ao vencer. | Cadete 4×4 (8 pares) · Piloto 4×5 (10 pares) · Comandante 6×6 (18 pares) |
 
-**GameTypes do backend (Prisma):** `NUMBER_GUESS` · `VS_GUESS` · `CARD_GUESS`
+**GameTypes do backend (Prisma):** `NUMBER_GUESS` · `VS_GUESS`
 
 **Máximo de tentativas por dificuldade (NUMBER_GUESS):** EASY → 5 · MEDIUM → 7 · HARD → 10
 
 **Endpoints:**
 | Método | Rota | Descrição |
 |---|---|---|
-| `POST` | `/api/games/:id/card-guess` | Palpite de carta `{ suit, value }` |
 | `POST` | `/api/games/:id/finish` | Salva/encerra a partida — revela o target |
 | `POST` | `/api/games/:id/save` | Salva resultado no ranking com apelido `{ name }` |
 | `GET` | `/api/ranking/global?gameType=VS_GUESS` | Ranking filtrado por Adivinhação Em Dupla |
 | `GET` | `/api/ranking/global?gameType=NUMBER_GUESS` | Ranking filtrado por Adivinhação Solo |
-| `GET` | `/api/ranking/global?gameType=CARD_GUESS` | Ranking filtrado por Jogo das Cartas |
 
 **Feedback de número (proporcional ao intervalo):**
 
@@ -443,7 +439,6 @@ import { CreateGameDto } from '../../game/dto/create-game.dto';
 import { CreateUserDto } from '../dto/user.dto';
 import { GuessDto } from '../dto/guess.dto';
 import { UpdateUserDto } from '../dto/user_update.dto';
-import { CardGuessDto } from '../dto/card-guess.dto';
 
 @Controller('api')
 export class GameController
@@ -485,12 +480,6 @@ export class GameController
     return this.gameService.makeGuess(id, dto.value);
   }
 
-
-  @Post('games/:id/card-guess')
-  async fazerPalpiteCarta(@Param('id') id: string, @Body() dto: CardGuessDto)
-  {
-    return this.gameService.makeCardGuess(id, dto.suit, dto.value);
-  }
 
   @Post('games/:id/finish')
   async encerrarJogo(@Param('id') id: string, @Body() body?: { won?: boolean })
@@ -583,12 +572,6 @@ export class GameModule {}
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateGameDto, Difficulty, GameType } from '../dto/create-game.dto';
-import { CardSuit } from '../dto/card-guess.dto';
-
-const SUITS        = ['SPADES', 'HEARTS', 'DIAMONDS', 'CLUBS'] as const;
-const SUIT_SYMBOLS = ['♠', '♥', '♦', '♣'] as const;
-const CARD_VALUES  = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'] as const;
-
 // ── helpers de número ──────────────────────────────────────────────────────
 
 function getLimitByDifficulty(difficulty: Difficulty): number
@@ -620,42 +603,6 @@ function getNumberFeedback(diff: number, limit: number): string
   return 'frio ❄️';
 }
 
-// ── helpers de carta ───────────────────────────────────────────────────────
-
-// Deck por dificuldade: EASY → ♠ (13) | MEDIUM → ♠+♥ (26) | HARD → baralho completo (52)
-function getCardLimitByDifficulty(difficulty: Difficulty): number
-{
-  switch (difficulty)
-  {
-    case 'EASY':   return 13;
-    case 'MEDIUM': return 26;
-    case 'HARD':   return 52;
-  }
-}
-
-// Codificação: suit×13 + value (1–52). Ex: 5♥ = 1×13+5 = 18
-function encodeCard(suit: CardSuit, value: number): number
-{
-  return SUITS.findIndex(s => s === suit) * 13 + value;
-}
-
-function decodeCard(encoded: number): { suit: CardSuit; value: number; display: string }
-{
-  const suitIndex = Math.floor((encoded - 1) / 13);
-  const value     = ((encoded - 1) % 13) + 1;
-  return { suit: SUITS[suitIndex] as CardSuit, value, display: `${CARD_VALUES[value - 1]}${SUIT_SYMBOLS[suitIndex]}` };
-}
-
-function getCardFeedback(target: number, guess: number): { feedback: string; direction: 'higher' | 'lower' | 'correct' | 'wrong_suit' }
-{
-  const tar = decodeCard(target);
-  const gue = decodeCard(guess);
-  if (target === guess)        return { feedback: 'acertou ✅',                   direction: 'correct'    };
-  if (tar.value === gue.value) return { feedback: 'valor certo, naipe errado 🎯', direction: 'wrong_suit' };
-  const isHigher = tar.value > gue.value;
-  return { feedback: isHigher ? 'valor maior ⬆️' : 'valor menor ⬇️', direction: isHigher ? 'higher' : 'lower' };
-}
-
 // ── service ────────────────────────────────────────────────────────────────
 
 @Injectable()
@@ -666,14 +613,12 @@ export class GameService
   async createGame(dto: CreateGameDto)
   {
     const gameType: GameType = dto.gameType ?? 'NUMBER_GUESS';
-    const limit  = gameType === 'CARD_GUESS' ? getCardLimitByDifficulty(dto.difficulty) : getLimitByDifficulty(dto.difficulty);
+    const limit  = getLimitByDifficulty(dto.difficulty);
     const target = Math.floor(Math.random() * limit) + 1;
     return this.prismaService.prisma.game.create({ data: { userId: dto.userId ?? null, gameType, difficulty: dto.difficulty, target, attempts: 0, won: false } });
   }
 
   async makeGuess(gameId: string, value: number): Promise<any> { /* valida range, registra guess, atualiza estado */ }
-
-  async makeCardGuess(gameId: string, suit: CardSuit, value: number): Promise<any> { /* valida naipe/valor, codifica, registra guess */ }
 
   async finishGame(gameId: string, won?: boolean): Promise<any>
   {
@@ -692,20 +637,9 @@ export class GameService
 <img src="https://img.shields.io/badge/-Data_Transform_Object_(DTO)-111827?style=flat&logo=typescript&logoColor=orange" height="18" alt="DTO"/>
 
 ```ts
-// Arquivo: backend/src/game/dto/card-guess.dto.ts
-export type CardSuit = 'SPADES' | 'HEARTS' | 'DIAMONDS' | 'CLUBS';
-
-export class CardGuessDto
-{
-  suit!: CardSuit;
-  value!: number;    
-}
-```
-
-```ts
 // Arquivo: backend/src/game/dto/create-game.dto.ts
 export type Difficulty = 'EASY' | 'MEDIUM' | 'HARD';
-export type GameType   = 'NUMBER_GUESS' | 'VS_GUESS' | 'CARD_GUESS';
+export type GameType   = 'NUMBER_GUESS' | 'VS_GUESS';
 
 export class CreateGameDto
 {
@@ -1114,19 +1048,18 @@ export function Game(props: GameProps)
 
 ```ts
 // components/ranking.tsx — Hall da Fama com filtro por missão
-// Tabs: 🌌 Galáxia | 📡 Batalha de Sinais (VS_GUESS) | 🔭 Operação Resgate (NUMBER_GUESS) | 🃏 Jogo das Cartas (CARD_GUESS)
+// Tabs: 🌌 Galáxia | 📡 Batalha de Sinais (VS_GUESS) | 🔭 Operação Resgate (NUMBER_GUESS)
 // GET /api/ranking/global?limit=10&gameType=<filtro>
 // Ordenação: menor média de tentativas = melhor posição
 // Medalhas: 🥇🥈🥉 para top 3 · posição numérica para o restante
 
-type GameTypeFilter = 'all' | 'NUMBER_GUESS' | 'VS_GUESS' | 'CARD_GUESS';
+type GameTypeFilter = 'all' | 'NUMBER_GUESS' | 'VS_GUESS';
 
 const TABS: { label: string; value: GameTypeFilter }[] =
 [
   { label: '🌌 Galáxia',          value: 'all'          },
   { label: '📡 Batalha de Sinais', value: 'VS_GUESS'     },
   { label: '🔭 Operação Resgate',  value: 'NUMBER_GUESS' },
-  { label: '🃏 Jogo das Cartas',   value: 'CARD_GUESS'   },
 ];
 
 const SUBTITULO: Record<GameTypeFilter, string> =
@@ -1134,7 +1067,6 @@ const SUBTITULO: Record<GameTypeFilter, string> =
   all:          '🌌 Ranking Galáctico — todos os astronautas',
   VS_GUESS:     '📡 Batalha de Sinais — ambos se cadastram ao final',
   NUMBER_GUESS: '🔭 Operação Resgate — missões solo',
-  CARD_GUESS:   '🃏 Jogo das Cartas',
 };
 
 export function Ranking({ onBack, apiUrl }: RankingProps)
@@ -1322,41 +1254,6 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient, Difficulty } from '@prisma/client';
 import { Pool } from 'pg';
 
-const SUITS   = ['SPADES', 'HEARTS', 'DIAMONDS', 'CLUBS'] as const;
-const SYMBOLS = ['♠', '♥', '♦', '♣'] as const;
-const LABELS  = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'] as const;
-type  CardSuit = typeof SUITS[number];
-
-function cardLimitByDifficulty(d: Difficulty): number
-{
-  if (d === 'EASY')   return 13;
-  if (d === 'MEDIUM') return 26;
-  return 52;
-}
-
-function encodeCard(suit: CardSuit, value: number): number
-{
-  return SUITS.indexOf(suit) * 13 + value;
-}
-
-function decodeCard(encoded: number)
-{
-  const suitIndex = Math.floor((encoded - 1) / 13);
-  const value     = ((encoded - 1) % 13) + 1;
-  return { suit: SUITS[suitIndex] as CardSuit, value, display: `${LABELS[value - 1]}${SYMBOLS[suitIndex]}` };
-}
-
-function cardFeedback(target: number, guess: number): { feedback: string; direction: 'higher' | 'lower' | 'correct' | 'wrong_suit' }
-{
-  const t = decodeCard(target);
-  const g = decodeCard(guess);
-  if (target === guess)    return { feedback: 'acertou ✅',                   direction: 'correct'    };
-  if (t.value === g.value) return { feedback: 'valor certo, naipe errado 🎯', direction: 'wrong_suit' };
-  return t.value > g.value
-    ? { feedback: 'valor maior ⬆️', direction: 'higher' }
-    : { feedback: 'valor menor ⬇️', direction: 'lower'  };
-}
-
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
 const prismaClient = new PrismaClient({ adapter });
@@ -1421,62 +1318,6 @@ async function seedGameForUser(userId: string, difficulty: Difficulty)
   return { gameId: game.id, difficulty, target, attempts };
 }
 
-async function seedCardGameForUser(userId: string, difficulty: Difficulty)
-{
-  const limit         = cardLimitByDifficulty(difficulty);
-  const target        = randomInt(1, limit);
-  const targetDecoded = decodeCard(target);
-
-  const game = await prismaClient.game.create
-  (
-    {
-      data: { userId, difficulty, target, attempts: 0, won: false, gameType: 'CARD_GUESS' as any },
-    }
-  );
-
-  const guesses: Array<{ value: number; feedback: string }> = [];
-
-  // busca binária no valor usando ♠, depois confirma naipe se necessário
-  let low = 1, high = 13;
-  while (low <= high)
-  {
-    const mid    = Math.floor((low + high) / 2);
-    const guess  = encodeCard('SPADES', mid);
-    const result = cardFeedback(target, guess);
-    guesses.push({ value: guess, feedback: result.feedback });
-    if (result.direction === 'correct' || result.direction === 'wrong_suit') break;
-    if (result.direction === 'higher') low  = mid + 1;
-    else                               high = mid - 1;
-  }
-
-  const lastDirection = cardFeedback(target, guesses[guesses.length - 1].value).direction;
-  if (lastDirection === 'wrong_suit')
-  {
-    const suitsInDeck = SUITS.slice(0, limit / 13) as CardSuit[];
-    for (const suit of suitsInDeck)
-    {
-      if (suit === 'SPADES') continue;
-      const guess  = encodeCard(suit, targetDecoded.value);
-      const result = cardFeedback(target, guess);
-      guesses.push({ value: guess, feedback: result.feedback });
-      if (result.direction === 'correct') break;
-    }
-  }
-
-  for (const g of guesses)
-    await prismaClient.guess.create({ data: { gameId: game.id, value: g.value, feedback: g.feedback } });
-
-  await prismaClient.game.update
-  (
-    {
-      where: { id: game.id },
-      data:  { attempts: guesses.length, won: true, endedAt: new Date() },
-    }
-  );
-
-  return { gameId: game.id, difficulty, targetCard: targetDecoded.display, attempts: guesses.length };
-}
-
 async function main()
 {
   console.log('🎮 Iniciando seed de games e guesses...');
@@ -1502,11 +1343,6 @@ async function main()
         console.log(`  ✅ NUMBER_GUESS ${difficulty}: target=${result.target}, tentativas=${result.attempts} (game: ${result.gameId})`);
       }
 
-      for (const difficulty of difficulties)
-      {
-        const result = await seedCardGameForUser(user.id, difficulty);
-        console.log(`  ✅ CARD_GUESS   ${difficulty}: target=${result.targetCard}, tentativas=${result.attempts} (game: ${result.gameId})`);
-      }
     }
 
     console.log('\n✅ Seed de games concluído com sucesso!');
