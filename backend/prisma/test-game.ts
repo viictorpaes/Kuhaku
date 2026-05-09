@@ -3,6 +3,41 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient, Difficulty } from '@prisma/client';
 import { Pool } from 'pg';
 
+const SUITS    = ['SPADES', 'HEARTS', 'DIAMONDS', 'CLUBS'] as const;
+const SYMBOLS  = ['♠', '♥', '♦', '♣'] as const;
+const LABELS   = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'] as const;
+type  CardSuit = typeof SUITS[number];
+
+function cardLimitByDifficulty(d: Difficulty): number
+{
+  if (d === 'EASY')   return 13;
+  if (d === 'MEDIUM') return 26;
+  return 52;
+}
+
+function encodeCard(suit: CardSuit, value: number): number
+{
+  return SUITS.indexOf(suit) * 13 + value;
+}
+
+function decodeCard(encoded: number)
+{
+  const suitIndex = Math.floor((encoded - 1) / 13);
+  const value     = ((encoded - 1) % 13) + 1;
+  return { suit: SUITS[suitIndex] as CardSuit, value, display: `${LABELS[value - 1]}${SYMBOLS[suitIndex]}` };
+}
+
+function cardFeedback(target: number, guess: number): { feedback: string; direction: 'higher' | 'lower' | 'correct' | 'wrong_suit' }
+{
+  const t = decodeCard(target);
+  const g = decodeCard(guess);
+  if (target === guess)    return { feedback: 'acertou ✅',                   direction: 'correct'    };
+  if (t.value === g.value) return { feedback: 'valor certo, naipe errado 🎯', direction: 'wrong_suit' };
+  return t.value > g.value
+    ? { feedback: 'valor maior ⬆️', direction: 'higher' }
+    : { feedback: 'valor menor ⬇️', direction: 'lower'  };
+}
+
 const pool = new Pool
 (
   {
@@ -88,6 +123,59 @@ async function seedGameForUser(userId: string, difficulty: Difficulty)
   return { gameId: game.id, difficulty, target, attempts };
 }
 
+async function seedCardGameForUser(userId: string, difficulty: Difficulty)
+{
+  const limit         = cardLimitByDifficulty(difficulty);
+  const target        = randomInt(1, limit);
+  const targetDecoded = decodeCard(target);
+
+  const game = await prismaClient.game.create(
+  {
+    data: { userId, difficulty, target, attempts: 0, won: false, gameType: 'CARD_GUESS' as any },
+  });
+
+  const guesses: Array<{ value: number; feedback: string }> = [];
+
+  // binary search on card value using SPADES
+  let low = 1, high = 13;
+  while (low <= high)
+  {
+    const mid    = Math.floor((low + high) / 2);
+    const guess  = encodeCard('SPADES', mid);
+    const result = cardFeedback(target, guess);
+    guesses.push({ value: guess, feedback: result.feedback });
+    if (result.direction === 'correct')    break;
+    if (result.direction === 'wrong_suit') break;
+    if (result.direction === 'higher') low  = mid + 1;
+    else                               high = mid - 1;
+  }
+
+ const lastDirection = cardFeedback(target, guesses[guesses.length - 1].value).direction;
+  if (lastDirection === 'wrong_suit')
+  {
+    const suitsInDeck = SUITS.slice(0, limit / 13) as CardSuit[];
+    for (const suit of suitsInDeck)
+    {
+      if (suit === 'SPADES') continue;
+      const guess  = encodeCard(suit, targetDecoded.value);
+      const result = cardFeedback(target, guess);
+      guesses.push({ value: guess, feedback: result.feedback });
+      if (result.direction === 'correct') break;
+    }
+  }
+
+  for (const g of guesses)
+    await prismaClient.guess.create({ data: { gameId: game.id, value: g.value, feedback: g.feedback } });
+
+  await prismaClient.game.update(
+  {
+    where: { id: game.id },
+    data:  { attempts: guesses.length, won: true, endedAt: new Date() },
+  });
+
+  return { gameId: game.id, difficulty, targetCard: targetDecoded.display, attempts: guesses.length };
+}
+
 async function main()
 {
   console.log('🎮 Iniciando seed de games e guesses...');
@@ -110,7 +198,13 @@ async function main()
       for (const difficulty of difficulties)
       {
         const result = await seedGameForUser(user.id, difficulty);
-        console.log(`  ✅ ${difficulty}: target=${result.target}, tentativas=${result.attempts} (game: ${result.gameId})`);
+        console.log(`  ✅ NUMBER_GUESS ${difficulty}: target=${result.target}, tentativas=${result.attempts} (game: ${result.gameId})`);
+      }
+
+      for (const difficulty of difficulties)
+      {
+        const result = await seedCardGameForUser(user.id, difficulty);
+        console.log(`  ✅ CARD_GUESS   ${difficulty}: target=${result.targetCard}, tentativas=${result.attempts} (game: ${result.gameId})`);
       }
     }
 
@@ -134,4 +228,5 @@ main().catch
     console.error(error);
     process.exitCode = 1;
   }
+  
 );

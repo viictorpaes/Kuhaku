@@ -10,18 +10,18 @@ export const MAX_TENTATIVAS_SOLO: Record<Dificuldade, number> =
   HARD: 10,
 };
 
-export const RANGE_LABEL: Record<Dificuldade, string> = 
+export const RANGE_LABEL: Record<Dificuldade, string> =
 {
-  EASY: '1 a 10',
-  MEDIUM: '1 a 50',
-  HARD: '1 a 100',
+  EASY:   'Canal 1-10',
+  MEDIUM: 'Canal 1-50',
+  HARD:   'Canal 1-100',
 };
 
-export const DIF_LABEL: Record<Dificuldade, string> = 
+export const DIF_LABEL: Record<Dificuldade, string> =
 {
-  EASY: 'Fácil',
-  MEDIUM: 'Médio',
-  HARD: 'Difícil',
+  EASY:   '🌍 Cadete',
+  MEDIUM: '🚀 Piloto',
+  HARD:   '👨‍🚀 Comandante',
 };
 
 export const RANGE_MAX: Record<Dificuldade, number> = 
@@ -31,9 +31,16 @@ export const RANGE_MAX: Record<Dificuldade, number> =
   HARD: 100,
 };
 
-export const DIF_COLOR: Record<Dificuldade, { bg: string; hover: string; btn: string }> = 
+export const DIF_COLOR: Record<Dificuldade, { bg: string; hover: string; btn: string }> =
 {
-  EASY:   { bg: 'bg-green-600',  hover: 'hover:bg-green-500',  btn: 'bg-green-500 hover:bg-green-400' },
-  MEDIUM: { bg: 'bg-amber-500',  hover: 'hover:bg-amber-400',  btn: 'bg-amber-500 hover:bg-amber-400' },
-  HARD:   { bg: 'bg-red-600',    hover: 'hover:bg-red-500',    btn: 'bg-red-600   hover:bg-red-500'   },
+  EASY:   { bg: 'bg-cyan-700',    hover: 'hover:bg-cyan-600',    btn: 'bg-cyan-700 hover:bg-cyan-600'       },
+  MEDIUM: { bg: 'bg-blue-700',    hover: 'hover:bg-blue-600',    btn: 'bg-blue-700 hover:bg-blue-600'       },
+  HARD:   { bg: 'bg-violet-700',  hover: 'hover:bg-violet-600',  btn: 'bg-violet-700 hover:bg-violet-600'   },
+};
+
+export const MEMORIA_GRID: Record<Dificuldade, { cols: number; rows: number; label: string; pairs: number }> = 
+{
+  EASY:   { cols: 4, rows: 4, label: '4×4', pairs: 8  },
+  MEDIUM: { cols: 4, rows: 5, label: '4×5', pairs: 10 },
+  HARD:   { cols: 6, rows: 6, label: '6×6', pairs: 18 },
 };

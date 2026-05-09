@@ -21,10 +21,17 @@ enum Difficulty {
   HARD
 }
 
+enum GameType {
+  NUMBER_GUESS
+  VS_GUESS
+  CARD_GUESS
+}
+
 model Game {
   id         String     @id @default(cuid())
   userId     String?
   user       User?      @relation(fields: [userId], references: [id])
+  gameType   GameType   @default(NUMBER_GUESS)
   difficulty Difficulty
   target     Int
   attempts   Int        @default(0)
