@@ -31,8 +31,8 @@ function cardFeedback(target: number, guess: number): { feedback: string; direct
 {
   const t = decodeCard(target);
   const g = decodeCard(guess);
-  if (target === guess)    return { feedback: 'acertou ✅',                   direction: 'correct'    };
-  if (t.value === g.value) return { feedback: 'valor certo, naipe errado 🎯', direction: 'wrong_suit' };
+  if (target === guess)    return { feedback: 'acertou ✅', direction: 'correct'    };
+  if (t.value === g.value) return { feedback: 'valor certo, categoria errada 🎯', direction: 'wrong_suit' };
   return t.value > g.value
     ? { feedback: 'valor maior ⬆️', direction: 'higher' }
     : { feedback: 'valor menor ⬇️', direction: 'lower'  };
@@ -136,7 +136,6 @@ async function seedCardGameForUser(userId: string, difficulty: Difficulty)
 
   const guesses: Array<{ value: number; feedback: string }> = [];
 
-  // binary search on card value using SPADES
   let low = 1, high = 13;
   while (low <= high)
   {

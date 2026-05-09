@@ -4,7 +4,6 @@ import { CreateGameDto } from '../../game/dto/create-game.dto';
 import { CreateUserDto } from '../dto/user.dto';
 import { GuessDto } from '../dto/guess.dto';
 import { UpdateUserDto } from '../dto/user_update.dto';
-import { CardGuessDto } from '../dto/card-guess.dto';
 
 @Controller('api')
 export class GameController
@@ -47,12 +46,6 @@ export class GameController
   }
 
   
-  @Post('games/:id/card-guess')
-  async fazerPalpiteCarta(@Param('id') id: string, @Body() dto: CardGuessDto)
-  {
-    return this.gameService.makeCardGuess(id, dto.suit, dto.value);
-  }
-
   @Post('games/:id/finish')
   async encerrarJogo(@Param('id') id: string, @Body() body?: { won?: boolean })
   {
