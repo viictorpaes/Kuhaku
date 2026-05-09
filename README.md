@@ -104,8 +104,8 @@ Kuhaku/
 │   ├── vite.config.js <img src="https://img.shields.io/badge/-Vite_JS-111827?style=flat&logo=vite&logoColor=purple" height="18"/>
 │   └── vite.config.ts <img src="https://img.shields.io/badge/-Vite_TS-111827?style=flat&logo=vite&logoColor=purple" height="18"/>
 │
-├── docs <img src="https://img.shields.io/badge/Docs-111827?style=flat&logo=markdown&logoColor=white" height="18"/>/
-│   └── Histórias_de_Usuário.md <img src="https://img.shields.io/badge/User_Stories-111827?style=flat&logo=markdown&logoColor=white" height="18"/>
+├── docs <img src="https://img.shields.io/badge/Docs-111827?style=flat&logo=markdown&logoColor=blue" height="18"/>/
+│   └── Histórias_de_Usuário.md <img src="https://img.shields.io/badge/User_Stories-111827?style=flat&logo=markdown&logoColor=blue" height="18"/>
 │
 ├── img/ <img src="https://img.shields.io/badge/Assets-green?style=flat&logo=image&logoColor=white" height="18"/>
 ├── .dockerignore <img src="https://img.shields.io/badge/-DockerIgnore-111827?style=flat&logo=docker&logoColor=2496ED" height="18"/>
