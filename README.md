@@ -1,4 +1,4 @@
-<h1 align="center">Jogo da Adivinhação (Kuhaku)</h1>
+<h1 align="center">Jogo da Adivinhação (Kuhaku 🧑🏻‍🚀)</h1>
 
 <h2 align="center">💻⛏️ Tecnologias e Ferramentas Utilizadas: </h2>
 
@@ -6,7 +6,6 @@
   <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/vscode/vscode-original.svg" height="35" alt="VS Code"/><br>
   <img src="https://img.shields.io/badge/Node.js-111827?style=for-the-badge&logo=nodedotjs&logoColor=339933" height="35" alt="Node.js"/>
   <img src="https://img.shields.io/badge/NestJS-111827?style=for-the-badge&logo=nestjs&logoColor=E0234E" height="35" alt="NestJS"/>
-  <img src="https://img.shields.io/badge/JavaScript-111827?style=for-the-badge&logo=javascript&logoColor=yellow" height="35" alt="JavaScript"/>
   <img src="https://img.shields.io/badge/TypeScript-111827?style=for-the-badge&logo=typescript&logoColor=3178C6" height="35" alt="TypeScript"/>
   <img src="https://img.shields.io/badge/React-111827?style=for-the-badge&logo=react&logoColor=61DAFB" height="35" alt="React"/>
   <img src="https://img.shields.io/badge/Vite-111827?style=for-the-badge&logo=vite&logoColor=purple" height="35" alt="Vite"/>
@@ -40,9 +39,7 @@ Kuhaku/
 │   │   ├── test-user.ts <img src="https://img.shields.io/badge/Test_User_Create-111827?style=flat&logo=typescript&logoColor=purple" height="18"/>
 │   │   └── test-game.ts <img src="https://img.shields.io/badge/Test_Game_Create-111827?style=flat&logo=typescript&logoColor=orange" height="18"/>
 │   ├── public/ <img src="https://img.shields.io/badge/Public-111827?style=flat&logo=files&logoColor=white" height="18"/>
-│   │   ├── assets/ <img src="https://img.shields.io/badge/Assets-111827?style=flat&logo=files&logoColor=yellow" height="18"/>
-│   │   │   ├── index-D7nSDayN.js <img src="https://img.shields.io/badge/JS-index--D7nSDayN.js-F7DF1E?style=flat&logo=javascript&logoColor=yellow" height="18"/>
-│   │   │   └── index-DbxskrSv.css <img src="https://img.shields.io/badge/CSS-index--DbxskrSv.css-1572B6?style=flat&logo=css3&logoColor=white" height="18"/>
+│   │   ├── assets <img src="https://img.shields.io/badge/Assets-111827?style=flat&logo=files&logoColor=yellow" height="18"/>/
 │   │   └── index.html <img src="https://img.shields.io/badge/-HTML5-111827?style=flat&logo=html5&logoColor=E34F26" height="18"/>
 │   ├── src <img src="https://img.shields.io/badge/src-8B0000?style=flat&logo=nestjs&logoColor=FF0000" height="18"/>/
 │   │   ├── auth <img src="https://img.shields.io/badge/-Auth-111827?style=flat&logo=nestjs&logoColor=E0234E" height="18"/>/
@@ -107,6 +104,9 @@ Kuhaku/
 │   ├── vite.config.js <img src="https://img.shields.io/badge/-Vite_JS-111827?style=flat&logo=vite&logoColor=purple" height="18"/>
 │   └── vite.config.ts <img src="https://img.shields.io/badge/-Vite_TS-111827?style=flat&logo=vite&logoColor=purple" height="18"/>
 │
+├── docs <img src="https://img.shields.io/badge/Docs-111827?style=flat&logo=markdown&logoColor=white" height="18"/>/
+│   └── Histórias_de_Usuário.md <img src="https://img.shields.io/badge/User_Stories-111827?style=flat&logo=markdown&logoColor=white" height="18"/>
+│
 ├── img/ <img src="https://img.shields.io/badge/Assets-green?style=flat&logo=image&logoColor=white" height="18"/>
 ├── .dockerignore <img src="https://img.shields.io/badge/-DockerIgnore-111827?style=flat&logo=docker&logoColor=2496ED" height="18"/>
 ├── .gitignore <img src="https://img.shields.io/badge/-GitIgnore-111827?style=flat&logo=git&logoColor=F05032" height="18"/>
@@ -129,6 +129,34 @@ Kuhaku/
 git clone https://github.com/viictorpaes/Kuhaku
 ```
 
+<h3 align="center">Rodar localmente <br>
+<img src="https://img.shields.io/badge/Local_Host-111827?style=flat-square&logo=readme&logoColor=white"/>
+</h3>
+
+>
+>
+> ```bash
+> # 1. Sobe o banco Dockerizado `PostgresSql`
+> docker compose up db -d
+>
+> # 2. Entra no backend e prepara o banco
+> cd backend
+> npm run prisma:generate # gera o Prisma Client
+> npm run prisma:migrate:deploy # cria as tabelas (inclui GameType: NUMBER_GUESS | VS_GUESS | CARD_GUESS)
+> npm run prisma:seed # popula usuários iniciais (admin, dev, user)
+>
+> # OPCIONAL: popula dados de teste com usuários e partidas
+> npx tsx --env-file=.env prisma/test-user.ts # cria usuários de teste com senha (bcrypt)
+> npx tsx --env-file=.env prisma/test-game.ts # cria partidas NUMBER_GUESS e CARD_GUESS
+> cd ..
+>
+> # 3. Sobe backend (:3001) + frontend (:5173)
+> npm run start:dev
+>
+> # Apenas o frontend (:5173)
+> npm run dev:frontend
+> ```
+>
 
 <h2 align="center">1. Docker<br>
 <img src="https://img.shields.io/badge/-Docker-111827?style=flat-square&logo=docker&logoColor=2496ed"/>
@@ -190,7 +218,7 @@ docker system prune -f --volumes
 
 <h2 align="center">2. Prisma<br>
 <img src="https://img.shields.io/badge/Prisma-111827?style=flat-square&logo=prisma&logoColor=5A67D8"/>
-<img src="https://img.shields.io/badge/Prisma_Studio-4ade80?style=flat-square&logo=prisma&logoColor=white"/>
+<img src="https://img.shields.io/badge/Prisma_Studio-4ade80?style=flat-square&logo=prisma&logoColor=black"/>
 </h2>
 
 > 📖 [Prisma Docs](https://www.prisma.io/docs)
@@ -212,7 +240,7 @@ npx prisma generate
 npx prisma migrate dev --name init
 
 # Após adicionar GameType ao schema (necessário para o jogo de cartas):
-npx prisma migrate dev --name add-game-type
+npx prisma migrate dev --name add-vs-guess-gametype
 
 # Aplica migrations em produção
 npx prisma migrate deploy
@@ -280,22 +308,6 @@ npm run docker:down
 npm run studio
 ```
 
-> ### Ordem recomendada para rodar localmente
->
-> ```bash
-> # 1. Sobe o banco Postgres
-> docker compose up db -d
->
-> # 2. Entra no backend e prepara o banco
-> cd backend
-> npm run prisma:generate          # gera o Prisma Client
-> npm run prisma:migrate:deploy    # cria as tabelas
-> npm run prisma:seed              # popula dados iniciais
-> cd ..
->
-> # 3. Sobe backend (:3001) + frontend (:5173)
-> npm run start:dev
-> ```
 
 <h2 align="center">4. Frontend<br>
 <img src="https://img.shields.io/badge/HTML5-111827?style=for-the-badge&logo=html5&logoColor=E34F26" height="22" alt="HTML5"/>
@@ -338,7 +350,7 @@ npm run format
   <img src="https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=black" alt="HTML5">
   <img src="https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3">
   <img src="https://img.shields.io/badge/Tailwind_CSS-4.0.0-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=38B2AC"/>
-  <img src="https://img.shields.io/badge/NestJS-11.1.19-E0234E?style=for-the-badge&logo=nestjs&logoColor=red"/>
+  <img src="https://img.shields.io/badge/NestJS-11.1.19-E0234E?style=for-the-badge&logo=nestjs&logoColor=E0234E"/>
   <img src="https://img.shields.io/badge/TypeScript-5.8.0-3178C6?style=for-the-badge&logo=typescript&logoColor=blue"/> <br>
   <img src="https://img.shields.io/badge/React-19.0.0-cyan?style=for-the-badge&logo=react&logoColor=cyan"/> 
   <img src="https://img.shields.io/badge/Vite-6.2.0-purple?style=for-the-badge&logo=vite&logoColor=purple"/> <br>
@@ -383,40 +395,34 @@ Camada de **lógica de negócio**. Processa os dados recebidos do Controller, ap
 
 | Modo | Tipo | Descrição | Dificuldade |
 |---|---|---|---|
-| **VS Adivinhação** | `NUMBER_GUESS` (backend) | 2 jogadores adivinham o mesmo número. Turno alternado — quem acertar primeiro vence a rodada. 3 rodadas. | EASY 1–10 · MEDIUM 1–50 · HARD 1–100 |
-| **Adivinhe o Número** | `NUMBER_GUESS` (backend) | Solo. Feedback quente/frio proporcional ao range. | EASY (5 tent.) · MEDIUM (8 tent.) · HARD (10 tent.) |
-| **Jogo da Memória** | Frontend-only | Solo. Grid de pares de números para virar e combinar. Cronômetro + contador de erros. | EASY 4×4 (8 pares) · MEDIUM 4×5 (10 pares) · HARD 6×6 (18 pares) |
+| **Batalha de Sinais** | `VS_GUESS` (backend) | 2 astronautas adivinham a mesma frequência secreta. Turno alternado — quem sintonizar primeiro vence a rodada. 3 rodadas. Ambos podem se cadastrar no ranking ao final. | Cadete 1–10 · Piloto 1–50 · Comandante 1–100 |
+| **Operação Resgate** | `NUMBER_GUESS` (backend) | Solo. Feedback de sinal proporcional ao range. | Cadete (5 tent.) · Piloto (7 tent.) · Comandante (10 tent.) |
+| **Mapas Estelares** | `NUMBER_GUESS` (backend) | Solo. Grid de pares de coordenadas para virar e combinar. Cronômetro + contador de erros. Salva no ranking ao vencer. | Cadete 4×4 (8 pares) · Piloto 4×5 (10 pares) · Comandante 6×6 (18 pares) |
 
-**GameTypes do backend (Prisma):** `NUMBER_GUESS` · `CARD_GUESS`
+**GameTypes do backend (Prisma):** `NUMBER_GUESS` · `VS_GUESS` · `CARD_GUESS`
 
 **Máximo de tentativas por dificuldade (NUMBER_GUESS):** EASY → 5 · MEDIUM → 7 · HARD → 10
 
-**Endpoints novos:**
+**Endpoints:**
 | Método | Rota | Descrição |
 |---|---|---|
 | `POST` | `/api/games/:id/card-guess` | Palpite de carta `{ suit, value }` |
 | `POST` | `/api/games/:id/finish` | Salva/encerra a partida — revela o target |
+| `POST` | `/api/games/:id/save` | Salva resultado no ranking com apelido `{ name }` |
+| `GET` | `/api/ranking/global?gameType=VS_GUESS` | Ranking filtrado por Adivinhação Em Dupla |
+| `GET` | `/api/ranking/global?gameType=NUMBER_GUESS` | Ranking filtrado por Adivinhação Solo |
+| `GET` | `/api/ranking/global?gameType=CARD_GUESS` | Ranking filtrado por Jogo das Cartas |
 
 **Feedback de número (proporcional ao intervalo):**
 
-| Diferença | Feedback |
-|---|---|
-| 0 | acertou ✅ |
-| ≤ 10% do range | pegando fogo 🔥🔥🔥 |
-| ≤ 20% do range | quente 🌡️ |
-| ≤ 40% do range | morno ☔️ |
-| > 40% do range | frio ❄️ |
+| Diferença | Interno (backend) | Exibido ao jogador (frontend) |
+|---|---|---|
+| 0 | acertou ✅ | 📡 Sinal estabelecido! Resgate a caminho! |
+| ≤ 10% do range | pegando fogo 🔥🔥🔥 | 🔭 Frequência muito próxima! |
+| ≤ 20% do range | quente 🌡️ | 📶 Sinal detectado! |
+| ≤ 40% do range | morno ☔️ | 🌌 Interferência estática... |
+| > 40% do range | frio ❄️ | 🔇 Sem sinal no espaço... |
 
-**Feedback de carta:**
-
-| Situação | Feedback |
-|---|---|
-| Naipe e valor corretos | acertou ✅ |
-| Valor correto, naipe errado | valor certo, naipe errado 🎯 |
-| Target tem valor maior | valor maior ⬆️ |
-| Target tem valor menor | valor menor ⬇️ |
-
----
 
 <h2 align="center"><b>Lógica do Jogo em</b>: <i>backend/src/game/</i> <br>
 <img src="https://img.shields.io/badge/<>src-green?style=flat&logo=image&logoColor=white" height="18"/><img src="https://img.shields.io/badge/-Game-111827?style=flat&logo=nestjs&logoColor=E0234E" height="18"/><img src="https://img.shields.io/badge/-TypeScript-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/><img src="https://img.shields.io/badge/DTO_Create-111827?style=flat&logo=typescript&logoColor=E0234E" height="18"/><img src="https://img.shields.io/badge/DTO_Update-111827?style=flat&logo=typescript&logoColor=yellow" height="18"/></h2>
@@ -438,80 +444,113 @@ import { CardGuessDto } from '../dto/card-guess.dto';
 @Controller('api')
 export class GameController
 {
-  constructor(private readonly gameService: GameService) {}
+  constructor(private readonly gameService: GameService) 
+  {}
 
   // ── usuários ──────────────────────────────────────
 
   @Post('users')
   async criarUsuario(@Body() dto: CreateUserDto)
-  { return this.gameService.createUser(dto.email, dto.name); }
+  {
+    return this.gameService.createUser(dto.email, dto.name);
+  }
 
   @Put('users/:id')
   async atualizarUsuario(@Param('id') id: string, @Body() dto: UpdateUserDto)
-  { return this.gameService.updateUser(id, dto as any); }
+  {
+    return this.gameService.updateUser(id, dto as any);
+  }
 
   @Delete('users/:id')
   async removerUsuario(@Param('id') id: string)
-  { return this.gameService.removeUser(id); }
+  {
+    return this.gameService.removeUser(id);
+  }
 
   // ── jogos ─────────────────────────────────────────
 
   @Post('games')
   async criarJogo(@Body() dto: CreateGameDto)
-  { return this.gameService.createGame(dto); }
+  {
+    return this.gameService.createGame(dto);
+  }
 
-  // Palpite: jogo de números (NUMBER_GUESS)
   @Post('games/:id/guess')
   async fazerPalpite(@Param('id') id: string, @Body() dto: GuessDto)
-  { return this.gameService.makeGuess(id, dto.value); }
+  {
+    return this.gameService.makeGuess(id, dto.value);
+  }
 
-  // Palpite: jogo de cartas (CARD_GUESS) — { suit: 'SPADES'|'HEARTS'|'DIAMONDS'|'CLUBS', value: 1-13 }
+
   @Post('games/:id/card-guess')
   async fazerPalpiteCarta(@Param('id') id: string, @Body() dto: CardGuessDto)
-  { return this.gameService.makeCardGuess(id, dto.suit, dto.value); }
+  {
+    return this.gameService.makeCardGuess(id, dto.suit, dto.value);
+  }
 
-  // Salvar/encerrar partida (vitória ou desistência) — revela o target
   @Post('games/:id/finish')
-  async encerrarJogo(@Param('id') id: string)
-  { return this.gameService.finishGame(id); }
+  async encerrarJogo(@Param('id') id: string, @Body() body?: { won?: boolean })
+  {
+    return this.gameService.finishGame(id, body?.won);
+  }
 
-  // ── consultas de jogo ─────────────────────────────
+  @Post('games/:id/save')
+  async salvarNoRanking(@Param('id') id: string, @Body() body: { name: string })
+  {
+    return this.gameService.saveGameToRanking(id, body.name);
+  }
 
   @Get('games/:id/history')
   async obterHistoricoDoJogo(@Param('id') id: string)
-  { return this.gameService.getGameHistory(id); }
+  {
+    return this.gameService.getGameHistory(id);
+  }
 
   @Get('games/:id/summary')
   async resumoDoJogo(@Param('id') id: string)
-  { return this.gameService.getGameSummary(id); }
+  {
+    return this.gameService.getGameSummary(id);
+  }
 
   // ── consultas de usuário ──────────────────────────
 
   @Get('users/:id/games')
   async listarJogosDoUsuario(@Param('id') id: string)
-  { return this.gameService.listUserGames(id); }
+  {
+    return this.gameService.listUserGames(id);
+  }
 
   @Get('users/:id/stats')
   async estatisticasDoUsuario(@Param('id') id: string)
-  { return this.gameService.getUserStats(id); }
+  {
+    return this.gameService.getUserStats(id);
+  }
 
   @Get('users/:id/achievements')
   async conquistasDoUsuario(@Param('id') id: string)
-  { return this.gameService.getUserAchievements(id); }
+  {
+    return this.gameService.getUserAchievements(id);
+  }
 
   @Get('users/:id/summary')
   async resumoCompletoDoUsuario(@Param('id') id: string)
-  { return this.gameService.getUserSummary(id); }
+  {
+    return this.gameService.getUserSummary(id);
+  }
 
   // ── ranking ───────────────────────────────────────
 
   @Get('ranking/global')
-  async rankingGlobal(@Query('limit') limit?: string)
-  { return this.gameService.getGlobalRanking(limit ? parseInt(limit, 10) : 10); }
+  async rankingGlobal(@Query('limit') limit?: string, @Query('gameType') gameType?: string)
+  {
+    return this.gameService.getGlobalRanking(limit ? parseInt(limit, 10) : 10, gameType);
+  }
 
   @Get('ranking/user/:id')
   async rankingDoUsuario(@Param('id') id: string)
-  { return this.gameService.getUserRanking(id); }
+  {
+    return this.gameService.getUserRanking(id);
+  }
 }
 ```
 
@@ -542,29 +581,76 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { CreateGameDto, Difficulty, GameType } from '../dto/create-game.dto';
 import { CardSuit } from '../dto/card-guess.dto';
 
+const SUITS        = ['SPADES', 'HEARTS', 'DIAMONDS', 'CLUBS'] as const;
+const SUIT_SYMBOLS = ['♠', '♥', '♦', '♣'] as const;
+const CARD_VALUES  = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'] as const;
+
 // ── helpers de número ──────────────────────────────────────────────────────
 
-// Intervalos por dificuldade: EASY 1-10 | MEDIUM 1-50 | HARD 1-100
-function getLimitByDifficulty(difficulty: Difficulty): number { ... }
+function getLimitByDifficulty(difficulty: Difficulty): number
+{
+  switch (difficulty)
+  {
+    case 'EASY':   return 10;
+    case 'MEDIUM': return 50;
+    case 'HARD':   return 100;
+  }
+}
 
-// Máximo de tentativas por dificuldade: EASY 5 | MEDIUM 7 | HARD 10
-function getMaxAttempts(difficulty: Difficulty): number { ... }
+function getMaxAttempts(difficulty: Difficulty): number
+{
+  switch (difficulty)
+  {
+    case 'EASY':   return 5;
+    case 'MEDIUM': return 7;
+    case 'HARD':   return 10;
+  }
+}
 
-// Feedback proporcional ao intervalo (evita que limiares fixos sejam inúteis no EASY):
-//   ≤10% do range → pegando fogo 🔥🔥🔥 | ≤20% → quente 🌡️ | ≤40% → morno ☔️ | >40% → frio ❄️
-function getNumberFeedback(diff: number, limit: number): string { ... }
+function getNumberFeedback(diff: number, limit: number): string
+{
+  if (diff === 0)                       return 'acertou ✅';
+  if (diff <= Math.ceil(limit * 0.10))  return 'pegando fogo 🔥🔥🔥';
+  if (diff <= Math.ceil(limit * 0.20))  return 'quente 🌡️';
+  if (diff <= Math.ceil(limit * 0.40))  return 'morno ☔️';
+  return 'frio ❄️';
+}
 
 // ── helpers de carta ───────────────────────────────────────────────────────
 
 // Deck por dificuldade: EASY → ♠ (13) | MEDIUM → ♠+♥ (26) | HARD → baralho completo (52)
-function getCardLimitByDifficulty(difficulty: Difficulty): number { ... }
+function getCardLimitByDifficulty(difficulty: Difficulty): number
+{
+  switch (difficulty)
+  {
+    case 'EASY':   return 13;
+    case 'MEDIUM': return 26;
+    case 'HARD':   return 52;
+  }
+}
 
-// Codificação: suit×13 + value  (1-52).  Ex: 5♥ = 1×13+5 = 18
-function encodeCard(suit: CardSuit, value: number): number { ... }
-function decodeCard(encoded: number): { suit: CardSuit; value: number; display: string } { ... }
+// Codificação: suit×13 + value (1–52). Ex: 5♥ = 1×13+5 = 18
+function encodeCard(suit: CardSuit, value: number): number
+{
+  return SUITS.findIndex(s => s === suit) * 13 + value;
+}
 
-// Feedback de carta: acertou ✅ | valor certo, naipe errado 🎯 | valor maior ⬆️ | valor menor ⬇️
-function getCardFeedback(target: number, guess: number) { ... }
+function decodeCard(encoded: number): { suit: CardSuit; value: number; display: string }
+{
+  const suitIndex = Math.floor((encoded - 1) / 13);
+  const value     = ((encoded - 1) % 13) + 1;
+  return { suit: SUITS[suitIndex] as CardSuit, value, display: `${CARD_VALUES[value - 1]}${SUIT_SYMBOLS[suitIndex]}` };
+}
+
+function getCardFeedback(target: number, guess: number): { feedback: string; direction: 'higher' | 'lower' | 'correct' | 'wrong_suit' }
+{
+  const tar = decodeCard(target);
+  const gue = decodeCard(guess);
+  if (target === guess)        return { feedback: 'acertou ✅',                   direction: 'correct'    };
+  if (tar.value === gue.value) return { feedback: 'valor certo, naipe errado 🎯', direction: 'wrong_suit' };
+  const isHigher = tar.value > gue.value;
+  return { feedback: isHigher ? 'valor maior ⬆️' : 'valor menor ⬇️', direction: isHigher ? 'higher' : 'lower' };
+}
 
 // ── service ────────────────────────────────────────────────────────────────
 
@@ -573,44 +659,25 @@ export class GameService
 {
   constructor(private readonly prismaService: PrismaService) {}
 
-  // createUser / updateUser / removeUser  (sem alterações)
-
   async createGame(dto: CreateGameDto)
   {
     const gameType: GameType = dto.gameType ?? 'NUMBER_GUESS';
-    // target gerado dentro do intervalo correto (número ou carta)
     const limit  = gameType === 'CARD_GUESS' ? getCardLimitByDifficulty(dto.difficulty) : getLimitByDifficulty(dto.difficulty);
     const target = Math.floor(Math.random() * limit) + 1;
-    // persiste com gameType, difficulty, target
+    return this.prismaService.prisma.game.create({ data: { userId: dto.userId ?? null, gameType, difficulty: dto.difficulty, target, attempts: 0, won: false } });
   }
 
-  async makeGuess(gameId: string, value: number): Promise<any>
+  async makeGuess(gameId: string, value: number): Promise<any> { /* valida range, registra guess, atualiza estado */ }
+
+  async makeCardGuess(gameId: string, suit: CardSuit, value: number): Promise<any> { /* valida naipe/valor, codifica, registra guess */ }
+
+  async finishGame(gameId: string, won?: boolean): Promise<any>
   {
-    // 1. valida intervalo: rejeita value fora de [1, limit] com BadRequestException
-    // 2. calcula feedback proporcional via getNumberFeedback(diff, limit)
-    // 3. ao atingir maxAttempts sem acertar: endedAt = now(), retorna { gameOver, target }
-    // 4. retorna { feedback, diff, direction, attemptsLeft, won? }
+    const updateData: Record<string, any> = {};
+    if (!game.endedAt)     updateData.endedAt = new Date();
+    if (won !== undefined) updateData.won = won;
+    // ...
   }
-
-  async makeCardGuess(gameId: string, suit: CardSuit, value: number): Promise<any>
-  {
-    // 1. valida gameType === 'CARD_GUESS'
-    // 2. valida naipe permitido para a dificuldade (ex: EASY só aceita SPADES)
-    // 3. valida value ∈ [1,13]
-    // 4. codifica guess, obtém feedback via getCardFeedback
-    // 5. ao atingir maxAttempts: endedAt = now(), retorna { gameOver, targetCard }
-    // 6. retorna { feedback, direction, guessedCard, attemptsLeft, won?, targetCard? }
-  }
-
-  // Salva/encerra a partida (vitória ou desistência).
-  // Se endedAt ainda não foi setado, seta agora (= desistência).
-  // Sempre revela target e, para cartas, targetCard.
-  async finishGame(gameId: string): Promise<any> { ... }
-
-  // getGameHistory: para CARD_GUESS decoda cada guess.value → card display
-  // getGameSummary: inclui gameType, targetCard (se over e CARD_GUESS)
-  // getUserStats:   retorna totalGames, wins, losses, averageAttempts, best, worst
-  // getUserSummary: Promise.all([stats, achievements, ranking])
 }
 ```
 
@@ -622,37 +689,34 @@ export class GameService
 
 ```ts
 // Arquivo: backend/src/game/dto/card-guess.dto.ts
-// Payload para palpite no jogo de cartas.
 export type CardSuit = 'SPADES' | 'HEARTS' | 'DIAMONDS' | 'CLUBS';
 
 export class CardGuessDto
 {
-  suit!: CardSuit;   // naipe da carta
-  value!: number;    // valor: 1=A, 2-10, 11=J, 12=Q, 13=K
+  suit!: CardSuit;
+  value!: number;    
 }
 ```
 
 ```ts
 // Arquivo: backend/src/game/dto/create-game.dto.ts
-// Define as opções para criar um jogo.
 export type Difficulty = 'EASY' | 'MEDIUM' | 'HARD';
-export type GameType   = 'NUMBER_GUESS' | 'CARD_GUESS';
+export type GameType   = 'NUMBER_GUESS' | 'VS_GUESS' | 'CARD_GUESS';
 
 export class CreateGameDto
 {
-  userId?:    string;     // opcional: associa a um usuário
-  difficulty!: Difficulty; // obrigatório
-  gameType?:  GameType;   // padrão: NUMBER_GUESS
+  userId?:    string;
+  difficulty!: Difficulty;
+  gameType?:  GameType;
 }
 ```
 
 ```ts
 // Arquivo: backend/src/game/dto/guess.dto.ts
-// Payload para submeter um palpite no jogo de números.
 export class GuessDto
 {
   gameId!: string;
-  value!:  number;  // inteiro dentro do intervalo da dificuldade
+  value!:  number; 
 }
 ```
 
@@ -691,18 +755,20 @@ export class UpdateUserDto
 ```ts
 // frontend/src/types.ts
 export type Tela = 'home' | 'setup' | 'game' | 'result' | 'ranking';
-export type Modo = 'solo' | 'vs' | 'memoria';   // 'memoria' = Jogo da Memória (frontend-only)
+export type Modo = 'solo' | 'vs' | 'memoria'; 
 export type Dificuldade = 'EASY' | 'MEDIUM' | 'HARD';
 export type Direcao = 'higher' | 'lower' | 'correct';
 
-export interface Palpite {
+export interface Palpite 
+{
   valor: number;
   feedback: string;
   direcao: Direcao;
   jogador: 1 | 2;
 }
 
-export interface ConfigJogo {
+export interface ConfigJogo 
+{
   dificuldade: Dificuldade;
   p1: string;
   p2: string;
@@ -716,38 +782,43 @@ import type { Dificuldade } from './types';
 export const TOTAL_ROUNDS_VS = 3;
 export const MAX_TENTATIVAS_VS = 12;
 
-export const MAX_TENTATIVAS_SOLO: Record<Dificuldade, number> = {
+export const MAX_TENTATIVAS_SOLO: Record<Dificuldade, number> =
+{
   EASY: 5,
   MEDIUM: 8,
   HARD: 10,
 };
 
-export const RANGE_LABEL: Record<Dificuldade, string> = {
-  EASY: '1 a 10',
-  MEDIUM: '1 a 50',
-  HARD: '1 a 100',
+export const RANGE_LABEL: Record<Dificuldade, string> =
+{
+  EASY:   'Canal 1-10',
+  MEDIUM: 'Canal 1-50',
+  HARD:   'Canal 1-100',
 };
 
-export const RANGE_MAX: Record<Dificuldade, number> = {
-  EASY: 10,
+export const RANGE_MAX: Record<Dificuldade, number> =
+{
+  EASY:   10,
   MEDIUM: 50,
-  HARD: 100,
+  HARD:   100,
 };
 
-export const DIF_LABEL: Record<Dificuldade, string> = {
-  EASY: 'Fácil',
-  MEDIUM: 'Médio',
-  HARD: 'Difícil',
+export const DIF_LABEL: Record<Dificuldade, string> =
+{
+  EASY:   '🌍 Cadete',
+  MEDIUM: '🚀 Piloto',
+  HARD:   '👨‍🚀 Comandante',
 };
 
-export const DIF_COLOR: Record<Dificuldade, { bg: string; hover: string; btn: string }> = {
-  EASY:   { bg: 'bg-green-600', hover: 'hover:bg-green-500', btn: 'bg-green-500 hover:bg-green-400' },
-  MEDIUM: { bg: 'bg-amber-500', hover: 'hover:bg-amber-400', btn: 'bg-amber-500 hover:bg-amber-400' },
-  HARD:   { bg: 'bg-red-600',   hover: 'hover:bg-red-500',   btn: 'bg-red-600   hover:bg-red-500'   },
+export const DIF_COLOR: Record<Dificuldade, { bg: string; hover: string; btn: string }> =
+{
+  EASY:   { bg: 'bg-cyan-700',   hover: 'hover:bg-cyan-600',   btn: 'bg-cyan-700 hover:bg-cyan-600'     },
+  MEDIUM: { bg: 'bg-blue-700',   hover: 'hover:bg-blue-600',   btn: 'bg-blue-700 hover:bg-blue-600'     },
+  HARD:   { bg: 'bg-violet-700', hover: 'hover:bg-violet-600', btn: 'bg-violet-700 hover:bg-violet-600' },
 };
 
-// Grid do Jogo da Memória por dificuldade
-export const MEMORIA_GRID: Record<Dificuldade, { cols: number; rows: number; label: string; pairs: number }> = {
+export const MEMORIA_GRID: Record<Dificuldade, { cols: number; rows: number; label: string; pairs: number }> =
+{
   EASY:   { cols: 4, rows: 4, label: '4×4', pairs: 8  },
   MEDIUM: { cols: 4, rows: 5, label: '4×5', pairs: 10 },
   HARD:   { cols: 6, rows: 6, label: '6×6', pairs: 18 },
@@ -770,7 +841,7 @@ document.body.className = 'min-h-screen bg-[#0d1b2e] text-slate-100 antialiased'
 const API_BASE_URL =
   import.meta.env.VITE_API_URL ||
   (import.meta.env.MODE === 'development' ? 'http://localhost:3001' : '');
-(window as any).API_BASE_URL = API_BASE_URL;
+  (window as any).API_BASE_URL = API_BASE_URL;
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
@@ -787,24 +858,27 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 import { useState, useCallback } from 'react';
 import { Home } from './components/home';
 import { Setup } from './components/setup';
-import { Game } from './components/game';
+import { Game, VsResultScreen } from './components/game';
 import { Ranking } from './components/ranking';
 import type { Tela, Modo, Dificuldade, ConfigJogo } from './types';
 import { TOTAL_ROUNDS_VS } from './constants';
 
 const API_URL = (window as any).API_BASE_URL ?? 'http://localhost:3001';
 
-async function criarJogo(dificuldade: Dificuldade): Promise<string> {
-  const res = await fetch(`${API_URL}/api/games`, {
+async function criarJogo(dificuldade: Dificuldade, gameType?: string): Promise<string>
+{
+  const res = await fetch(`${API_URL}/api/games`,
+  {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ difficulty: dificuldade }),
+    body: JSON.stringify({ difficulty: dificuldade, ...(gameType && { gameType }) }),
   });
   const game = await res.json();
   return game.id;
 }
 
-export function App() {
+export function App()
+{
   const [tela, setTela] = useState<Tela>('home');
   const [modo, setModo] = useState<Modo | null>(null);
   const [dificuldade, setDificuldade] = useState<Dificuldade | null>(null);
@@ -814,66 +888,121 @@ export function App() {
   const [round, setRound] = useState(1);
   const [score, setScore] = useState({ p1: 0, p2: 0 });
   const [finalScore, setFinalScore] = useState<{ p1: number; p2: number } | null>(null);
+  const [vsRoundResults, setVsRoundResults] = useState<{ gameId: string; winner: 1 | 2 | null }[]>([]);
 
-  const iniciarJogo = useCallback(async (config: ConfigJogo) => {
+  const iniciarJogo = useCallback(async (config: ConfigJogo) =>
+  {
     setDificuldade(config.dificuldade);
     setP1(config.p1 || 'Jogador 1');
     setP2(config.p2 || 'Jogador 2');
     setRound(1);
     setScore({ p1: 0, p2: 0 });
     setFinalScore(null);
-    // Jogo da Memória é puramente frontend — não cria jogo no backend
-    if (modo !== 'memoria') {
-      const id = await criarJogo(config.dificuldade);
-      setGameId(id);
-    } else {
-      setGameId('local');
-    }
+    setVsRoundResults([]);
+    const isVs = modo === 'vs';
+    const id = await criarJogo(config.dificuldade, isVs ? 'VS_GUESS' : undefined);
+    setGameId(id);
     setTela('game');
   }, [modo]);
 
-  const onRoundEnd = useCallback(async (winner: 1 | 2 | null) => {
+  const onRoundEnd = useCallback(async (winner: 1 | 2 | null) =>
+  {
+    setVsRoundResults((prev) => [...prev, { gameId: gameId!, winner }]);
+
     const newScore = { ...score };
     if (winner === 1) newScore.p1++;
     if (winner === 2) newScore.p2++;
     setScore(newScore);
 
-    if (round >= TOTAL_ROUNDS_VS) {
+    if (round >= TOTAL_ROUNDS_VS)
+    {
       setFinalScore(newScore);
       setTela('result');
-    } else {
+    }
+    else
+    {
       setRound((r) => r + 1);
-      const id = await criarJogo(dificuldade!);
+      const id = await criarJogo(dificuldade!, 'VS_GUESS');
       setGameId(id);
     }
-  }, [round, score, dificuldade]);
+  }, [round, score, dificuldade, gameId]);
 
-  const novoJogoSolo = useCallback(async () => {
-    if (modo === 'memoria') return;   // Memória reinicia o estado internamente
+  const novoJogoSolo = useCallback(async () =>
+  {
     const id = await criarJogo(dificuldade!);
     setGameId(id);
-  }, [dificuldade, modo]);
+  }, [dificuldade]);
 
-  const voltarParaHome = () => {
-    setTela('home'); setModo(null); setDificuldade(null);
-    setGameId(null); setRound(1); setScore({ p1: 0, p2: 0 }); setFinalScore(null);
+  const voltarParaHome = () =>
+  {
+    setTela('home');
+    setModo(null);
+    setDificuldade(null);
+    setGameId(null);
+    setRound(1);
+    setScore({ p1: 0, p2: 0 });
+    setFinalScore(null);
+    setVsRoundResults([]);
   };
 
-  if (tela === 'ranking') return <Ranking onBack={() => setTela('home')} apiUrl={API_URL} />;
+  if (tela === 'ranking')
+    return <Ranking onBack={() => setTela('home')} apiUrl={API_URL} />;
 
-  if (tela === 'result') { /* ... tela de resultado final VS ... */ }
-
-  if (tela === 'setup') {
-    return <Setup modo={modo!} onStart={iniciarJogo} onBack={() => setTela('home')} onOpenRanking={() => setTela('ranking')} />;
+  if (tela === 'result')
+  {
+    return (
+      <VsResultScreen
+        p1={p1}
+        p2={p2}
+        finalScore={finalScore!}
+        vsRoundResults={vsRoundResults}
+        apiUrl={API_URL}
+        onJogarNovamente={() => iniciarJogo({ dificuldade: dificuldade!, p1, p2 })}
+        onVoltarHome={voltarParaHome}
+        onOpenRanking={() => setTela('ranking')}
+      />
+    );
   }
 
-  if (tela === 'game') {
-    return <Game gameId={gameId!} modo={modo!} dificuldade={dificuldade!} p1={p1} p2={p2}
-      round={round} score={score} apiUrl={API_URL} onBack={voltarParaHome}
-      onOpenRanking={() => setTela('ranking')} onRoundEnd={onRoundEnd} onNovoJogo={novoJogoSolo} />;
+  if (tela === 'setup')
+  {
+    return (
+      <Setup
+        modo={modo!}
+        onStart={iniciarJogo}
+        onBack={() => setTela('home')}
+        onOpenRanking={() => setTela('ranking')}
+      />
+    );
   }
 
-  return <Home onSelectMode={(m) => { setModo(m); setTela('setup'); }} onOpenRanking={() => setTela('ranking')} />;
+  if (tela === 'game')
+  {
+    return (
+      <Game
+        key={gameId!}
+        gameId={gameId!}
+        modo={modo!}
+        dificuldade={dificuldade!}
+        p1={p1}
+        p2={p2}
+        round={round}
+        score={score}
+        apiUrl={API_URL}
+        onBack={voltarParaHome}
+        onOpenRanking={() => setTela('ranking')}
+        onRoundEnd={onRoundEnd}
+        onNovoJogo={novoJogoSolo}
+      />
+    );
+  }
+
+  return (
+    <Home
+      onSelectMode={(m) => { setModo(m); setTela('setup'); }}
+      onOpenRanking={() => setTela('ranking')}
+    />
+  );
 }
 ```
 
@@ -882,31 +1011,30 @@ export function App() {
 
 ```ts
 // components/home.tsx — tela inicial com seleção de modo de jogo
-export function Home({ onSelectMode, onOpenRanking }) {
+export function Home({ onSelectMode, onOpenRanking }: HomeProps)
+{
   return (
     <div className="min-h-screen text-white flex flex-col items-center justify-center px-4 py-12">
-      {/* Logo */}
-      <h1 className="text-5xl font-black">Kuha<span style={{ color: '#f97316' }}>ku</span></h1>
+      <h1 className="text-5xl font-black">
+        <span className="text-white">Kuha</span><span style={{ color: '#06b6d4' }}>ku</span>
+      </h1>
 
-      {/* Botão VS Adivinhação — destaque full width */}
-      <button onClick={() => onSelectMode('vs')} className="w-full rounded-3xl p-6 ..." style={{ background: 'linear-gradient(135deg, #6366f1, #ec4899, #f97316)' }}>
-        ⚔️ VS Adivinhação — 2 jogadores · 3 rodadas
+      {/* Card VS — destaque full width */}
+      <button onClick={() => onSelectMode('vs')} className="w-full rounded-3xl p-6 ..."
+        style={{ background: 'linear-gradient(135deg, #0284c7, #0ea5e9, #06b6d4, #0891b2)' }}>
+        📡 Batalha de Sinais — 2 astronautas · 3 rodadas
       </button>
 
-      {/* Grid inferior — 2 jogos */}
       <div className="grid grid-cols-2 gap-4">
-        {/* Botão Solo */}
         <button onClick={() => onSelectMode('solo')} className="rounded-3xl p-6 ...">
-          # Adivinhe o Número — Solo · dicas quente/frio
+          🔭 Operação Resgate — Solo · sistema de sinal inteligente
         </button>
-
-        {/* Jogo da Memória — clicável */}
         <button onClick={() => onSelectMode('memoria')} className="rounded-3xl p-6 ...">
-          🧠 Jogo da Memória — pares de números · 4×4 / 4×5 / 6×6
+          🌕 Mapas Estelares — pares de coordenadas · 4×4 / 4×5 / 6×6
         </button>
       </div>
 
-      <button onClick={onOpenRanking}>🏆 Ver Ranking Global</button>
+      <button onClick={onOpenRanking}>🏆 Ver Ranking da Missão</button>
     </div>
   );
 }
@@ -914,10 +1042,11 @@ export function Home({ onSelectMode, onOpenRanking }) {
 
 ```ts
 // components/setup.tsx — configuração antes de iniciar
-// VsSetup:      campos de texto para Jogador 1 / Jogador 2 + seletor de dificuldade
-// SoloSetup:    cards de dificuldade (Fácil / Médio / Difícil) com emoji + range
+// VsSetup:      campos de texto para Astronauta 1 / 2 + seletor de patente (Cadete / Piloto / Comandante)
+// SoloSetup:    cards de patente com range de frequência
 // MemoriaSetup: cards de tamanho de tabuleiro (4×4 / 4×5 / 6×6) com nº de pares
-export function Setup({ modo, onStart, onBack, onOpenRanking }: SetupProps) {
+export function Setup({ modo, onStart, onBack, onOpenRanking }: SetupProps)
+{
   if (modo === 'vs')      return <VsSetup {...} />;
   if (modo === 'memoria') return <MemoriaSetup {...} />;
   return <SoloSetup {...} />;
@@ -925,24 +1054,96 @@ export function Setup({ modo, onStart, onBack, onOpenRanking }: SetupProps) {
 ```
 
 ```ts
-// components/game.tsx — tela de jogo (3 modos)
-//
-// VsGame:      alternância de turnos entre p1/p2, histórico de palpites, placar por rodada
-// SoloGame:    barra de progresso de tentativas, feedback visual quente/frio, novo jogo
-// MemoriaGame: grid de cartas (flip), detecção de pares, cronômetro, contador de erros
-//              — 100% frontend, sem chamada de API
-//
-// Validação nos modos de número:
-const max = RANGE_MAX[dificuldade]; // EASY=10, MEDIUM=50, HARD=100
-if (isNaN(valor) || valor < 1 || valor > max) {
+// components/game.tsx — tela de jogo (3 modos) + tela de resultado VS
+
+// VsGame (Batalha de Sinais): alternância de turnos entre p1/p2, histórico de palpites, placar por rodada
+// displayScore antecipa o +1 quando roundOver.winner é definido (sem esperar o clique em "avançar")
+// SoloGame (Operação Resgate): barra de progresso, feedback de sinal, SaveRankingPanel ao vencer/perder
+// MemoriaGame (Mapas Estelares): grid flip, detecção de pares, cronômetro, contador de erros
+// ao completar todos os pares chama POST /api/games/:id/finish com { won: true }
+// SaveRankingPanel — reutilizado nos 3 modos + VsResultScreen
+
+// Validação dos modos de número:
+const max = RANGE_MAX[dificuldade];
+if (isNaN(valor) || valor < 1 || valor > max)
+{
   setErro(`Digite um número entre 1 e ${max}`);
   return;
 }
 
-export function Game(props: GameProps) {
+// displayScore (VsGame): preview do placar antes do avanço de rodada
+const displayScore =
+{
+  p1: score.p1 + (roundOver?.winner === 1 ? 1 : 0),
+  p2: score.p2 + (roundOver?.winner === 2 ? 1 : 0),
+};
+
+// SaveRankingPanel — exibido após vitória/derrota
+function SaveRankingPanel({ saveNome, setSaveNome, saving, savedPosition, saveErro, onSalvar, onOpenRanking })
+{
+  if (savedPosition)
+    return <p>🏆 #{savedPosition.position} de {savedPosition.total} jogadores!</p>;
+
+  return (
+    <form onSubmit={onSalvar}>
+      <input value={saveNome} onChange={(e) => setSaveNome(e.target.value)} placeholder="Seu apelido" maxLength={30} />
+      <button type="submit" disabled={saving || !saveNome.trim()}>
+        {saving ? '...' : '💾 Salvar'}
+      </button>
+      {saveErro && <p>{saveErro}</p>}
+    </form>
+  );
+}
+
+// VsResultScreen — resultado final com save para AMBOS os jogadores
+// gameIdP1: primeiro round ganho por P1 (fallback: rounds[0])
+// gameIdP2: primeiro round ganho por P2 (fallback: primeiro round diferente do gameIdP1)
+export function VsResultScreen({ p1, p2, finalScore, vsRoundResults, apiUrl, ... }) { ... }
+
+export function Game(props: GameProps)
+{
   if (props.modo === 'vs')      return <VsGame {...props} />;
   if (props.modo === 'memoria') return <MemoriaGame {...props} />;
   return <SoloGame {...props} />;
+}
+```
+
+```ts
+// components/ranking.tsx — Hall da Fama com filtro por missão
+// Tabs: 🌌 Galáxia | 📡 Batalha de Sinais (VS_GUESS) | 🔭 Operação Resgate (NUMBER_GUESS) | 🃏 Jogo das Cartas (CARD_GUESS)
+// GET /api/ranking/global?limit=10&gameType=<filtro>
+// Ordenação: menor média de tentativas = melhor posição
+// Medalhas: 🥇🥈🥉 para top 3 · posição numérica para o restante
+
+type GameTypeFilter = 'all' | 'NUMBER_GUESS' | 'VS_GUESS' | 'CARD_GUESS';
+
+const TABS: { label: string; value: GameTypeFilter }[] =
+[
+  { label: '🌌 Galáxia',          value: 'all'          },
+  { label: '📡 Batalha de Sinais', value: 'VS_GUESS'     },
+  { label: '🔭 Operação Resgate',  value: 'NUMBER_GUESS' },
+  { label: '🃏 Jogo das Cartas',   value: 'CARD_GUESS'   },
+];
+
+const SUBTITULO: Record<GameTypeFilter, string> =
+{
+  all:          '🌌 Ranking Galáctico — todos os astronautas',
+  VS_GUESS:     '📡 Batalha de Sinais — ambos se cadastram ao final',
+  NUMBER_GUESS: '🔭 Operação Resgate — missões solo',
+  CARD_GUESS:   '🃏 Jogo das Cartas',
+};
+
+export function Ranking({ onBack, apiUrl }: RankingProps)
+{
+  const [filtro, setFiltro] = useState<GameTypeFilter>('all');
+
+  useEffect(() =>
+  {
+    const query = filtro === 'all' ? '' : `&gameType=${filtro}`;
+    fetch(`${apiUrl}/api/ranking/global?limit=10${query}`)
+      .then((r) => r.json())
+      .then((data) => setRanking(Array.isArray(data) ? data : []));
+  }, [apiUrl, filtro]);
 }
 ```
 
@@ -1122,13 +1323,42 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient, Difficulty } from '@prisma/client';
 import { Pool } from 'pg';
 
-const pool = new Pool
-(
-  {
-    connectionString: process.env.DATABASE_URL,
-  }
-);
+const SUITS   = ['SPADES', 'HEARTS', 'DIAMONDS', 'CLUBS'] as const;
+const SYMBOLS = ['♠', '♥', '♦', '♣'] as const;
+const LABELS  = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'] as const;
+type  CardSuit = typeof SUITS[number];
 
+function cardLimitByDifficulty(d: Difficulty): number
+{
+  if (d === 'EASY')   return 13;
+  if (d === 'MEDIUM') return 26;
+  return 52;
+}
+
+function encodeCard(suit: CardSuit, value: number): number
+{
+  return SUITS.indexOf(suit) * 13 + value;
+}
+
+function decodeCard(encoded: number)
+{
+  const suitIndex = Math.floor((encoded - 1) / 13);
+  const value     = ((encoded - 1) % 13) + 1;
+  return { suit: SUITS[suitIndex] as CardSuit, value, display: `${LABELS[value - 1]}${SYMBOLS[suitIndex]}` };
+}
+
+function cardFeedback(target: number, guess: number): { feedback: string; direction: 'higher' | 'lower' | 'correct' | 'wrong_suit' }
+{
+  const t = decodeCard(target);
+  const g = decodeCard(guess);
+  if (target === guess)    return { feedback: 'acertou ✅',                   direction: 'correct'    };
+  if (t.value === g.value) return { feedback: 'valor certo, naipe errado 🎯', direction: 'wrong_suit' };
+  return t.value > g.value
+    ? { feedback: 'valor maior ⬆️', direction: 'higher' }
+    : { feedback: 'valor menor ⬇️', direction: 'lower'  };
+}
+
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
 const prismaClient = new PrismaClient({ adapter });
 
@@ -1155,7 +1385,7 @@ function feedbackByDiff(diff: number)
 
 async function seedGameForUser(userId: string, difficulty: Difficulty)
 {
-  const limit = limitByDifficulty(difficulty);
+  const limit  = limitByDifficulty(difficulty);
   const target = randomInt(1, limit);
 
   const game = await prismaClient.game.create
@@ -1167,44 +1397,85 @@ async function seedGameForUser(userId: string, difficulty: Difficulty)
 
   let current = randomInt(1, limit);
   let attempts = 0;
-  const guessHistory: number[] = [];
 
   while (current !== target && attempts < 7)
   {
-    guessHistory.push(current);
-    const diff = Math.abs(target - current);
+    const diff     = Math.abs(target - current);
     const feedback = feedbackByDiff(diff);
-
-    await prismaClient.guess.create
-    (
-      {
-        data: { gameId: game.id, value: current, feedback },
-      }
-    );
+    await prismaClient.guess.create({ data: { gameId: game.id, value: current, feedback } });
     attempts++;
-
-    const step = Math.max(1, Math.ceil((Math.abs(target - current)) / 2));
+    const step = Math.max(1, Math.ceil(diff / 2));
     current = current < target ? current + step : current - step;
   }
 
-  guessHistory.push(target);
-  await prismaClient.guess.create
-  (
-    {
-      data: { gameId: game.id, value: target, feedback: 'acertou ✅' },
-    }
-  );
+  await prismaClient.guess.create({ data: { gameId: game.id, value: target, feedback: 'acertou ✅' } });
   attempts++;
 
   await prismaClient.game.update
   (
     {
       where: { id: game.id },
-      data: { attempts, won: true, endedAt: new Date() },
+      data:  { attempts, won: true, endedAt: new Date() },
     }
   );
 
   return { gameId: game.id, difficulty, target, attempts };
+}
+
+async function seedCardGameForUser(userId: string, difficulty: Difficulty)
+{
+  const limit         = cardLimitByDifficulty(difficulty);
+  const target        = randomInt(1, limit);
+  const targetDecoded = decodeCard(target);
+
+  const game = await prismaClient.game.create
+  (
+    {
+      data: { userId, difficulty, target, attempts: 0, won: false, gameType: 'CARD_GUESS' as any },
+    }
+  );
+
+  const guesses: Array<{ value: number; feedback: string }> = [];
+
+  // busca binária no valor usando ♠, depois confirma naipe se necessário
+  let low = 1, high = 13;
+  while (low <= high)
+  {
+    const mid    = Math.floor((low + high) / 2);
+    const guess  = encodeCard('SPADES', mid);
+    const result = cardFeedback(target, guess);
+    guesses.push({ value: guess, feedback: result.feedback });
+    if (result.direction === 'correct' || result.direction === 'wrong_suit') break;
+    if (result.direction === 'higher') low  = mid + 1;
+    else                               high = mid - 1;
+  }
+
+  const lastDirection = cardFeedback(target, guesses[guesses.length - 1].value).direction;
+  if (lastDirection === 'wrong_suit')
+  {
+    const suitsInDeck = SUITS.slice(0, limit / 13) as CardSuit[];
+    for (const suit of suitsInDeck)
+    {
+      if (suit === 'SPADES') continue;
+      const guess  = encodeCard(suit, targetDecoded.value);
+      const result = cardFeedback(target, guess);
+      guesses.push({ value: guess, feedback: result.feedback });
+      if (result.direction === 'correct') break;
+    }
+  }
+
+  for (const g of guesses)
+    await prismaClient.guess.create({ data: { gameId: game.id, value: g.value, feedback: g.feedback } });
+
+  await prismaClient.game.update
+  (
+    {
+      where: { id: game.id },
+      data:  { attempts: guesses.length, won: true, endedAt: new Date() },
+    }
+  );
+
+  return { gameId: game.id, difficulty, targetCard: targetDecoded.display, attempts: guesses.length };
 }
 
 async function main()
@@ -1229,7 +1500,13 @@ async function main()
       for (const difficulty of difficulties)
       {
         const result = await seedGameForUser(user.id, difficulty);
-        console.log(`  ✅ ${difficulty}: target=${result.target}, tentativas=${result.attempts} (game: ${result.gameId})`);
+        console.log(`  ✅ NUMBER_GUESS ${difficulty}: target=${result.target}, tentativas=${result.attempts} (game: ${result.gameId})`);
+      }
+
+      for (const difficulty of difficulties)
+      {
+        const result = await seedCardGameForUser(user.id, difficulty);
+        console.log(`  ✅ CARD_GUESS   ${difficulty}: target=${result.targetCard}, tentativas=${result.attempts} (game: ${result.gameId})`);
       }
     }
 

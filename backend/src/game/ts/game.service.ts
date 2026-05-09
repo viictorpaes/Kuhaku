@@ -29,36 +29,37 @@ function getMaxAttempts(difficulty: Difficulty): number
   }
 }
 
-// Feedback proporcional ao intervalo: evita que os limiares fixos sejam inúteis no EASY
 function getNumberFeedback(diff: number, limit: number): string
 {
-  if (diff === 0)                           return 'acertou ✅';
-  if (diff <= Math.ceil(limit * 0.10))      return 'pegando fogo 🔥🔥🔥';
-  if (diff <= Math.ceil(limit * 0.20))      return 'quente 🌡️';
-  if (diff <= Math.ceil(limit * 0.40))      return 'morno ☔️';
-  return 'frio ❄️';
+  if (diff === 0) return 'acertou ✅';
+  if (diff <= Math.ceil(limit * 0.10)) return 'pegando fogo 🔥🔥🔥';
+  if (diff <= Math.ceil(limit * 0.20)) return 'quente 🌡️';
+  if (diff <= Math.ceil(limit * 0.40)) return 'morno ☔️';
+  else
+    return 'frio ❄️';
 }
 
 // ──────────────── helpers de carta ────────────────
 
-// Tamanho do deck varia com a dificuldade:
-//   EASY   → só ♠ (13 cartas)
-//   MEDIUM → ♠ + ♥ (26 cartas)
-//   HARD   → baralho completo (52 cartas)
 function getCardLimitByDifficulty(difficulty: Difficulty): number
 {
   switch (difficulty)
   {
-    case 'EASY':   return 13;
-    case 'MEDIUM': return 26;
-    case 'HARD':   return 52;
+    case 'EASY': 
+    return 13;
+
+    case 'MEDIUM': 
+    return 26;
+
+    case 'HARD': 
+    return 52;
   }
 }
 
 function decodeCard(encoded: number): { suit: CardSuit; value: number; display: string }
 {
   const suitIndex = Math.floor((encoded - 1) / 13);
-  const value     = ((encoded - 1) % 13) + 1;
+  const value = ((encoded - 1) % 13) + 1;
   return {
     suit:    SUITS[suitIndex] as CardSuit,
     value,
@@ -72,18 +73,24 @@ function encodeCard(suit: CardSuit, value: number): number
   return suitIndex * 13 + value;
 }
 
-function getCardFeedback(
+function getCardFeedback
+(
   target: number,
   guess: number,
-): { feedback: string; direction: 'higher' | 'lower' | 'correct' | 'wrong_suit' }
+): 
+
+{ feedback: string; direction: 'higher' | 'lower' | 'correct' | 'wrong_suit' }
+
 {
-  const t = decodeCard(target);
-  const g = decodeCard(guess);
+  const tar = decodeCard(target);
+  const gue = decodeCard(guess);
 
-  if (target === guess)    return { feedback: 'acertou ✅',                   direction: 'correct'    };
-  if (t.value === g.value) return { feedback: 'valor certo, naipe errado 🎯', direction: 'wrong_suit' };
+  if (target === guess)    
+    return { feedback: 'acertou ✅', direction: 'correct' };
+  if (tar.value === gue.value) 
+    return { feedback: 'valor certo, naipe errado 🎯', direction: 'wrong_suit' };
 
-  const isHigher = t.value > g.value;
+  const isHigher = tar.value > gue.value;
   return {
     feedback:  isHigher ? 'valor maior ⬆️' : 'valor menor ⬇️',
     direction: isHigher ? 'higher'         : 'lower',
@@ -102,7 +109,8 @@ export class GameService
   async createUser(email: string, name?: string)
   {
     const existing = await this.prismaService.prisma.user.findUnique({ where: { email } });
-    if (existing) return existing;
+    if (existing) 
+      return existing;
     return this.prismaService.prisma.user.create({ data: { email, name } });
   }
 
@@ -114,7 +122,8 @@ export class GameService
   async removeUser(userId: string)
   {
     const user = await this.prismaService.prisma.user.findUnique({ where: { id: userId } });
-    if (!user) throw new NotFoundException('Usuário não encontrado');
+    if (!user) 
+      throw new NotFoundException('Usuário não encontrado');
     return this.prismaService.prisma.user.delete({ where: { id: userId } });
   }
 
@@ -134,55 +143,65 @@ export class GameService
     if (dto.userId)
     {
       const user = await this.prismaService.prisma.user.findUnique({ where: { id: dto.userId } });
-      if (!user) throw new NotFoundException('Usuário não encontrado');
+      if (!user) 
+        throw new NotFoundException('Usuário não encontrado');
     }
 
-    return this.prismaService.prisma.game.create({
-      data: {
-        userId:     dto.userId ?? null,
-        gameType,
-        difficulty: dto.difficulty,
-        target,
-        attempts:   0,
-        won:        false,
-      },
-    });
+    return this.prismaService.prisma.game.create
+    (
+      {
+        data: 
+        {
+          userId:     dto.userId ?? null,
+          gameType,
+          difficulty: dto.difficulty,
+          target,
+          attempts:   0,
+          won:        false,
+        },
+      }
+    );
   }
-
-  // ── palpite: jogo de números ──────────────────────
 
   async makeGuess(gameId: string, value: number): Promise<any>
   {
     const game = await this.prismaService.prisma.game.findUnique({ where: { id: gameId } });
-    if (!game) throw new NotFoundException('Jogo não encontrado ❌');
-    if (game.won || game.endedAt) return { message: 'Jogo já foi concluído ✅' };
+    if (!game) 
+        throw new NotFoundException('Jogo não encontrado ❌');
+
+    if (game.won || game.endedAt) 
+        return { message: 'Jogo já foi concluído ✅' };
 
     const gameType = (game as any).gameType as GameType ?? 'NUMBER_GUESS';
     if (gameType === 'CARD_GUESS')
       throw new BadRequestException('Use o endpoint /card-guess para jogos de cartas');
 
     const difficulty = game.difficulty as Difficulty;
-    const limit      = getLimitByDifficulty(difficulty);
+    const limit  = getLimitByDifficulty(difficulty);
 
     if (!Number.isInteger(value) || value < 1 || value > limit)
-      throw new BadRequestException(`Palpite deve ser um inteiro entre 1 e ${limit} para dificuldade ${difficulty}`);
+      throw new BadRequestException(`Palpite deve ser um inteiro entre: 1 e ${limit} para dificuldade ${difficulty}`);
 
-    const diff      = Math.abs(game.target - value);
-    const feedback  = getNumberFeedback(diff, limit);
-    const isWon     = diff === 0;
+    const diff = Math.abs(game.target - value);
+    const feedback = getNumberFeedback(diff, limit);
+    const isWon = diff === 0;
     const maxAttempts = getMaxAttempts(difficulty);
     const newAttempts = game.attempts + 1;
     const isGameOver  = !isWon && newAttempts >= maxAttempts;
 
     await this.prismaService.prisma.guess.create({ data: { gameId, value, feedback } });
-    await this.prismaService.prisma.game.update({
-      where: { id: gameId },
-      data: {
-        attempts: { increment: 1 },
-        won:      isWon,
-        endedAt:  isWon || isGameOver ? new Date() : undefined,
-      },
-    });
+    await this.prismaService.prisma.game.update
+    (
+      {
+        where: { id: gameId },
+        data: 
+        {
+          attempts: { increment: 1 },
+          won:      isWon,
+          endedAt:  isWon || isGameOver ? new Date() : undefined,
+        },
+      }
+    );
 
     const direction: 'higher' | 'lower' | 'correct' =
       diff === 0 ? 'correct' : game.target > value ? 'higher' : 'lower';
@@ -202,17 +221,19 @@ export class GameService
   async makeCardGuess(gameId: string, suit: CardSuit, value: number): Promise<any>
   {
     const game = await this.prismaService.prisma.game.findUnique({ where: { id: gameId } });
-    if (!game) throw new NotFoundException('Jogo não encontrado ❌');
-    if (game.won || game.endedAt) return { message: 'Jogo já foi concluído ✅' };
+    if (!game) 
+        throw new NotFoundException('Jogo não encontrado ❌');
+    if (game.won || game.endedAt) 
+        return { message: 'Jogo já foi concluído ✅' };
 
     const gameType = (game as any).gameType as GameType ?? 'NUMBER_GUESS';
     if (gameType !== 'CARD_GUESS')
       throw new BadRequestException('Este jogo não é do tipo cartas. Use o endpoint /guess');
 
-    const difficulty   = game.difficulty as Difficulty;
-    const cardLimit    = getCardLimitByDifficulty(difficulty);
+    const difficulty = game.difficulty as Difficulty;
+    const cardLimit = getCardLimitByDifficulty(difficulty);
     const maxSuitIndex = Math.floor((cardLimit - 1) / 13);
-    const suitIndex    = SUITS.findIndex(s => s === suit);
+    const suitIndex = SUITS.findIndex(s => s === suit);
 
     if (suitIndex === -1)
       throw new BadRequestException('Naipe inválido. Use: SPADES, HEARTS, DIAMONDS ou CLUBS');
@@ -226,22 +247,28 @@ export class GameService
     if (!Number.isInteger(value) || value < 1 || value > 13)
       throw new BadRequestException('Valor da carta deve ser inteiro entre 1 (Ás) e 13 (Rei)');
 
-    const encodedGuess           = encodeCard(suit, value);
+    const encodedGuess = encodeCard(suit, value);
     const { feedback, direction } = getCardFeedback(game.target, encodedGuess);
-    const isWon                  = encodedGuess === game.target;
-    const maxAttempts            = getMaxAttempts(difficulty);
-    const newAttempts            = game.attempts + 1;
-    const isGameOver             = !isWon && newAttempts >= maxAttempts;
+    const isWon = encodedGuess === game.target;
+    const maxAttempts = getMaxAttempts(difficulty);
+    const newAttempts = game.attempts + 1;
+    const isGameOver = !isWon && newAttempts >= maxAttempts;
 
-    await this.prismaService.prisma.guess.create({ data: { gameId, value: encodedGuess, feedback } });
-    await this.prismaService.prisma.game.update({
-      where: { id: gameId },
-      data: {
-        attempts: { increment: 1 },
-        won:      isWon,
-        endedAt:  isWon || isGameOver ? new Date() : undefined,
-      },
-    });
+    await this.prismaService.prisma.guess.create
+    ({ data: { gameId, value: encodedGuess, feedback } });
+
+    await this.prismaService.prisma.game.update
+    (
+      {
+        where: { id: gameId },
+        data: 
+        {
+          attempts: { increment: 1 },
+          won:      isWon,
+          endedAt:  isWon || isGameOver ? new Date() : undefined,
+        },
+      }
+    );
 
     const targetCard = decodeCard(game.target);
 
@@ -257,32 +284,41 @@ export class GameService
 
   // ── salvar/encerrar partida ───────────────────────
 
-  // Chamado quando o usuário clica "Salvar" ao fim do jogo (vitória ou desistência).
-  // Se o jogo ainda não tiver endedAt, marca como encerrado (desistência).
-  // Em ambos os casos revela o target.
-  async finishGame(gameId: string): Promise<any>
+  async finishGame(gameId: string, won?: boolean): Promise<any>
   {
-    const game = await this.prismaService.prisma.game.findUnique({
-      where: { id: gameId },
-      include: { guesses: true },
-    });
-    if (!game) throw new NotFoundException('Jogo não encontrado ❌');
-
-    if (!game.endedAt)
-    {
-      await this.prismaService.prisma.game.update({
+    const game = await this.prismaService.prisma.game.findUnique
+    (
+      {
         where: { id: gameId },
-        data:  { endedAt: new Date() },
-      });
+        include: { guesses: true },
+      }
+    );
+    if (!game)
+        throw new NotFoundException('Jogo não encontrado ❌');
+
+    const updateData: Record<string, any> = {};
+    if (!game.endedAt) updateData.endedAt = new Date();
+    if (won !== undefined) updateData.won = won;
+
+    if (Object.keys(updateData).length > 0)
+    {
+      await this.prismaService.prisma.game.update
+      (
+        {
+          where: { id: gameId },
+          data:  updateData,
+        }
+      );
     }
 
     const gameType = (game as any).gameType as GameType ?? 'NUMBER_GUESS';
+    const finalWon = won !== undefined ? won : game.won;
 
     return {
       gameId:       game.id,
       gameType,
       difficulty:   game.difficulty,
-      won:          game.won,
+      won:          finalWon,
       attempts:     game.attempts,
       target:       game.target,
       totalGuesses: (game.guesses ?? []).length,
@@ -294,12 +330,16 @@ export class GameService
 
   async getGameHistory(gameId: string)
   {
-    const [game, guesses] = await Promise.all([
-      this.prismaService.prisma.game.findUnique({ where: { id: gameId } }),
-      this.prismaService.prisma.guess.findMany({ where: { gameId }, orderBy: { createdAt: 'asc' } }),
-    ]);
+    const [game, guesses] = await Promise.all
+    (
+      [
+        this.prismaService.prisma.game.findUnique({ where: { id: gameId } }),
+        this.prismaService.prisma.guess.findMany({ where: { gameId }, orderBy: { createdAt: 'asc' } }),
+      ]
+    );
 
-    if (!game) throw new NotFoundException('Jogo não encontrado ❌');
+    if (!game) 
+        throw new NotFoundException('Jogo não encontrado ❌');
 
     const gameType = (game as any).gameType as GameType ?? 'NUMBER_GUESS';
     if (gameType === 'CARD_GUESS')
@@ -310,25 +350,30 @@ export class GameService
 
   async getGameSummary(gameId: string)
   {
-    const game = await this.prismaService.prisma.game.findUnique({
-      where:   { id: gameId },
-      include: { guesses: true },
-    });
-    if (!game) throw new NotFoundException('Jogo não encontrado ❌');
+    const game = await this.prismaService.prisma.game.findUnique
+    (
+      {
+        where:   { id: gameId },
+        include: { guesses: true },
+      }
+    );
+
+    if (!game) 
+        throw new NotFoundException('Jogo não encontrado ❌');
 
     const guesses = (game.guesses ?? []).sort(
       (a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
     );
 
-    const first      = guesses[0];
-    const last       = guesses[guesses.length - 1];
+    const first = guesses[0];
+    const last = guesses[guesses.length - 1];
     const durationMs =
       first && last
         ? new Date(last.createdAt).getTime() - new Date(first.createdAt).getTime()
         : null;
 
     const gameType = (game as any).gameType as GameType ?? 'NUMBER_GUESS';
-    const isOver   = game.won || !!game.endedAt;
+    const isOver = game.won || !!game.endedAt;
 
     return {
       gameId:    game.id,
@@ -351,10 +396,13 @@ export class GameService
 
   async listUserGames(userId: string)
   {
-    return this.prismaService.prisma.game.findMany({
-      where:   { userId },
-      orderBy: { createdAt: 'desc' },
-    });
+    return this.prismaService.prisma.game.findMany
+    (
+      {
+        where:   { userId },
+        orderBy: { createdAt: 'desc' },
+      }
+    );
   }
 
   // ── estatísticas e ranking ────────────────────────
@@ -380,17 +428,46 @@ export class GameService
     };
   }
 
-  async getGlobalRanking(limit = 10)
+  async saveGameToRanking(gameId: string, name: string)
   {
-    const users = await this.prismaService.prisma.user.findMany({ include: { games: true } });
-    return users
-      .map((u: any) =>
+    const game = await this.prismaService.prisma.game.findUnique
+    ({ where: { id: gameId } });
+    if (!game) 
+        throw new NotFoundException('Jogo não encontrado ❌');
+
+    const email = `${name.toLowerCase().replace(/\s+/g, '.')}@kuhaku.player`;
+    let user = await this.prismaService.prisma.user.findUnique({ where: { email } });
+    if (!user)
+      user = await this.prismaService.prisma.user.create({ data: { email, name } });
+
+    await this.prismaService.prisma.game.update
+    (
       {
-        const wins = (u.games ?? []).filter((g: any) => g.won).map((g: any) => Number(g.attempts ?? 0));
-        if (wins.length === 0) return null;
-        const avg = wins.reduce((a: number, b: number) => a + b, 0) / wins.length;
-        return { userId: u.id, name: u.name ?? u.email, averageAttempts: avg, wins: wins.length };
-      })
+        where: { id: gameId },
+        data:  { userId: user.id },
+      }
+    );
+
+    return this.getUserRanking(user.id);
+  }
+
+  async getGlobalRanking(limit = 10, gameType?: string)
+  {
+    const users = await this.prismaService.prisma.user.findMany
+    ({ include: { games: true } });
+
+    return users.map((u: any) =>
+      {
+        let games = (u.games ?? []) as any[];
+        if (gameType) games = games.filter((g: any) => g.gameType === gameType);
+        const wonAttempts = games.filter((g: any) => g.won).map((g: any) => Number(g.attempts ?? 0));
+        if (wonAttempts.length === 0) 
+          return null;
+        const avg = wonAttempts.reduce((a: number, b: number) => a + b, 0) / wonAttempts.length;
+
+        return { userId: u.id, name: u.name ?? u.email, averageAttempts: avg, wins: wonAttempts.length };
+      }
+    )
       .filter(Boolean)
       .sort((a: any, b: any) => a.averageAttempts - b.averageAttempts)
       .slice(0, limit);
@@ -406,11 +483,15 @@ export class GameService
 
   async getUserAchievements(userId: string)
   {
-    const games = await this.prismaService.prisma.game.findMany({
-      where:   { userId },
-      include: { guesses: true },
-      orderBy: { createdAt: 'asc' },
-    });
+    const games = await this.prismaService.prisma.game.findMany
+    (
+      {
+        where:   { userId },
+        include: { guesses: true },
+        orderBy: { createdAt: 'asc' },
+      }
+    );
+
     const wins = games.filter((g: any) => g.won);
 
     const fastestWinAttempts = wins.length ? Math.min(...wins.map((g: any) => g.attempts)) : null;
@@ -421,7 +502,8 @@ export class GameService
         const sorted = (g.guesses ?? []).sort(
           (a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
         );
-        if (sorted.length < 1) return null;
+        if (sorted.length < 1) 
+          return null;
         const first = sorted[0];
         const last  = sorted[sorted.length - 1];
         return first && last
@@ -433,7 +515,7 @@ export class GameService
     const fastestWinTimeMs = winDurations.length ? Math.min(...winDurations) : null;
 
     let bestStreak = 0;
-    let current    = 0;
+    let current = 0;
     for (const g of games)
     {
       if (g.won) current += 1;
@@ -446,11 +528,14 @@ export class GameService
 
   async getUserSummary(userId: string)
   {
-    const [stats, achievements, ranking] = await Promise.all([
-      this.getUserStats(userId),
-      this.getUserAchievements(userId),
-      this.getUserRanking(userId),
-    ]);
+    const [stats, achievements, ranking] = await Promise.all
+    (
+      [
+        this.getUserStats(userId),
+        this.getUserAchievements(userId),
+        this.getUserRanking(userId),
+      ]
+    );
     return { stats, achievements, ranking };
   }
 }

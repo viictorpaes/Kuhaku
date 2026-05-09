@@ -9,7 +9,8 @@ import { CardGuessDto } from '../dto/card-guess.dto';
 @Controller('api')
 export class GameController
 {
-  constructor(private readonly gameService: GameService) {}
+  constructor(private readonly gameService: GameService) 
+  {}
 
   // ── usuários ──────────────────────────────────────
 
@@ -39,25 +40,29 @@ export class GameController
     return this.gameService.createGame(dto);
   }
 
-  // Palpite para jogo de números
   @Post('games/:id/guess')
   async fazerPalpite(@Param('id') id: string, @Body() dto: GuessDto)
   {
     return this.gameService.makeGuess(id, dto.value);
   }
 
-  // Palpite para jogo de cartas: { suit: 'SPADES'|'HEARTS'|'DIAMONDS'|'CLUBS', value: 1-13 }
+  
   @Post('games/:id/card-guess')
   async fazerPalpiteCarta(@Param('id') id: string, @Body() dto: CardGuessDto)
   {
     return this.gameService.makeCardGuess(id, dto.suit, dto.value);
   }
 
-  // Salva/encerra a partida (vitória ou desistência): revela o target
   @Post('games/:id/finish')
-  async encerrarJogo(@Param('id') id: string)
+  async encerrarJogo(@Param('id') id: string, @Body() body?: { won?: boolean })
   {
-    return this.gameService.finishGame(id);
+    return this.gameService.finishGame(id, body?.won);
+  }
+
+  @Post('games/:id/save')
+  async salvarNoRanking(@Param('id') id: string, @Body() body: { name: string })
+  {
+    return this.gameService.saveGameToRanking(id, body.name);
   }
 
   // ── consultas de jogo ─────────────────────────────
@@ -103,9 +108,9 @@ export class GameController
   // ── ranking ───────────────────────────────────────
 
   @Get('ranking/global')
-  async rankingGlobal(@Query('limit') limit?: string)
+  async rankingGlobal(@Query('limit') limit?: string, @Query('gameType') gameType?: string)
   {
-    return this.gameService.getGlobalRanking(limit ? parseInt(limit, 10) : 10);
+    return this.gameService.getGlobalRanking(limit ? parseInt(limit, 10) : 10, gameType);
   }
 
   @Get('ranking/user/:id')

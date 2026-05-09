@@ -23,6 +23,7 @@ enum Difficulty {
 
 enum GameType {
   NUMBER_GUESS
+  VS_GUESS
   CARD_GUESS
 }
 
