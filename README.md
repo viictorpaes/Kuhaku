@@ -119,6 +119,10 @@ Kuhaku/
 └── tsconfig.base.json <img src="https://img.shields.io/badge/TypeScript-Base-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>
 </pre>
 
+
+<h2 align="center">Telas <br>
+<img src="https://img.shields.io/badge/Vite-111827?style=for-the-badge&logo=vite&logoColor=purple" height="25" alt="Vite"/></h2>
+
 <h2 align="center">🕹️ Comandos</h2>
  
 <p align="left">Clone o repositório via GitHub Desktop ou terminal: <br>
@@ -1146,11 +1150,6 @@ export function Ranking({ onBack, apiUrl }: RankingProps)
   }, [apiUrl, filtro]);
 }
 ```
-
-5. Telas <br>
-<img src="https://img.shields.io/badge/Vite-111827?style=for-the-badge&logo=vite&logoColor=purple" height="25" alt="Vite"/>
-
-
 
 <h2 align="center">👤🌱 Teste de Criação de Usuário / Seed<br>
 <img src="https://img.shields.io/badge/Test_User_Create-111827?style=flat&logo=typescript&logoColor=purple" height="18"/><img src="https://img.shields.io/badge/-Seed-111827?style=flat&logo=typescript&logoColor=2E8B57" height="18"/><img src="https://img.shields.io/badge/-Guess-111827?style=flat&logo=typescript&logoColor=orange" height="18"/>
