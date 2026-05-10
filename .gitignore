@@ -6,7 +6,7 @@ dist
 coverage
 
 # TypeScript build info
-**/tsconfig.tsbuildinfo
+**/*.tsbuildinfo
 
 # Vite and other caches
 .vite
