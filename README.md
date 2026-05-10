@@ -1,5 +1,5 @@
 <h1 align="center">Jogo da Adivinhação (Kuhaku 🧑🏻‍🚀) <br>
-<img src="./img/" alt="logo"></h1>
+<img src="./img/logo.jpeg" width="450" alt="logo"></h1>
 
 <h2 align="center">💻⛏️ Tecnologias e Ferramentas Utilizadas: </h2>
 
