@@ -1,4 +1,5 @@
-<h1 align="center">Jogo da Adivinhação (Kuhaku 🧑🏻‍🚀)</h1>
+<h1 align="center">Jogo da Adivinhação (Kuhaku 🧑🏻‍🚀) <br>
+<img src="./img/" alt="logo"></h1>
 
 <h2 align="center">💻⛏️ Tecnologias e Ferramentas Utilizadas: </h2>
 
@@ -119,8 +120,47 @@ Kuhaku/
 </pre>
 
 
-<h2 align="center">Telas <br>
-<img src="https://img.shields.io/badge/Vite-111827?style=for-the-badge&logo=vite&logoColor=purple" height="25" alt="Vite"/></h2>
+<h2 align="center">Telas 📱 <br>
+<img src="https://img.shields.io/badge/Vite-111827?style=for-the-badge&logo=vite&logoColor=purple" height="25" alt="Vite"/>
+<img src="https://img.shields.io/badge/🧑‍🚀_Astronautas-111827?style=for-the-badge" height="25" alt="Astronautas"/></h2>
+
+<table align="center" width="780">
+  <tr><th align="center">🏠 Tela Inicial</th></tr>
+  <tr><td align="center"><b>Página de entrada do Kuhaku — o astronauta escolhe sua missão entre os três modos de jogo disponíveis.</b></td></tr>
+  <tr><td align="center"><img src="img/telainicial.jpeg" width="750" alt="Tela Inicial"/></td></tr>
+</table>
+
+<br>
+
+<table align="center" width="780">
+  <tr><th align="center">⚡ Batalha de Sinais</th></tr>
+  <tr><td align="center"><b>Modo multiplayer local: dois astronautas disputam na mesma frequência secreta. Quem sintonizar primeiro vence a rodada. Dificuldades: Cadete, Piloto ou Comandante.</b></td></tr>
+  <tr><td align="center"><img src="img/batalha_de_sinais.jpeg" width="750" alt="Batalha de Sinais"/></td></tr>
+</table>
+
+<br>
+
+<table align="center" width="780">
+  <tr><th align="center">🗺️ Mapas Estelares</th></tr>
+  <tr><td align="center"><b>Modo single-player de memória: encontre os pares de coordenadas estelares em grids 4×4, 4×5 ou 6×6 conforme a dificuldade escolhida.</b></td></tr>
+  <tr><td align="center"><img src="img/mapas_estrelares.jpeg" width="750" alt="Mapas Estelares"/></td></tr>
+</table>
+
+<br>
+
+<table align="center" width="780">
+  <tr><th align="center">🚀 Operação Resgate</th></tr>
+  <tr><td align="center"><b>Modo single-player de adivinhação: sintonize a frequência de resgate correta dentro do número de tentativas disponíveis. Dificuldades: Cadete, Piloto ou Comandante.</b></td></tr>
+  <tr><td align="center"><img src="img/operação_resgate.jpeg" width="750" alt="Operação Resgate"/></td></tr>
+</table>
+
+<br>
+
+<table align="center" width="780">
+  <tr><th align="center">🏆 Hall da Fama</th></tr>
+  <tr><td align="center"><b>Ranking Galáctico com a pontuação de todos os astronautas por modalidade — filtre por Batalha de Sinais, Operação Resgate ou Mapas Estelares.</b></td></tr>
+  <tr><td align="center"><img src="img/ranking_halldafama.jpeg" width="750" alt="Hall da Fama"/></td></tr>
+</table>
 
 <h2 align="center">🕹️ Comandos</h2>
  
