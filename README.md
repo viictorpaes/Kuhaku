@@ -397,7 +397,7 @@ Camada de **lógica de negócio**. Processa os dados recebidos do Controller, ap
 
 | Modo | Tipo | Descrição | Dificuldade |
 |---|---|---|---|
-| **Batalha de Sinais** | `VS_GUESS` (backend) | 2 astronautas adivinham a mesma frequência secreta. Turno alternado — quem sintonizar primeiro vence a rodada. 3 rodadas. Ambos podem se cadastrar no ranking ao final. | Cadete 1–10 · Piloto 1–50 · Comandante 1–100 |
+| **Batalha de Sinais** | `VS_GUESS` (backend) | 2 astronautas adivinham a mesma frequência secreta. Turno alternado — quem sintonizar primeiro vence a rodada. 3 rodadas. Ambos podem se cadastrar no ranking ao final. | Cadete 1–10 · Piloto 1–50 · Comandante 1–100 · **12 tentativas totais por rodada** |
 | **Operação Resgate** | `NUMBER_GUESS` (backend) | Solo. Feedback de sinal proporcional ao range. | Cadete (5 tent.) · Piloto (7 tent.) · Comandante (10 tent.) |
 | **Mapas Estelares** | `NUMBER_GUESS` (backend) | Solo. Grid de pares de coordenadas para virar e combinar. Cronômetro + contador de erros. Salva no ranking ao vencer. | Cadete 4×4 (8 pares) · Piloto 4×5 (10 pares) · Comandante 6×6 (18 pares) |
 
@@ -405,11 +405,13 @@ Camada de **lógica de negócio**. Processa os dados recebidos do Controller, ap
 
 **Máximo de tentativas por dificuldade (NUMBER_GUESS):** EASY → 5 · MEDIUM → 7 · HARD → 10
 
+**Máximo de tentativas (VS_GUESS):** 12 por rodada (independente da dificuldade) — cada jogador recebe turnos alternados até alguém acertar ou as 12 tentativas se esgotarem
+
 **Endpoints:**
 | Método | Rota | Descrição |
 |---|---|---|
 | `POST` | `/api/games/:id/finish` | Salva/encerra a partida — revela o target |
-| `POST` | `/api/games/:id/save` | Salva resultado no ranking com apelido `{ name }` |
+| `POST` | `/api/games/:id/save` | Salva resultado no ranking com apelido `{ name }` → retorna `{ saved: true, position, total }` (`position` pode ser `null` se o jogador não venceu nenhuma partida) |
 | `GET` | `/api/ranking/global?gameType=VS_GUESS` | Ranking filtrado por Adivinhação Em Dupla |
 | `GET` | `/api/ranking/global?gameType=NUMBER_GUESS` | Ranking filtrado por Adivinhação Solo |
 
@@ -618,7 +620,11 @@ export class GameService
     return this.prismaService.prisma.game.create({ data: { userId: dto.userId ?? null, gameType, difficulty: dto.difficulty, target, attempts: 0, won: false } });
   }
 
-  async makeGuess(gameId: string, value: number): Promise<any> { /* valida range, registra guess, atualiza estado */ }
+  async makeGuess(gameId: string, value: number): Promise<any>
+  {
+    // VS_GUESS usa 12 tentativas totais; NUMBER_GUESS usa getMaxAttempts(difficulty) → 5/7/10
+    // retorna { feedback, direction, attemptsLeft } ou { gameOver: true, target } quando esgotado
+  }
 
   async finishGame(gameId: string, won?: boolean): Promise<any>
   {
@@ -996,6 +1002,8 @@ export function Setup({ modo, onStart, onBack, onOpenRanking }: SetupProps)
 
 // VsGame (Batalha de Sinais): alternância de turnos entre p1/p2, histórico de palpites, placar por rodada
 // displayScore antecipa o +1 quando roundOver.winner é definido (sem esperar o clique em "avançar")
+// rodada encerra quando direction === 'correct' (acerto) ou dados.gameOver === true (tentativas esgotadas no backend)
+// em ambos os casos exibe o card de round-over com botão salvar/avançar para próxima rodada
 // SoloGame (Operação Resgate): barra de progresso, feedback de sinal, SaveRankingPanel ao vencer/perder
 // MemoriaGame (Mapas Estelares): grid flip, detecção de pares, cronômetro, contador de erros
 // ao completar todos os pares chama POST /api/games/:id/finish com { won: true }
@@ -1016,12 +1024,19 @@ const displayScore =
   p2: score.p2 + (roundOver?.winner === 2 ? 1 : 0),
 };
 
-// SaveRankingPanel — exibido após vitória/derrota
+// SaveRankingPanel — exibido após vitória/derrota (reutilizado nos 3 modos + VsResultScreen)
+// savedPosition: { position: number | null; total: number } | null
+//   null          → exibe formulário de apelido
+//   position != null → 🏆 #X de Y jogadores
+//   position === null → ✅ Resultado salvo! (participação sem vitória — não aparece no ranking)
 function SaveRankingPanel({ saveNome, setSaveNome, saving, savedPosition, saveErro, onSalvar, onOpenRanking })
 {
   if (savedPosition)
-    return <p>🏆 #{savedPosition.position} de {savedPosition.total} jogadores!</p>;
-
+  {
+    if (savedPosition.position != null)
+      return <p>🏆 #{savedPosition.position} de {savedPosition.total} jogadores!</p>;
+    return <p>✅ Resultado salvo! Vença uma rodada para aparecer no ranking.</p>;
+  }
   return (
     <form onSubmit={onSalvar}>
       <input value={saveNome} onChange={(e) => setSaveNome(e.target.value)} placeholder="Seu apelido" maxLength={30} />

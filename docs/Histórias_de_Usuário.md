@@ -42,7 +42,7 @@
 
 | # | História |
 |---|---|
-| US-12 | Como **jogador no modo VS**, quero disputar 3 rodadas alternando turnos com outro astronauta, para que possamos descobrir quem sintoniza a frequência secreta primeiro em cada rodada. |
+| US-12 | Como **jogador no modo VS**, quero disputar 3 rodadas alternando turnos com outro astronauta, para que possamos descobrir quem sintoniza a frequência secreta primeiro — ou que a rodada encerre e avance quando as tentativas de ambos se esgotarem. |
 | US-13 | Como **jogador no modo VS**, quero ver o placar atualizado após cada rodada (incluindo o preview antes de avançar), para que eu acompanhe quem está vencendo a batalha. |
 | US-14 | Como **jogador no modo VS**, quero ver o histórico de palpites de ambos os jogadores durante a rodada, para que eu entenda o progresso de cada astronauta. |
 | US-15 | Como **jogador no modo VS**, quero ver a tela de resultado final com o vencedor da batalha após as 3 rodadas, para que o campeão seja revelado. |
@@ -50,7 +50,7 @@
 
 ---
 
-### 🌕 Mapas Estelares (CARD_GUESS — Memória)
+### 🌕 Mapas Estelares (NUMBER_GUESS — Memória)
 
 | # | História |
 |---|---|
@@ -66,7 +66,7 @@
 | # | História |
 |---|---|
 | US-21 | Como **visitante**, quero ver o ranking global com os 10 melhores astronautas, para que eu conheça os maiores exploradores da galáxia. |
-| US-22 | Como **visitante**, quero filtrar o ranking por tipo de missão (🌌 Galáxia / 📡 Batalha de Sinais / 🔭 Operação Resgate / 🃏 Jogo das Cartas), para que eu compare desempenhos por modo de jogo. |
+| US-22 | Como **visitante**, quero filtrar o ranking por tipo de missão (🌌 Galáxia / 📡 Batalha de Sinais / 🔭 Operação Resgate), para que eu compare desempenhos por modo de jogo. |
 | US-23 | Como **visitante**, quero ver medalhas 🥇🥈🥉 para o top 3 e posição numérica para os demais, para que o pódio seja destacado visualmente. |
 | US-24 | Como **visitante**, quero que o ranking ordene por menor média de tentativas, para que os jogadores mais eficientes sejam melhor posicionados. |
 | US-25 | Como **visitante**, quero voltar à tela inicial a partir do ranking, para que eu possa iniciar uma nova missão após consultar o Hall da Fama. |

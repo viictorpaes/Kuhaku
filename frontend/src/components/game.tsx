@@ -151,10 +151,17 @@ function VsGame({ gameId, dificuldade, p1, p2, round, score, apiUrl, onBack, onO
       }
     );
       const dados = await resposta.json();
-      if (dados.message) 
-        { setErro(dados.message); setLoading(false); return; }
+      if (dados.message)
+      {
+        if (dados.message.includes('concluído'))
+          setRoundOver({ winner: null, advancing: false });
+        else
+          setErro(dados.message);
+        setLoading(false);
+        return;
+      }
 
-      const novo: Palpite = 
+      const novo: Palpite =
       {
         valor,
         feedback: dados.feedback,
@@ -166,13 +173,13 @@ function VsGame({ gameId, dificuldade, p1, p2, round, score, apiUrl, onBack, onO
       setHistorico(novoHistorico);
       setPalpite('');
 
-      if (dados.direction === 'correct') 
+      if (dados.direction === 'correct')
       {
         setRoundOver({ winner: jogadorAtual, advancing: false });
         return;
       }
 
-      if (novoHistorico.length >= maxTentativas) 
+      if (dados.gameOver || novoHistorico.length >= maxTentativas)
       {
         setRoundOver({ winner: null, advancing: false });
         return;
@@ -360,7 +367,7 @@ interface SaveRankingPanelProps
   saveNome: string;
   setSaveNome: (v: string) => void;
   saving: boolean;
-  savedPosition: { position: number; total: number } | null;
+  savedPosition: { position: number | null; total: number } | null;
   saveErro: string;
   onSalvar: (e: React.FormEvent) => void;
   onOpenRanking: () => void;
@@ -368,19 +375,28 @@ interface SaveRankingPanelProps
 
 function SaveRankingPanel({ saveNome, setSaveNome, saving, savedPosition, saveErro, onSalvar, onOpenRanking }: SaveRankingPanelProps)
 {
-  if (savedPosition) 
+  if (savedPosition)
   {
+    if (savedPosition.position != null)
+    {
+      return (
+        <div className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-center">
+          <p className="text-amber-300 font-bold text-sm">
+            🏆 #{savedPosition.position} de {savedPosition.total} jogadores!
+          </p>
+          <button
+            onClick={onOpenRanking}
+            className="mt-2 text-xs text-amber-400 underline underline-offset-2 hover:text-amber-300 transition"
+          >
+            Ver ranking completo →
+          </button>
+        </div>
+      );
+    }
     return (
-      <div className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-center">
-        <p className="text-amber-300 font-bold text-sm">
-          🏆 #{savedPosition.position} de {savedPosition.total} jogadores!
-        </p>
-        <button
-          onClick={onOpenRanking}
-          className="mt-2 text-xs text-amber-400 underline underline-offset-2 hover:text-amber-300 transition"
-        >
-          Ver ranking completo →
-        </button>
+      <div className="mt-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-center">
+        <p className="text-emerald-300 font-bold text-sm">✅ Resultado salvo!</p>
+        <p className="text-slate-400 text-xs mt-1">Vença uma rodada para aparecer no ranking.</p>
       </div>
     );
   }
@@ -424,7 +440,7 @@ function SoloGame({ gameId, dificuldade, apiUrl, onBack, onOpenRanking, onNovoJo
   const [perdeu, setPerdeu] = useState(false);
   const [saveNome, setSaveNome] = useState('');
   const [saving, setSaving] = useState(false);
-  const [savedPosition, setSavedPosition] = useState<{ position: number; total: number } | null>(null);
+  const [savedPosition, setSavedPosition] = useState<{ position: number | null; total: number } | null>(null);
   const [saveErro, setSaveErro] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -525,20 +541,16 @@ function SoloGame({ gameId, dificuldade, apiUrl, onBack, onOpenRanking, onNovoJo
         body: JSON.stringify({ name: nome }),
       });
       const data = await res.json();
-      if (data.position != null) 
-      {
-        setSavedPosition({ position: data.position, total: data.total });
-      } 
-      else 
-      {
+      if (data.saved)
+        setSavedPosition({ position: data.position ?? null, total: data.total });
+      else
         setSaveErro('Não foi possível salvar. Tente novamente.');
-      }
-    } 
-    catch 
+    }
+    catch
     {
       setSaveErro('Erro de conexão');
-    } 
-    finally 
+    }
+    finally
     {
       setSaving(false);
     }
@@ -733,7 +745,7 @@ function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, o
   const timerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
   const [saveNome, setSaveNome] = useState('');
   const [saving, setSaving] = useState(false);
-  const [savedPosition, setSavedPosition] = useState<{ position: number; total: number } | null>(null);
+  const [savedPosition, setSavedPosition] = useState<{ position: number | null; total: number } | null>(null);
   const [saveErro, setSaveErro] = useState('');
   const finishCalledRef = useRef(false);
 
@@ -831,8 +843,8 @@ function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, o
         body: JSON.stringify({ name: nome }),
       });
       const data = await res.json();
-      if (data.position != null)
-        setSavedPosition({ position: data.position, total: data.total });
+      if (data.saved)
+        setSavedPosition({ position: data.position ?? null, total: data.total });
       else
         setSaveErro('Não foi possível salvar. Tente novamente.');
     }
@@ -984,12 +996,12 @@ export function VsResultScreen({ p1, p2, finalScore, vsRoundResults, apiUrl, onJ
 
   const [saveNomeP1, setSaveNomeP1] = useState('');
   const [savingP1, setSavingP1] = useState(false);
-  const [savedPositionP1, setSavedPositionP1] = useState<{ position: number; total: number } | null>(null);
+  const [savedPositionP1, setSavedPositionP1] = useState<{ position: number | null; total: number } | null>(null);
   const [saveErroP1, setSaveErroP1] = useState('');
 
   const [saveNomeP2, setSaveNomeP2] = useState('');
   const [savingP2, setSavingP2] = useState(false);
-  const [savedPositionP2, setSavedPositionP2] = useState<{ position: number; total: number } | null>(null);
+  const [savedPositionP2, setSavedPositionP2] = useState<{ position: number | null; total: number } | null>(null);
   const [saveErroP2, setSaveErroP2] = useState('');
 
   const handleSalvarP1 = async (e: React.FormEvent) =>
@@ -1009,8 +1021,8 @@ export function VsResultScreen({ p1, p2, finalScore, vsRoundResults, apiUrl, onJ
         body: JSON.stringify({ name: nome }),
       });
       const data = await res.json();
-      if (data.position != null)
-        setSavedPositionP1({ position: data.position, total: data.total });
+      if (data.saved)
+        setSavedPositionP1({ position: data.position ?? null, total: data.total });
       else
         setSaveErroP1('Não foi possível salvar. Tente novamente.');
     }
@@ -1041,8 +1053,8 @@ export function VsResultScreen({ p1, p2, finalScore, vsRoundResults, apiUrl, onJ
         body: JSON.stringify({ name: nome }),
       });
       const data = await res.json();
-      if (data.position != null)
-        setSavedPositionP2({ position: data.position, total: data.total });
+      if (data.saved)
+        setSavedPositionP2({ position: data.position ?? null, total: data.total });
       else
         setSaveErroP2('Não foi possível salvar. Tente novamente.');
     }

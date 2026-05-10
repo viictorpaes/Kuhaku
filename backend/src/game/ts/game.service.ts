@@ -111,7 +111,8 @@ export class GameService
     const diff = Math.abs(game.target - value);
     const feedback = getNumberFeedback(diff, limit);
     const isWon = diff === 0;
-    const maxAttempts = getMaxAttempts(difficulty);
+    const gameType = (game as any).gameType as GameType ?? 'NUMBER_GUESS';
+    const maxAttempts = gameType === 'VS_GUESS' ? 12 : getMaxAttempts(difficulty);
     const newAttempts = game.attempts + 1;
     const isGameOver  = !isWon && newAttempts >= maxAttempts;
 
@@ -301,7 +302,8 @@ export class GameService
       }
     );
 
-    return this.getUserRanking(user.id);
+    const ranking = await this.getUserRanking(user.id);
+    return { saved: true, ...ranking };
   }
 
   async getGlobalRanking(limit = 10, gameType?: string)
