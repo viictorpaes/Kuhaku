@@ -429,7 +429,7 @@ Camada de **lógica de negócio**. Processa os dados recebidos do Controller, ap
  
 **Unidade de organização** do NestJS. Agrupa e registra o Controller e o Service de um domínio (`imports`, `providers`, `controllers`, `exports`). Permite que outros módulos reutilizem os providers via `exports`. O `AppModule` é o módulo raiz que importa todos os demais.
  
-**Arquivos neste projeto:** `app.module.ts` `game.module.ts` `auth.module.ts`, `user.module.ts`
+**Arquivos neste projeto:** `app.module.ts` `game.module.ts` `auth.module.ts` `user.module.ts`
 
 
 <h2 align="center">🎮 Modos de Jogo</h2>
