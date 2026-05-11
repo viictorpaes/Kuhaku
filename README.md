@@ -133,7 +133,7 @@ Kuhaku/
 <br>
 
 <table align="center" width="780">
-  <tr><th align="center">⚡ Batalha de Sinais</th></tr>
+  <tr><th align="center">📡 Batalha de Sinais</th></tr>
   <tr><td align="center"><b>Modo multiplayer local: dois astronautas disputam na mesma frequência secreta. Quem sintonizar primeiro vence a rodada. Dificuldades: Cadete, Piloto ou Comandante.</b></td></tr>
   <tr><td align="center"><img src="img/batalha_de_sinais.jpeg" width="750" alt="Batalha de Sinais"/></td></tr>
 </table>
@@ -141,7 +141,7 @@ Kuhaku/
 <br>
 
 <table align="center" width="780">
-  <tr><th align="center">🗺️ Mapas Estelares</th></tr>
+  <tr><th align="center">🌕 Mapas Estelares</th></tr>
   <tr><td align="center"><b>Modo single-player de memória: encontre os pares de coordenadas estelares em grids 4×4, 4×5 ou 6×6 conforme a dificuldade escolhida.</b></td></tr>
   <tr><td align="center"><img src="img/mapas_estrelares.jpeg" width="750" alt="Mapas Estelares"/></td></tr>
 </table>
@@ -149,7 +149,7 @@ Kuhaku/
 <br>
 
 <table align="center" width="780">
-  <tr><th align="center">🚀 Operação Resgate</th></tr>
+  <tr><th align="center">🔭 Operação Resgate</th></tr>
   <tr><td align="center"><b>Modo single-player de adivinhação: sintonize a frequência de resgate correta dentro do número de tentativas disponíveis. Dificuldades: Cadete, Piloto ou Comandante.</b></td></tr>
   <tr><td align="center"><img src="img/operação_resgate.jpeg" width="750" alt="Operação Resgate"/></td></tr>
 </table>
@@ -159,7 +159,7 @@ Kuhaku/
 <table align="center" width="780">
   <tr><th align="center">🏆 Hall da Fama</th></tr>
   <tr><td align="center"><b>Ranking Galáctico com a pontuação de todos os astronautas por modalidade — filtre por Batalha de Sinais, Operação Resgate ou Mapas Estelares.</b></td></tr>
-  <tr><td align="center"><img src="img/ranking_halldafama.jpeg" width="750" alt="Hall da Fama"/></td></tr>
+  <tr><td align="center"><img src="img/ranking_halldafama2.jpeg" width="750" alt="Hall da Fama"/></td></tr>
 </table>
 
 <h2 align="center">🕹️ Comandos</h2>
