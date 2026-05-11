@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import type { Dificuldade, Modo, Palpite, Direcao } from '../types';
-import {
+import 
+{
   RANGE_LABEL, DIF_LABEL, DIF_COLOR,
   MAX_TENTATIVAS_SOLO, MAX_TENTATIVAS_VS, TOTAL_ROUNDS_VS, RANGE_MAX,
   MEMORIA_GRID,
@@ -18,7 +19,7 @@ interface GameProps
   apiUrl: string;
 
   onBack: () => void;
-  onOpenRanking: () => void;
+  onOpenRanking: (filter?: string) => void;
   onRoundEnd: (winner: 1 | 2 | null) => Promise<void>;
   onNovoJogo: () => Promise<void>;
 }
@@ -208,7 +209,8 @@ function VsGame({ gameId, dificuldade, p1, p2, round, score, apiUrl, onBack, onO
   const isRoundOver = roundOver !== null;
   const lastPalpite = historico[0];
 
-  const displayScore = {
+  const displayScore = 
+  {
     p1: score.p1 + (roundOver?.winner === 1 ? 1 : 0),
     p2: score.p2 + (roundOver?.winner === 2 ? 1 : 0),
   };
@@ -242,10 +244,13 @@ function VsGame({ gameId, dificuldade, p1, p2, round, score, apiUrl, onBack, onO
         (
           <div
             className="rounded-2xl p-5 text-center border transition-all"
-            style={{
-              background: jogadorAtual === 1 ? 'rgba(6,182,212,0.10)' : 'rgba(99,102,241,0.12)',
-              borderColor: jogadorAtual === 1 ? 'rgba(6,182,212,0.40)' : 'rgba(99,102,241,0.40)',
-            }}
+            style=
+            {
+              {
+                background: jogadorAtual === 1 ? 'rgba(6,182,212,0.10)' : 'rgba(99,102,241,0.12)',
+                borderColor: jogadorAtual === 1 ? 'rgba(6,182,212,0.40)' : 'rgba(99,102,241,0.40)',
+              }
+            }
           >
             <p className="font-black text-lg flex items-center justify-center gap-2">
               <span className="w-3 h-3 rounded-full inline-block" style={{ background: corAtual }} />
@@ -261,11 +266,14 @@ function VsGame({ gameId, dificuldade, p1, p2, round, score, apiUrl, onBack, onO
         {isRoundOver && 
         (
           <div className="rounded-2xl p-5 text-center border"
-            style={{
-              background: roundOver.winner ? 'rgba(34,197,94,0.1)' : 'rgba(100,116,139,0.1)',
-              borderColor: roundOver.winner ? 'rgba(34,197,94,0.35)' : 'rgba(100,116,139,0.3)',
-            }}
-          >
+            style=
+            {
+              {
+                background: roundOver.winner ? 'rgba(34,197,94,0.1)' : 'rgba(100,116,139,0.1)',
+                borderColor: roundOver.winner ? 'rgba(34,197,94,0.35)' : 'rgba(100,116,139,0.3)',
+              }
+            }>
+
             <p className="text-2xl mb-1">{roundOver.winner ? '📡' : '🔇'}</p>
             <p className="font-black text-base text-white">
               {roundOver.winner
@@ -300,7 +308,8 @@ function VsGame({ gameId, dificuldade, p1, p2, round, score, apiUrl, onBack, onO
         )}
 
         {/* Input */}
-        {!isRoundOver && (
+        {!isRoundOver && 
+        (
           <form onSubmit={enviarPalpite} className="flex gap-3">
             <input
               ref={inputRef}
@@ -451,10 +460,12 @@ function SoloGame({ gameId, dificuldade, apiUrl, onBack, onOpenRanking, onNovoJo
   const lastPalpite = historico[0];
   const { bg: difBg, btn: difBtn } = DIF_COLOR[dificuldade];
 
-  useEffect(() => 
+  useEffect
+  (() => 
     {
       if (!ganhou && !perdeu) inputRef.current?.focus();
-    }, [ganhou, perdeu]);
+    }, [ganhou, perdeu]
+  );
 
   const enviarPalpite = async (e: React.FormEvent) => 
   {
@@ -831,7 +842,7 @@ function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, o
   {
     e.preventDefault();
     const nome = saveNome.trim();
-    if (!nome) { setSaveErro('Digite um apelido'); return; }
+    if (!nome) { setSaveErro('Digite um apelid: '); return; }
     setSaving(true);
     setSaveErro('');
     try
@@ -844,7 +855,10 @@ function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, o
       });
       const data = await res.json();
       if (data.saved)
+      {
         setSavedPosition({ position: data.position ?? null, total: data.total });
+        onOpenRanking('CARD_GUESS');
+      }
       else
         setSaveErro('Não foi possível salvar. Tente novamente.');
     }

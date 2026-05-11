@@ -176,30 +176,29 @@ git clone https://github.com/viictorpaes/Kuhaku
 <img src="https://img.shields.io/badge/Local_Host-111827?style=flat-square&logo=readme&logoColor=white"/>
 </h3>
 
->
->
-> ```bash
-> # 1. Sobe o banco Dockerizado `PostgresSql`
-> docker compose up db -d
->
-> # 2. Entra no backend e prepara o banco
-> cd backend
-> npm run prisma:generate # gera o Prisma Client
-> npm run prisma:migrate:deploy # cria as tabelas (inclui GameType: NUMBER_GUESS | VS_GUESS)
-> npm run prisma:seed # popula usuários iniciais (admin, dev, user)
->
-> # OPCIONAL: popula dados de teste com usuários e partidas
-> npx tsx --env-file=.env prisma/test-user.ts # cria usuários de teste com senha (bcrypt)
-> npx tsx --env-file=.env prisma/test-game.ts # cria partidas NUMBER_GUESS
-> cd ..
->
-> # 3. Sobe backend (:3001) + frontend (:5173)
-> npm run start:dev
->
-> # Apenas o frontend (:5173)
-> npm run dev:frontend
-> ```
->
+
+```bash
+# 1. Sobe o banco Dockerizado `PostgresSql` 
+docker compose up db -d
+
+# 2. Entra no backend e prepara o banco
+cd backend
+npm run prisma:generate # gera o Prisma Client
+npm run prisma:migrate:deploy # cria as tabelas (inclui GameType: NUMBER_GUESS | VS_GUESS | CARD_GUESS)
+npm run prisma:seed # popula usuários iniciais (admin, dev, user)
+
+# OPCIONAL: popula dados de teste com usuários e partidas
+npx tsx --env-file=.env prisma/test-user.ts # cria usuários de teste com senha (bcrypt)
+npx tsx --env-file=.env prisma/test-game.ts # cria partidas NUMBER_GUESS
+
+cd ..
+
+# 3. Sobe backend (:3001) + frontend (:5173)
+npm run start:dev
+# Apenas o frontend (:5173)
+npm run dev:frontend 
+```
+
 
 <h2 align="center">1. Docker<br>
 <img src="https://img.shields.io/badge/-Docker-111827?style=flat-square&logo=docker&logoColor=2496ed"/>
@@ -439,9 +438,9 @@ Camada de **lógica de negócio**. Processa os dados recebidos do Controller, ap
 |---|---|---|---|
 | **Batalha de Sinais** | `VS_GUESS` (backend) | 2 astronautas adivinham a mesma frequência secreta. Turno alternado — quem sintonizar primeiro vence a rodada. 3 rodadas. Ambos podem se cadastrar no ranking ao final. | Cadete 1–10 · Piloto 1–50 · Comandante 1–100 · **12 tentativas totais por rodada** |
 | **Operação Resgate** | `NUMBER_GUESS` (backend) | Solo. Feedback de sinal proporcional ao range. | Cadete (5 tent.) · Piloto (7 tent.) · Comandante (10 tent.) |
-| **Mapas Estelares** | `NUMBER_GUESS` (backend) | Solo. Grid de pares de coordenadas para virar e combinar. Cronômetro + contador de erros. Salva no ranking ao vencer. | Cadete 4×4 (8 pares) · Piloto 4×5 (10 pares) · Comandante 6×6 (18 pares) |
+| **Mapas Estelares** | `CARD_GUESS` (backend) | Solo. Grid de pares de coordenadas para virar e combinar. Cronômetro + contador de erros. Ao vencer e se registrar, redireciona automaticamente para o ranking de Jogo da Memória. | Cadete 4×4 (8 pares) · Piloto 4×5 (10 pares) · Comandante 6×6 (18 pares) |
 
-**GameTypes do backend (Prisma):** `NUMBER_GUESS` · `VS_GUESS`
+**GameTypes do backend (Prisma):** `NUMBER_GUESS` · `VS_GUESS` · `CARD_GUESS`
 
 **Máximo de tentativas por dificuldade (NUMBER_GUESS):** EASY → 5 · MEDIUM → 7 · HARD → 10
 
@@ -454,6 +453,7 @@ Camada de **lógica de negócio**. Processa os dados recebidos do Controller, ap
 | `POST` | `/api/games/:id/save` | Salva resultado no ranking com apelido `{ name }` → retorna `{ saved: true, position, total }` (`position` pode ser `null` se o jogador não venceu nenhuma partida) |
 | `GET` | `/api/ranking/global?gameType=VS_GUESS` | Ranking filtrado por Adivinhação Em Dupla |
 | `GET` | `/api/ranking/global?gameType=NUMBER_GUESS` | Ranking filtrado por Adivinhação Solo |
+| `GET` | `/api/ranking/global?gameType=CARD_GUESS` | Ranking filtrado por Jogo da Memória |
 
 **Feedback de número (proporcional ao intervalo):**
 
@@ -685,7 +685,7 @@ export class GameService
 ```ts
 // Arquivo: backend/src/game/dto/create-game.dto.ts
 export type Difficulty = 'EASY' | 'MEDIUM' | 'HARD';
-export type GameType   = 'NUMBER_GUESS' | 'VS_GUESS';
+export type GameType   = 'NUMBER_GUESS' | 'VS_GUESS' | 'CARD_GUESS';
 
 export class CreateGameDto
 {
@@ -845,6 +845,7 @@ import { Setup } from './components/setup';
 import { Game, VsResultScreen } from './components/game';
 import { Ranking } from './components/ranking';
 import type { Tela, Modo, Dificuldade, ConfigJogo } from './types';
+import type { GameTypeFilter } from './components/ranking';
 import { TOTAL_ROUNDS_VS } from './constants';
 
 const API_URL = (window as any).API_BASE_URL ?? 'http://localhost:3001';
@@ -873,6 +874,7 @@ export function App()
   const [score, setScore] = useState({ p1: 0, p2: 0 });
   const [finalScore, setFinalScore] = useState<{ p1: number; p2: number } | null>(null);
   const [vsRoundResults, setVsRoundResults] = useState<{ gameId: string; winner: 1 | 2 | null }[]>([]);
+  const [rankingFilter, setRankingFilter] = useState<GameTypeFilter | undefined>(undefined);
 
   const iniciarJogo = useCallback(async (config: ConfigJogo) =>
   {
@@ -883,8 +885,9 @@ export function App()
     setScore({ p1: 0, p2: 0 });
     setFinalScore(null);
     setVsRoundResults([]);
-    const isVs = modo === 'vs';
-    const id = await criarJogo(config.dificuldade, isVs ? 'VS_GUESS' : undefined);
+    const isVs      = modo === 'vs';
+    const isMemoria = modo === 'memoria';
+    const id = await criarJogo(config.dificuldade, isVs ? 'VS_GUESS' : isMemoria ? 'CARD_GUESS' : undefined);
     setGameId(id);
     setTela('game');
   }, [modo]);
@@ -913,9 +916,10 @@ export function App()
 
   const novoJogoSolo = useCallback(async () =>
   {
-    const id = await criarJogo(dificuldade!);
+    const gameType = modo === 'memoria' ? 'CARD_GUESS' : undefined;
+    const id = await criarJogo(dificuldade!, gameType);
     setGameId(id);
-  }, [dificuldade]);
+  }, [dificuldade, modo]);
 
   const voltarParaHome = () =>
   {
@@ -930,7 +934,7 @@ export function App()
   };
 
   if (tela === 'ranking')
-    return <Ranking onBack={() => setTela('home')} apiUrl={API_URL} />;
+    return <Ranking onBack={() => { setRankingFilter(undefined); setTela('home'); }} apiUrl={API_URL} initialFilter={rankingFilter} />;
 
   if (tela === 'result')
   {
@@ -974,7 +978,7 @@ export function App()
         score={score}
         apiUrl={API_URL}
         onBack={voltarParaHome}
-        onOpenRanking={() => setTela('ranking')}
+        onOpenRanking={(filter) => { setRankingFilter(filter as GameTypeFilter | undefined); setTela('ranking'); }}
         onRoundEnd={onRoundEnd}
         onNovoJogo={novoJogoSolo}
       />
@@ -1047,7 +1051,9 @@ export function Setup({ modo, onStart, onBack, onOpenRanking }: SetupProps)
 // SoloGame (Operação Resgate): barra de progresso, feedback de sinal, SaveRankingPanel ao vencer/perder
 // MemoriaGame (Mapas Estelares): grid flip, detecção de pares, cronômetro, contador de erros
 // ao completar todos os pares chama POST /api/games/:id/finish com { won: true }
+// ao salvar no ranking (handleSalvar), chama onOpenRanking('CARD_GUESS') → redireciona para a aba de Jogo da Memória
 // SaveRankingPanel — reutilizado nos 3 modos + VsResultScreen
+// onOpenRanking recebe filtro opcional para abrir o ranking já na aba correta
 
 // Validação dos modos de número:
 const max = RANGE_MAX[dificuldade];
@@ -1103,18 +1109,20 @@ export function Game(props: GameProps)
 
 ```ts
 // components/ranking.tsx — Hall da Fama com filtro por missão
-// Tabs: 🌌 Galáxia | 📡 Batalha de Sinais (VS_GUESS) | 🔭 Operação Resgate (NUMBER_GUESS)
+// Tabs: 🌌 Galáxia | 📡 Batalha de Sinais (VS_GUESS) | 🔭 Operação Resgate (NUMBER_GUESS) | 🧩 Jogo da Memória (CARD_GUESS)
 // GET /api/ranking/global?limit=10&gameType=<filtro>
 // Ordenação: menor média de tentativas = melhor posição
 // Medalhas: 🥇🥈🥉 para top 3 · posição numérica para o restante
+// initialFilter: abre o ranking já na aba correta (usado pelo MemoriaGame após save)
 
-type GameTypeFilter = 'all' | 'NUMBER_GUESS' | 'VS_GUESS';
+export type GameTypeFilter = 'all' | 'NUMBER_GUESS' | 'VS_GUESS' | 'CARD_GUESS';
 
 const TABS: { label: string; value: GameTypeFilter }[] =
 [
   { label: '🌌 Galáxia',          value: 'all'          },
   { label: '📡 Batalha de Sinais', value: 'VS_GUESS'     },
   { label: '🔭 Operação Resgate',  value: 'NUMBER_GUESS' },
+  { label: '🧩 Jogo da Memória',   value: 'CARD_GUESS'   },
 ];
 
 const SUBTITULO: Record<GameTypeFilter, string> =
@@ -1122,11 +1130,27 @@ const SUBTITULO: Record<GameTypeFilter, string> =
   all:          '🌌 Ranking Galáctico — todos os astronautas',
   VS_GUESS:     '📡 Batalha de Sinais — ambos se cadastram ao final',
   NUMBER_GUESS: '🔭 Operação Resgate — missões solo',
+  CARD_GUESS:   '🧩 Jogo da Memória — menor tempo e menos erros',
 };
 
-export function Ranking({ onBack, apiUrl }: RankingProps)
+const BADGE_LABEL: Record<GameTypeFilter, string> =
 {
-  const [filtro, setFiltro] = useState<GameTypeFilter>('all');
+  all:          '🌌 Geral',
+  VS_GUESS:     '📡 Batalha',
+  NUMBER_GUESS: '🔭 Resgate',
+  CARD_GUESS:   '🧩 Memória',
+};
+
+interface RankingProps
+{
+  onBack: () => void;
+  apiUrl: string;
+  initialFilter?: GameTypeFilter;
+}
+
+export function Ranking({ onBack, apiUrl, initialFilter }: RankingProps)
+{
+  const [filtro, setFiltro] = useState<GameTypeFilter>(initialFilter ?? 'all');
 
   useEffect(() =>
   {

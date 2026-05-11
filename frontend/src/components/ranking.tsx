@@ -12,16 +12,17 @@ interface RankingProps
 {
   onBack: () => void;
   apiUrl: string;
+  initialFilter?: GameTypeFilter;
 }
 
-type GameTypeFilter = 'all' | 'NUMBER_GUESS' | 'VS_GUESS' | 'CARD_GUESS';
+export type GameTypeFilter = 'all' | 'NUMBER_GUESS' | 'VS_GUESS' | 'CARD_GUESS';
 
 const TABS: { label: string; value: GameTypeFilter }[] =
 [
-  { label: '🌌 Galáxia',          value: 'all'          },
-  { label: '📡 Batalha de Sinais', value: 'VS_GUESS'     },
-  { label: '🔭 Operação Resgate',  value: 'NUMBER_GUESS' },
-  { label: '🃏 Jogo das Cartas',   value: 'CARD_GUESS'   },
+  { label: '🌌 Galáxia',          value: 'all'            },
+  { label: '📡 Batalha de Sinais', value: 'VS_GUESS'      },
+  { label: '🔭 Operação Resgate',  value: 'NUMBER_GUESS'  },
+  { label: '🌕 Mapas Estrelares - menor tempo e menos erros', value: 'CARD_GUESS'   },
 ];
 
 const BG = 'radial-gradient(ellipse at 50% 0%, rgba(6,182,212,0.12) 0%, transparent 50%), linear-gradient(180deg, #020818 0%, #0a0f1e 100%)';
@@ -32,7 +33,7 @@ const SUBTITULO: Record<GameTypeFilter, string> =
   all:          '🌌 Ranking Galáctico — todos os astronautas',
   VS_GUESS:     '📡 Batalha de Sinais — ambos se cadastram ao final',
   NUMBER_GUESS: '🔭 Operação Resgate — missões solo',
-  CARD_GUESS:   '🃏 Jogo das Cartas',
+  CARD_GUESS:   '🌕 Mapas Estrelares - joho da memória',
 };
 
 const BADGE_LABEL: Record<GameTypeFilter, string> =
@@ -40,15 +41,15 @@ const BADGE_LABEL: Record<GameTypeFilter, string> =
   all:          '🌌 Geral',
   VS_GUESS:     '📡 Batalha',
   NUMBER_GUESS: '🔭 Resgate',
-  CARD_GUESS:   '🃏 Cartas',
+  CARD_GUESS:   '🌕 Mapas Estrelares',
 };
 
-export function Ranking({ onBack, apiUrl }: RankingProps)
+export function Ranking({ onBack, apiUrl, initialFilter }: RankingProps)
 {
   const [ranking, setRanking] = useState<RankingEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro]       = useState(false);
-  const [filtro, setFiltro]   = useState<GameTypeFilter>('all');
+  const [filtro, setFiltro]   = useState<GameTypeFilter>(initialFilter ?? 'all');
 
   useEffect(() =>
   {
@@ -118,23 +119,26 @@ export function Ranking({ onBack, apiUrl }: RankingProps)
         {/* Lista */}
         <div className="w-full rounded-2xl overflow-hidden" style={{ background: '#0c1729', border: '1px solid rgba(6,182,212,0.15)' }}>
           {loading &&
-          (
-            <div className="p-16 text-center text-slate-500 text-sm">🛰️ Carregando transmissão...</div>
-          )}
+            (
+              <div className="p-16 text-center text-slate-500 text-sm">🛰️ Carregando transmissão...</div>
+            )
+          }
           {erro && !loading &&
-          (
-            <div className="p-16 text-center text-red-400 text-sm">
+            (
+              <div className="p-16 text-center text-red-400 text-sm">
               Falha na transmissão. Verifique a conexão.
-            </div>
-          )}
+              </div>
+            )
+          }
           {!loading && !erro && ranking.length === 0 &&
-          (
-            <div className="p-16 text-center">
+            (
+              <div className="p-16 text-center">
               <div className="text-4xl mb-3">🌌</div>
               <p className="text-slate-500 text-sm">Nenhuma missão registrada ainda.</p>
               <p className="text-slate-600 text-xs mt-1">Complete uma missão para aparecer aqui!</p>
-            </div>
-          )}
+              </div>
+            )
+          }
           {!loading && !erro && ranking.length > 0 &&
           (
             <div className="divide-y divide-white/5">
