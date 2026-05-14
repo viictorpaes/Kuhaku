@@ -47,7 +47,11 @@ export function App()
     setVsRoundResults([]);
     const isVs = modo === 'vs';
     const isMemoria = modo === 'memoria';
-    const id = await criarJogo(config.dificuldade, isVs ? 'VS_GUESS' : isMemoria ? 'CARD_GUESS' : undefined);
+    const isLogica = modo === 'logica';
+    const id = await criarJogo(
+      config.dificuldade,
+      isVs ? 'VS_GUESS' : isMemoria ? 'CARD_GUESS' : isLogica ? 'LOGIC_PUZZLE' : undefined,
+    );
     setGameId(id);
     setTela('game');
   }, [modo]);
@@ -76,7 +80,9 @@ export function App()
 
   const novoJogoSolo = useCallback(async () =>
   {
-    const gameType = modo === 'memoria' ? 'CARD_GUESS' : undefined;
+    const gameType =
+      modo === 'memoria' ? 'CARD_GUESS' :
+      modo === 'logica'  ? 'LOGIC_PUZZLE' : undefined;
     const id = await criarJogo(dificuldade!, gameType);
     setGameId(id);
   }, [dificuldade, modo]);

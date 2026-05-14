@@ -1,11 +1,136 @@
 import { useState, useRef, useEffect } from 'react';
 import type { Dificuldade, Modo, Palpite, Direcao } from '../types';
-import 
+import
 {
   RANGE_LABEL, DIF_LABEL, DIF_COLOR,
   MAX_TENTATIVAS_SOLO, MAX_TENTATIVAS_VS, TOTAL_ROUNDS_VS, RANGE_MAX,
-  MEMORIA_GRID,
+  MEMORIA_GRID, LOGICA_CONFIG,
 } from '../constants';
+
+// ─── MOTOR DE LÓGICA PROPOSICIONAL ────────────────────────────────────────────
+
+type Expr =
+  | { tipo: 'atomo'; nome: 'P' | 'Q' | 'R' }
+  | { tipo: 'nao'; expr: Expr }
+  | { tipo: 'e' | 'ou' | 'implica' | 'sse'; esq: Expr; dir: Expr };
+
+type Vals = { P: boolean; Q: boolean; R: boolean };
+
+function avaliar(e: Expr, v: Vals): boolean {
+  switch (e.tipo) {
+    case 'atomo':   return v[e.nome];
+    case 'nao':     return !avaliar(e.expr, v);
+    case 'e':       return avaliar(e.esq, v) && avaliar(e.dir, v);
+    case 'ou':      return avaliar(e.esq, v) || avaliar(e.dir, v);
+    case 'implica': return !avaliar(e.esq, v) || avaliar(e.dir, v);
+    case 'sse':     return avaliar(e.esq, v) === avaliar(e.dir, v);
+  }
+}
+
+type Classificacao = 'TAUTOLOGIA' | 'CONTRADIÇÃO' | 'CONTINGÊNCIA';
+
+function classificar(e: Expr): Classificacao {
+  let temVerd = false, temFalso = false;
+  for (const P of [false, true])
+    for (const Q of [false, true])
+      for (const R of [false, true]) {
+        if (avaliar(e, { P, Q, R })) temVerd = true;
+        else temFalso = true;
+      }
+  if (!temFalso) return 'TAUTOLOGIA';
+  if (!temVerd)  return 'CONTRADIÇÃO';
+  return 'CONTINGÊNCIA';
+}
+
+// ── construtores ──────────────────────────────────────────────────────────────
+const P: Expr = { tipo: 'atomo', nome: 'P' };
+const Q: Expr = { tipo: 'atomo', nome: 'Q' };
+const R: Expr = { tipo: 'atomo', nome: 'R' };
+const NAO  = (x: Expr): Expr                 => ({ tipo: 'nao',     expr: x    });
+const E    = (l: Expr, r: Expr): Expr        => ({ tipo: 'e',       esq: l, dir: r });
+const OU   = (l: Expr, r: Expr): Expr        => ({ tipo: 'ou',      esq: l, dir: r });
+const IMP  = (l: Expr, r: Expr): Expr        => ({ tipo: 'implica', esq: l, dir: r });
+const SSE  = (l: Expr, r: Expr): Expr        => ({ tipo: 'sse',     esq: l, dir: r });
+
+// ── banco de questões ─────────────────────────────────────────────────────────
+interface ModeloQuestao {
+  formula: string;
+  expr: Expr;
+  usaR: boolean;
+  topico: string;
+  conectivos: string;
+}
+
+const MODELOS: ModeloQuestao[] = [
+  // FÁCIL — P, Q com ∧ ∨ ¬
+  { formula: 'P ∧ Q',      expr: E(P,Q),             usaR: false, topico: 'Conjunção (∧)',                 conectivos: '∧' },
+  { formula: 'P ∨ Q',      expr: OU(P,Q),             usaR: false, topico: 'Disjunção (∨)',                 conectivos: '∨' },
+  { formula: '¬P',          expr: NAO(P),              usaR: false, topico: 'Negação (¬)',                   conectivos: '¬' },
+  { formula: '¬Q',          expr: NAO(Q),              usaR: false, topico: 'Negação (¬)',                   conectivos: '¬' },
+  { formula: '¬P ∧ Q',      expr: E(NAO(P),Q),        usaR: false, topico: 'Conjunção com Negação',         conectivos: '∧ ¬' },
+  { formula: 'P ∨ ¬Q',      expr: OU(P,NAO(Q)),       usaR: false, topico: 'Disjunção com Negação',         conectivos: '∨ ¬' },
+  { formula: '¬P ∨ ¬Q',     expr: OU(NAO(P),NAO(Q)),  usaR: false, topico: 'Disjunção de Negações',         conectivos: '∨ ¬' },
+  { formula: '¬(P ∧ Q)',    expr: NAO(E(P,Q)),         usaR: false, topico: 'Negação de Conjunção',          conectivos: '¬ ∧' },
+  { formula: '¬(P ∨ Q)',    expr: NAO(OU(P,Q)),        usaR: false, topico: 'Negação de Disjunção',          conectivos: '¬ ∨' },
+  { formula: '¬P ∧ ¬Q',     expr: E(NAO(P),NAO(Q)),   usaR: false, topico: 'Conjunção de Negações',         conectivos: '∧ ¬' },
+  { formula: 'P ∧ ¬P',      expr: E(P,NAO(P)),         usaR: false, topico: 'Contradição Clássica',          conectivos: '∧ ¬' },
+  { formula: 'P ∨ ¬P',      expr: OU(P,NAO(P)),        usaR: false, topico: 'Tautologia Clássica',           conectivos: '∨ ¬' },
+  // MÉDIO — adiciona R e →
+  { formula: 'P → Q',        expr: IMP(P,Q),                      usaR: false, topico: 'Implicação (→)',              conectivos: '→' },
+  { formula: '¬P → Q',       expr: IMP(NAO(P),Q),                 usaR: false, topico: 'Implicação com Negação',      conectivos: '→ ¬' },
+  { formula: 'P → ¬Q',       expr: IMP(P,NAO(Q)),                 usaR: false, topico: 'Implicação com Negação',      conectivos: '→ ¬' },
+  { formula: '¬P → ¬Q',      expr: IMP(NAO(P),NAO(Q)),            usaR: false, topico: 'Inversão da Implicação',      conectivos: '→ ¬' },
+  { formula: 'P → P',        expr: IMP(P,P),                      usaR: false, topico: 'Tautologia por Implicação',   conectivos: '→' },
+  { formula: '(P ∧ Q) → P',  expr: IMP(E(P,Q),P),                 usaR: false, topico: 'Simplificação (Tautologia)',  conectivos: '→ ∧' },
+  { formula: '(P ∧ Q) → R',  expr: IMP(E(P,Q),R),                 usaR: true,  topico: 'Implicação com Conjunção',    conectivos: '→ ∧' },
+  { formula: 'P → (Q ∨ R)',  expr: IMP(P,OU(Q,R)),                usaR: true,  topico: 'Implicação com Disjunção',    conectivos: '→ ∨' },
+  { formula: 'P ∧ (Q ∨ R)',  expr: E(P,OU(Q,R)),                  usaR: true,  topico: 'Distributividade',            conectivos: '∧ ∨' },
+  { formula: '(P ∨ Q) ∧ R',  expr: E(OU(P,Q),R),                  usaR: true,  topico: 'Distributividade',            conectivos: '∨ ∧' },
+  // DIFÍCIL — adiciona ↔ e aninhamentos
+  { formula: 'P ↔ Q',                          expr: SSE(P,Q),                                       usaR: false, topico: 'Bicondicional (↔)',              conectivos: '↔' },
+  { formula: 'P ↔ ¬Q',                         expr: SSE(P,NAO(Q)),                                  usaR: false, topico: 'Bicondicional com Negação',       conectivos: '↔ ¬' },
+  { formula: 'P ↔ ¬P',                         expr: SSE(P,NAO(P)),                                  usaR: false, topico: 'Contradição Bicondicional',       conectivos: '↔ ¬' },
+  { formula: '(P → Q) ↔ (¬Q → ¬P)',            expr: SSE(IMP(P,Q),IMP(NAO(Q),NAO(P))),               usaR: false, topico: 'Contrapositiva (Tautologia)',      conectivos: '↔ → ¬' },
+  { formula: '(P → Q) ↔ (¬P ∨ Q)',             expr: SSE(IMP(P,Q),OU(NAO(P),Q)),                    usaR: false, topico: 'Implicação Material (Tautologia)', conectivos: '↔ → ∨ ¬' },
+  { formula: '(P ↔ Q) ↔ ((P → Q) ∧ (Q → P))', expr: SSE(SSE(P,Q),E(IMP(P,Q),IMP(Q,P))),            usaR: false, topico: 'Equivalência Lógica (Tautologia)', conectivos: '↔ → ∧' },
+  { formula: '(P → Q) ∧ (Q → R)',              expr: E(IMP(P,Q),IMP(Q,R)),                          usaR: true,  topico: 'Transitividade da Implicação',     conectivos: '→ ∧' },
+  { formula: 'P ∧ (P → Q)',                    expr: E(P,IMP(P,Q)),                                 usaR: false, topico: 'Modus Ponens (parcial)',           conectivos: '∧ →' },
+];
+
+const FACIL_MAX  = 12;
+const MEDIO_MAX  = 22;
+
+interface Questao {
+  modelo: ModeloQuestao;
+  vals: Vals;
+  resposta: boolean;
+  classificacao: Classificacao;
+}
+
+function embaralhar<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function gerarQuestoes(dificuldade: Dificuldade): Questao[] {
+  const total = LOGICA_CONFIG[dificuldade].count;
+  const maxIdx = dificuldade === 'EASY' ? FACIL_MAX : dificuldade === 'MEDIUM' ? MEDIO_MAX : MODELOS.length;
+  const selecionados = embaralhar(MODELOS.slice(0, maxIdx)).slice(0, total);
+  return selecionados.map((modelo) => {
+    const vals: Vals = { P: Math.random() < 0.5, Q: Math.random() < 0.5, R: Math.random() < 0.5 };
+    return { modelo, vals, resposta: avaliar(modelo.expr, vals), classificacao: classificar(modelo.expr) };
+  });
+}
+
+const META_CLASSE: Record<Classificacao, { cor: string; borda: string; fundo: string; rotulo: string; emoji: string; dica: string }> = {
+  TAUTOLOGIA:   { cor: '#fbbf24', borda: 'rgba(251,191,36,0.35)',  fundo: 'rgba(251,191,36,0.08)',  rotulo: 'TAUTOLOGIA',   emoji: '🌟', dica: 'Sinal sempre ATIVO no cosmos — verdadeiro em qualquer frequência' },
+  CONTRADIÇÃO:  { cor: '#f87171', borda: 'rgba(248,113,113,0.35)', fundo: 'rgba(248,113,113,0.08)', rotulo: 'CONTRADIÇÃO',  emoji: '🕳️', dica: 'Buraco negro lógico — sinal sempre INATIVO em qualquer frequência' },
+  CONTINGÊNCIA: { cor: '#4ade80', borda: 'rgba(74,222,128,0.35)',  fundo: 'rgba(74,222,128,0.08)',  rotulo: 'CONTINGÊNCIA', emoji: '🪐', dica: 'Sinal variável — depende das frequências de P, Q e R'               },
+};
 
 interface GameProps 
 {
@@ -1165,11 +1290,322 @@ export function VsResultScreen({ p1, p2, finalScore, vsRoundResults, apiUrl, onJ
   );
 }
 
+// ─── PROTOCOLO LÓGICO — JOGO DE LÓGICA PROPOSICIONAL ────────────────────────
+
+function LogicaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, onNovoJogo }: GameProps)
+{
+  const [questoes] = useState<Questao[]>(() => gerarQuestoes(dificuldade));
+  const [atual, setAtual] = useState(0);
+  const [respondido, setRespondido] = useState<boolean | null>(null);
+  const [erros, setErros] = useState(0);
+  const [acertos, setAcertos] = useState(0);
+  const [encerrado, setEncerrado] = useState(false);
+  const [finalizando, setFinalizando] = useState(false);
+  const [saveNome, setSaveNome] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [savedPosition, setSavedPosition] = useState<{ position: number | null; total: number } | null>(null);
+  const [saveErro, setSaveErro] = useState('');
+  const finishRef = useRef(false);
+
+  const questao = questoes[atual];
+  const total = questoes.length;
+  const meta = META_CLASSE[questao?.classificacao ?? 'CONTINGÊNCIA'];
+
+  const acertou = respondido !== null && respondido === questao.resposta;
+
+  const responder = (escolha: boolean) => {
+    if (respondido !== null) return;
+    setRespondido(escolha);
+    if (escolha !== questao.resposta) setErros((e) => e + 1);
+    else setAcertos((a) => a + 1);
+  };
+
+  const proximo = async () => {
+    if (atual + 1 >= total) {
+      setEncerrado(true);
+      if (!finishRef.current) {
+        finishRef.current = true;
+        const totalErros = erros + (respondido !== questao.resposta ? 1 : 0);
+        fetch(`${apiUrl}/api/games/${gameId}/finish`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ won: true, mistakes: totalErros }),
+        }).catch(() => {});
+      }
+    } else {
+      setAtual((i) => i + 1);
+      setRespondido(null);
+    }
+  };
+
+  const handleNovo = async () => {
+    setFinalizando(true);
+    try { await onNovoJogo(); } finally { setFinalizando(false); }
+  };
+
+  const handleSalvar = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const nome = saveNome.trim();
+    if (!nome) { setSaveErro('Digite um apelido de astronauta'); return; }
+    setSaving(true);
+    setSaveErro('');
+    try {
+      const res = await fetch(`${apiUrl}/api/games/${gameId}/save`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: nome }),
+      });
+      const data = await res.json();
+      if (data.saved) {
+        setSavedPosition({ position: data.position ?? null, total: data.total });
+        onOpenRanking('LOGIC_PUZZLE');
+      } else {
+        setSaveErro('Não foi possível salvar. Tente novamente.');
+      }
+    } catch {
+      setSaveErro('Erro de conexão com a estação');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const vLabel = (b: boolean) => b ? 'VERDADEIRA' : 'FALSA';
+  const vColor = (b: boolean) => b ? '#4ade80' : '#f87171';
+
+  // ── Tela de missão concluída ───────────────────────────────────────────────
+  if (encerrado) {
+    const falhas = erros;
+    const decodificadas = acertos;
+    const perfeita = falhas === 0;
+    return (
+      <div className="min-h-screen text-white flex flex-col" style={{ background: BG, fontFamily: "'Inter', system-ui, sans-serif" }}>
+        <GameHeader onBack={onBack} onOpenRanking={onOpenRanking} />
+        <main className="flex-1 flex flex-col items-center justify-center px-4 py-8">
+          <div className="w-full max-w-md bg-[#0c1729] border border-white/10 rounded-3xl p-8 text-center shadow-2xl">
+            <div className="text-5xl mb-4">{perfeita ? '🏆' : decodificadas >= total / 2 ? '🛸' : '📡'}</div>
+            <h2 className="text-2xl font-black text-white mb-1">
+              {perfeita ? 'Missão Perfeita, Astronauta!' : 'Protocolo Concluído!'}
+            </h2>
+            <p className="text-slate-400 text-sm mb-6">
+              {p1} · {LOGICA_CONFIG[dificuldade].label} · Protocolo Lógico
+            </p>
+
+            <div className="flex gap-3 mb-6">
+              <div className="flex-1 rounded-2xl p-4" style={{ background: 'rgba(74,222,128,0.10)', border: '1px solid rgba(74,222,128,0.30)' }}>
+                <p className="text-3xl font-black text-green-400">{decodificadas}</p>
+                <p className="text-xs text-slate-400 mt-1">📡 Decodificadas</p>
+              </div>
+              <div className="flex-1 rounded-2xl p-4"
+                style={falhas > 0
+                  ? { background: 'rgba(248,113,113,0.10)', border: '1px solid rgba(248,113,113,0.30)' }
+                  : { background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.10)' }}>
+                <p className="text-3xl font-black" style={{ color: falhas > 0 ? '#f87171' : '#94a3b8' }}>{falhas}</p>
+                <p className="text-xs text-slate-400 mt-1">🔇 Falhas</p>
+              </div>
+              <div className="flex-1 rounded-2xl p-4" style={{ background: 'rgba(34,197,94,0.10)', border: '1px solid rgba(34,197,94,0.25)' }}>
+                <p className="text-3xl font-black text-green-300">{total}</p>
+                <p className="text-xs text-slate-400 mt-1">🌌 Transmissões</p>
+              </div>
+            </div>
+
+            <button
+              onClick={handleNovo}
+              disabled={finalizando}
+              className="w-full py-3 rounded-xl font-bold text-sm text-white transition hover:opacity-90 mb-3 disabled:opacity-50"
+              style={{ background: 'linear-gradient(135deg, #134e1e, #22c55e)', boxShadow: '0 4px 16px rgba(34,197,94,0.25)' }}
+            >
+              {finalizando ? '🛸 Iniciando...' : '🔄 Nova missão lógica'}
+            </button>
+
+            {savedPosition ? (
+              <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-center">
+                {savedPosition.position != null
+                  ? <><p className="text-amber-300 font-bold text-sm">🏆 #{savedPosition.position} de {savedPosition.total} astronautas!</p>
+                     <button onClick={() => onOpenRanking('LOGIC_PUZZLE')} className="mt-1 text-xs text-amber-400 underline underline-offset-2 hover:text-amber-300 transition">Ver ranking completo →</button></>
+                  : <p className="text-emerald-300 font-bold text-sm">✅ Resultado salvo na base espacial!</p>
+                }
+              </div>
+            ) : (
+              <form onSubmit={handleSalvar}>
+                <p className="text-slate-400 text-xs mb-2">Registrar no Hall da Fama:</p>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={saveNome}
+                    onChange={(e) => setSaveNome(e.target.value)}
+                    placeholder="Apelido do astronauta"
+                    maxLength={30}
+                    className="flex-1 bg-white/5 border border-white/15 focus:border-green-500 rounded-xl px-3 py-2 text-sm text-white focus:outline-none transition"
+                  />
+                  <button
+                    type="submit"
+                    disabled={saving || !saveNome.trim()}
+                    className="px-4 py-2 rounded-xl font-bold text-xs text-white disabled:opacity-40 transition hover:opacity-90"
+                    style={{ background: 'linear-gradient(135deg, #134e1e, #22c55e)' }}
+                  >
+                    {saving ? '...' : '💾 Salvar'}
+                  </button>
+                </div>
+                {saveErro && <p className="text-red-400 text-xs mt-1">{saveErro}</p>}
+              </form>
+            )}
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // ── Transmissão atual ──────────────────────────────────────────────────────
+  return (
+    <div className="min-h-screen text-white flex flex-col" style={{ background: BG, fontFamily: "'Inter', system-ui, sans-serif" }}>
+      <GameHeader onBack={onBack} onOpenRanking={onOpenRanking} />
+
+      {/* Barra de progresso */}
+      <div className="flex items-center gap-3 px-5 py-3 flex-wrap">
+        <span className="text-xs font-bold px-3 py-1.5 rounded-full border"
+          style={{ background: 'rgba(34,197,94,0.12)', borderColor: 'rgba(34,197,94,0.30)', color: '#4ade80' }}>
+          📡 Transmissão {atual + 1}/{total}
+        </span>
+        <span className="text-xs font-bold px-3 py-1.5 rounded-full border"
+          style={{ background: 'rgba(74,222,128,0.10)', borderColor: 'rgba(74,222,128,0.25)', color: '#4ade80' }}>
+          🛰️ {acertos} decodificadas
+        </span>
+        <span className="text-xs font-bold px-3 py-1.5 rounded-full border"
+          style={erros > 0
+            ? { background: 'rgba(248,113,113,0.10)', borderColor: 'rgba(248,113,113,0.30)', color: '#f87171' }
+            : { background: 'rgba(255,255,255,0.05)', borderColor: 'rgba(255,255,255,0.10)', color: '#94a3b8' }}>
+          🔇 {erros} falhas
+        </span>
+        <div className="ml-auto flex-1 max-w-[120px] h-1.5 bg-white/10 rounded-full overflow-hidden">
+          <div className="h-full rounded-full transition-all" style={{ width: `${(atual / total) * 100}%`, background: '#22c55e' }} />
+        </div>
+      </div>
+
+      <main className="flex-1 flex flex-col items-center px-4 pb-8 pt-2 max-w-lg mx-auto w-full gap-4">
+
+        {/* Tipo de sinal cósmico */}
+        <div className="w-full rounded-2xl p-4 border" style={{ background: meta.fundo, borderColor: meta.borda }}>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-lg">{meta.emoji}</span>
+            <span className="text-xs font-black px-2 py-0.5 rounded-full" style={{ background: meta.borda, color: meta.cor }}>
+              {meta.rotulo}
+            </span>
+            <span className="text-xs font-medium"
+              style={{ color: questao.modelo.conectivos.includes('↔') ? '#a78bfa' : questao.modelo.conectivos.includes('→') ? '#c084fc' : '#67e8f9' }}>
+              {questao.modelo.topico}
+            </span>
+          </div>
+          <p className="text-xs mt-1 font-medium" style={{ color: meta.cor }}>
+            {meta.dica}
+          </p>
+        </div>
+
+        {/* Frequências das proposições */}
+        <div className="w-full rounded-2xl p-4 border border-white/10" style={{ background: '#080f1e' }}>
+          <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-3">
+            🔭 Frequências das Proposições
+          </p>
+          <div className="flex gap-3 flex-wrap">
+            {(['P', 'Q', ...(questao.modelo.usaR ? ['R'] : [])] as ('P' | 'Q' | 'R')[]).map((v) => (
+              <div key={v} className="flex items-center gap-2 px-3 py-2 rounded-xl border"
+                style={{
+                  background: questao.vals[v] ? 'rgba(74,222,128,0.12)' : 'rgba(248,113,113,0.10)',
+                  borderColor: questao.vals[v] ? 'rgba(74,222,128,0.35)' : 'rgba(248,113,113,0.30)',
+                }}>
+                <span className="font-black text-white text-sm">{v}</span>
+                <span className="text-[10px] font-bold" style={{ color: vColor(questao.vals[v]) }}>= {vLabel(questao.vals[v])}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Sinal cifrado */}
+        <div className="w-full rounded-2xl p-6 border border-white/10 text-center" style={{ background: '#0a1428' }}>
+          <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-3">
+            🌌 Sinal Cifrado
+          </p>
+          <p className="text-3xl font-black tracking-wide" style={{ color: '#e2e8f0', fontFamily: 'monospace' }}>
+            {questao.modelo.formula}
+          </p>
+          <p className="text-xs text-slate-500 mt-2">Operadores lógicos: {questao.modelo.conectivos}</p>
+        </div>
+
+        {/* Decisão do astronauta */}
+        {respondido === null ? (
+          <div className="w-full">
+            <p className="text-center text-sm text-slate-400 mb-3">
+              Astronauta, esta transmissão é:
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => responder(true)}
+                className="flex-1 py-4 rounded-2xl font-black text-base transition-all hover:scale-[1.03] active:scale-95 flex flex-col items-center gap-1"
+                style={{ background: 'rgba(74,222,128,0.15)', border: '2px solid rgba(74,222,128,0.50)', color: '#4ade80' }}
+              >
+                <span className="text-xl">📡</span>
+                <span>VERDADEIRA</span>
+              </button>
+              <button
+                onClick={() => responder(false)}
+                className="flex-1 py-4 rounded-2xl font-black text-base transition-all hover:scale-[1.03] active:scale-95 flex flex-col items-center gap-1"
+                style={{ background: 'rgba(248,113,113,0.15)', border: '2px solid rgba(248,113,113,0.50)', color: '#f87171' }}
+              >
+                <span className="text-xl">🔇</span>
+                <span>FALSA</span>
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="w-full">
+            {/* Feedback espacial */}
+            <div className="rounded-2xl p-4 mb-3 text-center border"
+              style={acertou
+                ? { background: 'rgba(74,222,128,0.10)', borderColor: 'rgba(74,222,128,0.40)' }
+                : { background: 'rgba(248,113,113,0.10)', borderColor: 'rgba(248,113,113,0.40)' }}>
+              <p className="text-xl font-black mb-1" style={{ color: acertou ? '#4ade80' : '#f87171' }}>
+                {acertou ? '📡 Sinal decodificado!' : '🔇 Falha na decodificação!'}
+              </p>
+              <p className="text-sm text-slate-300">
+                A transmissão é{' '}
+                <span className="font-black" style={{ color: vColor(questao.resposta) }}>{vLabel(questao.resposta)}</span>
+                {questao.classificacao === 'TAUTOLOGIA' && (
+                  <span className="block text-xs text-yellow-400 mt-1">
+                    🌟 Tautologia — sinal sempre ativo, verdadeiro em qualquer frequência!
+                  </span>
+                )}
+                {questao.classificacao === 'CONTRADIÇÃO' && (
+                  <span className="block text-xs text-red-400 mt-1">
+                    🕳️ Contradição — buraco negro lógico, falso em qualquer frequência!
+                  </span>
+                )}
+                {questao.classificacao === 'CONTINGÊNCIA' && (
+                  <span className="block text-xs text-slate-400 mt-1">
+                    🪐 Contingência — substitua P, Q{questao.modelo.usaR ? ', R' : ''} e avalie passo a passo
+                  </span>
+                )}
+              </p>
+            </div>
+
+            <button
+              onClick={proximo}
+              className="w-full py-4 rounded-2xl font-black text-white text-base transition hover:opacity-90 active:scale-[0.98]"
+              style={{ background: 'linear-gradient(135deg, #134e1e, #22c55e)', boxShadow: '0 4px 16px rgba(34,197,94,0.20)' }}
+            >
+              {atual + 1 >= total ? '🏁 Ver resultado da missão' : '🛸 Próxima transmissão →'}
+            </button>
+          </div>
+        )}
+      </main>
+    </div>
+  );
+}
+
 // ─── EXPORT ───────────────────────────────────────────────────────────────────
 
 export function Game(props: GameProps)
 {
   if (props.modo === 'vs') return <VsGame {...props} />;
   if (props.modo === 'memoria') return <MemoriaGame {...props} />;
+  if (props.modo === 'logica') return <LogicaGame {...props} />;
   return <SoloGame {...props} />;
 }

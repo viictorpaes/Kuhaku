@@ -126,7 +126,7 @@ Kuhaku/
 
 <table align="center" width="780">
   <tr><th align="center">🏠 Tela Inicial</th></tr>
-  <tr><td align="center"><b>Página de entrada do Kuhaku — o astronauta escolhe sua missão entre os três modos de jogo disponíveis.</b></td></tr>
+  <tr><td align="center"><b>Página de entrada do Kuhaku — o astronauta escolhe sua missão entre os quatro modos de jogo disponíveis.</b></td></tr>
   <tr><td align="center"><img src="img/telainicial.jpeg" width="750" alt="Tela Inicial"/></td></tr>
 </table>
 
@@ -157,8 +157,15 @@ Kuhaku/
 <br>
 
 <table align="center" width="780">
+  <tr><th align="center">🧠 Protocolo Lógico</th></tr>
+  <tr><td align="center"><b>A base espacial intercepta transmissões cifradas do cosmos. O astronauta decodifica cada sinal lógico avaliando fórmulas proposicionais (∧ ∨ ¬ → ↔) como VERDADEIRAS ou FALSAS. Cada transmissão revela seu tipo — 🌟 Tautologia (sempre ativa), 🕳️ Contradição (buraco negro lógico) ou 🪐 Contingência (sinal variável). Dificuldades: 🌍 Cadete (8 transmissões · P,Q · ∧∨¬), 🚀 Piloto (10 · P,Q,R · ∧∨¬→), 👨‍🚀 Comandante (12 · todos os operadores · ∧∨¬→↔).</b></td></tr>
+</table>
+
+<br>
+
+<table align="center" width="780">
   <tr><th align="center">🏆 Hall da Fama</th></tr>
-  <tr><td align="center"><b>Ranking Galáctico com a pontuação de todos os astronautas por modalidade — filtre por Batalha de Sinais, Operação Resgate ou Mapas Estelares.</b></td></tr>
+  <tr><td align="center"><b>Ranking Galáctico com a pontuação de todos os astronautas por modalidade — filtre por Batalha de Sinais, Operação Resgate, Mapas Estelares ou Protocolo Lógico.</b></td></tr>
   <tr><td align="center"><img src="img/ranking_halldafama2.jpeg" width="750" alt="Hall da Fama"/></td></tr>
 </table>
 
@@ -184,7 +191,7 @@ docker compose up db -d
 # 2. Entra no backend e prepara o banco
 cd backend
 npm run prisma:generate # gera o Prisma Client
-npm run prisma:migrate:deploy # cria as tabelas (inclui GameType: NUMBER_GUESS | VS_GUESS | CARD_GUESS)
+npm run prisma:migrate:deploy # cria as tabelas (inclui GameType: NUMBER_GUESS | VS_GUESS | CARD_GUESS | LOGIC_PUZZLE)
 npm run prisma:seed # popula usuários iniciais (admin, dev, user)
 
 # OPCIONAL: popula dados de teste com usuários e partidas

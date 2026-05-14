@@ -47,9 +47,9 @@ export class GameController
 
   
   @Post('games/:id/finish')
-  async encerrarJogo(@Param('id') id: string, @Body() body?: { won?: boolean })
+  async encerrarJogo(@Param('id') id: string, @Body() body?: { won?: boolean; mistakes?: number })
   {
-    return this.gameService.finishGame(id, body?.won);
+    return this.gameService.finishGame(id, body?.won, body?.mistakes);
   }
 
   @Post('games/:id/save')

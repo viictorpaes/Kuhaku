@@ -15,14 +15,15 @@ interface RankingProps
   initialFilter?: GameTypeFilter;
 }
 
-export type GameTypeFilter = 'all' | 'NUMBER_GUESS' | 'VS_GUESS' | 'CARD_GUESS';
+export type GameTypeFilter = 'all' | 'NUMBER_GUESS' | 'VS_GUESS' | 'CARD_GUESS' | 'LOGIC_PUZZLE';
 
 const TABS: { label: string; value: GameTypeFilter }[] =
 [
-  { label: '🌌 Galáxia',          value: 'all'            },
-  { label: '📡 Batalha de Sinais', value: 'VS_GUESS'      },
-  { label: '🔭 Operação Resgate',  value: 'NUMBER_GUESS'  },
-  { label: '🌕 Mapas Estrelares - menor tempo e menos erros', value: 'CARD_GUESS'   },
+  { label: '🌌 Galáxia',           value: 'all'            },
+  { label: '📡 Batalha de Sinais', value: 'VS_GUESS'       },
+  { label: '🔭 Operação Resgate',  value: 'NUMBER_GUESS'   },
+  { label: '🌕 Mapas Estrelares',  value: 'CARD_GUESS'     },
+  { label: '🧠 Protocolo Lógico',  value: 'LOGIC_PUZZLE'   },
 ];
 
 const BG = 'radial-gradient(ellipse at 50% 0%, rgba(6,182,212,0.12) 0%, transparent 50%), linear-gradient(180deg, #020818 0%, #0a0f1e 100%)';
@@ -33,7 +34,8 @@ const SUBTITULO: Record<GameTypeFilter, string> =
   all:          '🌌 Ranking Galáctico — todos os astronautas',
   VS_GUESS:     '📡 Batalha de Sinais — ambos se cadastram ao final',
   NUMBER_GUESS: '🔭 Operação Resgate — missões solo',
-  CARD_GUESS:   '🌕 Mapas Estrelares - joho da memória',
+  CARD_GUESS:   '🌕 Mapas Estelares — jogo da memória',
+  LOGIC_PUZZLE: '🧠 Protocolo Lógico — menor número de erros',
 };
 
 const BADGE_LABEL: Record<GameTypeFilter, string> =
@@ -41,8 +43,10 @@ const BADGE_LABEL: Record<GameTypeFilter, string> =
   all:          '🌌 Geral',
   VS_GUESS:     '📡 Batalha',
   NUMBER_GUESS: '🔭 Resgate',
-  CARD_GUESS:   '🌕 Mapas Estrelares',
+  CARD_GUESS:   '🌕 Mapas',
+  LOGIC_PUZZLE: '🧠 Protocolo',
 };
+
 
 export function Ranking({ onBack, apiUrl, initialFilter }: RankingProps)
 {
@@ -162,10 +166,12 @@ export function Ranking({ onBack, apiUrl, initialFilter }: RankingProps)
                     </div>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="font-black text-lg" style={{ color: '#06b6d4' }}>
+                    <p className="font-black text-lg" style={{ color: filtro === 'LOGIC_PUZZLE' ? '#4ade80' : '#06b6d4' }}>
                       {(Math.round(entry.averageAttempts * 10) / 10).toFixed(1)}
                     </p>
-                    <p className="text-[10px] text-slate-500 uppercase tracking-wide">média</p>
+                    <p className="text-[10px] text-slate-500 uppercase tracking-wide">
+                      {filtro === 'LOGIC_PUZZLE' ? 'erros' : 'média'}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -173,7 +179,11 @@ export function Ranking({ onBack, apiUrl, initialFilter }: RankingProps)
           )}
         </div>
 
-        <p className="text-slate-600 text-xs mt-6">Menor média de tentativas = astronauta de elite</p>
+        <p className="text-slate-600 text-xs mt-6">
+          {filtro === 'LOGIC_PUZZLE'
+            ? 'Menor número de erros = astronauta de elite lógico'
+            : 'Menor média de tentativas = astronauta de elite'}
+        </p>
       </main>
     </div>
   );

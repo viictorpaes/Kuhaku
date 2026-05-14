@@ -38,9 +38,16 @@ export const DIF_COLOR: Record<Dificuldade, { bg: string; hover: string; btn: st
   HARD:   { bg: 'bg-violet-700',  hover: 'hover:bg-violet-600',  btn: 'bg-violet-700 hover:bg-violet-600'   },
 };
 
-export const MEMORIA_GRID: Record<Dificuldade, { cols: number; rows: number; label: string; pairs: number }> = 
+export const MEMORIA_GRID: Record<Dificuldade, { cols: number; rows: number; label: string; pairs: number }> =
 {
   EASY:   { cols: 4, rows: 4, label: '4×4', pairs: 8  },
   MEDIUM: { cols: 4, rows: 5, label: '4×5', pairs: 10 },
   HARD:   { cols: 6, rows: 6, label: '6×6', pairs: 18 },
+};
+
+export const LOGICA_CONFIG: Record<Dificuldade, { count: number; label: string; description: string }> =
+{
+  EASY:   { count: 8,  label: '🌍 Cadete',     description: 'P, Q · ∧ ∨ ¬ · 8 transmissões'            },
+  MEDIUM: { count: 10, label: '🚀 Piloto',      description: 'P, Q, R · ∧ ∨ ¬ → · 10 transmissões'    },
+  HARD:   { count: 12, label: '👨‍🚀 Comandante',  description: 'P, Q, R · ∧ ∨ ¬ → ↔ · 12 transmissões'  },
 };

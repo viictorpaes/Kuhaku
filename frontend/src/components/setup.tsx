@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Modo, Dificuldade, ConfigJogo } from '../types';
-import { RANGE_LABEL, DIF_LABEL, MAX_TENTATIVAS_SOLO, MEMORIA_GRID } from '../constants';
+import { RANGE_LABEL, DIF_LABEL, MAX_TENTATIVAS_SOLO, MEMORIA_GRID, LOGICA_CONFIG } from '../constants';
 
 interface SetupProps {
   modo: Modo;
@@ -264,8 +264,88 @@ function MemoriaSetup({ onStart, onBack, onOpenRanking }: SetupProps) {
   );
 }
 
+/** Protocolo Lógico setup */
+function LogicaSetup({ onStart, onBack, onOpenRanking }: SetupProps) {
+  const [loading, setLoading] = useState<Dificuldade | null>(null);
+
+  const handleStart = async (dif: Dificuldade) => {
+    setLoading(dif);
+    try {
+      await onStart({ dificuldade: dif, p1: 'Astronauta', p2: '' });
+    } finally {
+      setLoading(null);
+    }
+  };
+
+  const cards: { dif: Dificuldade; emoji: string; bg: string; shadow: string }[] = [
+    { dif: 'EASY',   emoji: '🌍', bg: '#0e3d1a', shadow: 'rgba(34,197,94,0.30)'   },
+    { dif: 'MEDIUM', emoji: '🚀', bg: '#1a380d', shadow: 'rgba(132,204,22,0.28)'  },
+    { dif: 'HARD',   emoji: '👨‍🚀', bg: '#0d2822', shadow: 'rgba(20,184,166,0.28)'  },
+  ];
+
+  const conectivos: { sym: string; nome: string }[] = [
+    { sym: '∧', nome: 'E (conjunção)' },
+    { sym: '∨', nome: 'OU (disjunção)' },
+    { sym: '¬', nome: 'NÃO (negação)' },
+    { sym: '→', nome: 'SE…ENTÃO (implicação)' },
+    { sym: '↔', nome: 'SSE (equivalência)' },
+  ];
+
+  return (
+    <div className="min-h-screen text-white flex flex-col" style={{ background: BG, fontFamily: "'Inter', system-ui, sans-serif" }}>
+      <GameHeader onBack={onBack} onOpenRanking={onOpenRanking} />
+
+      <div className="flex-1 flex flex-col items-center justify-center px-4 py-8">
+        <div className="w-20 h-20 rounded-full flex items-center justify-center text-3xl mb-5 shadow-lg"
+          style={{ background: 'linear-gradient(135deg, #134e1e, #22c55e)', boxShadow: '0 0 28px rgba(34,197,94,0.35)' }}>
+          🧠
+        </div>
+
+        <h1 className="text-3xl font-black text-white mb-1">Protocolo Lógico</h1>
+        <p className="text-slate-400 text-sm mb-4">Decodifique as transmissões lógicas do cosmos</p>
+
+        {/* Legenda dos operadores */}
+        <div className="flex flex-wrap gap-2 justify-center mb-8 max-w-sm">
+          {conectivos.map(({ sym, nome }) => (
+            <span key={sym} className="text-xs font-bold px-2.5 py-1 rounded-full"
+              style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.25)', color: '#4ade80' }}>
+              <span className="font-black">{sym}</span> {nome}
+            </span>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-3 gap-4 w-full max-w-lg">
+          {cards.map(({ dif, emoji, bg, shadow }) => {
+            const { label, description } = LOGICA_CONFIG[dif];
+            return (
+              <button
+                key={dif}
+                onClick={() => handleStart(dif)}
+                disabled={loading !== null}
+                className="rounded-2xl p-5 flex flex-col items-center justify-center gap-1 transition-all duration-200 hover:scale-105 hover:shadow-xl active:scale-95 disabled:opacity-70"
+                style={{ background: bg, border: '1px solid rgba(34,197,94,0.25)', boxShadow: `0 8px 24px ${shadow}` }}
+              >
+                <span className="text-2xl">{emoji}</span>
+                <span className="font-black text-white text-base mt-1">
+                  {loading === dif ? '🛸 ...' : label}
+                </span>
+                <span className="text-white/65 text-[10px] text-center leading-tight mt-0.5">{description}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        <p className="text-slate-600 text-xs mt-8 text-center max-w-sm">
+          Cada transmissão revela o tipo da fórmula (Tautologia · Contradição · Contingência). Deduza se é VERDADEIRA ou FALSA com as frequências dadas.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export function Setup(props: SetupProps) {
   if (props.modo === 'vs') return <VsSetup {...props} />;
   if (props.modo === 'memoria') return <MemoriaSetup {...props} />;
+  if (props.modo === 'logica') return <LogicaSetup {...props} />;
   return <SoloSetup {...props} />;
 }

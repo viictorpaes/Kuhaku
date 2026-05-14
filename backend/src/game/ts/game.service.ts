@@ -68,7 +68,7 @@ export class GameService
   {
     const gameType: GameType = dto.gameType ?? 'NUMBER_GUESS';
     const limit = getLimitByDifficulty(dto.difficulty);
-    const target = Math.floor(Math.random() * limit) + 1;
+    const target = gameType === 'LOGIC_PUZZLE' ? 0 : Math.floor(Math.random() * limit) + 1;
 
     if (dto.userId)
     {
@@ -145,7 +145,7 @@ export class GameService
 
   // ── salvar/encerrar partida ───────────────────────
 
-  async finishGame(gameId: string, won?: boolean): Promise<any>
+  async finishGame(gameId: string, won?: boolean, mistakes?: number): Promise<any>
   {
     const game = await this.prismaService.prisma.game.findUnique
     (
@@ -157,9 +157,11 @@ export class GameService
     if (!game)
         throw new NotFoundException('Jogo não encontrado ❌');
 
+    const gameType = (game as any).gameType as GameType ?? 'NUMBER_GUESS';
     const updateData: Record<string, any> = {};
     if (!game.endedAt) updateData.endedAt = new Date();
     if (won !== undefined) updateData.won = won;
+    if (gameType === 'LOGIC_PUZZLE' && mistakes !== undefined) updateData.attempts = mistakes;
 
     if (Object.keys(updateData).length > 0)
     {
@@ -172,7 +174,6 @@ export class GameService
       );
     }
 
-    const gameType = (game as any).gameType as GameType ?? 'NUMBER_GUESS';
     const finalWon = won !== undefined ? won : game.won;
 
     return {

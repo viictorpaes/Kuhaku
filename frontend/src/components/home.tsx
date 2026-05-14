@@ -107,6 +107,39 @@ export function Home({ onSelectMode, onOpenRanking }: HomeProps)
             </div>
           </button>
         </div>
+
+        {/* Protocolo Lógico — full width */}
+        <button
+          onClick={() => onSelectMode('logica')}
+          className="w-full text-left rounded-3xl overflow-hidden transition-all duration-200 hover:scale-[1.02] hover:shadow-2xl active:scale-[0.99]"
+          style={{ background: 'linear-gradient(135deg, #0d2b16 0%, #1a3a0d 50%, #0e2f1a 100%)', border: '1px solid rgba(34,197,94,0.30)', boxShadow: '0 8px 32px rgba(34,197,94,0.15)' }}
+        >
+          <div className="p-6 flex gap-4 items-start">
+            <div className="shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-xl" style={{ background: 'rgba(34,197,94,0.20)', border: '1px solid rgba(34,197,94,0.40)' }}>
+              🧠
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex gap-2 mb-2 flex-wrap">
+                <span className="inline-flex items-center gap-1 text-white text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wide" style={{ background: 'rgba(34,197,94,0.20)' }}>
+                  🌌 PROTOCOLO LÓGICO
+                </span>
+                <span className="inline-flex items-center text-white text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wide" style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.25)' }}>
+                  ∧ ∨ ¬ → ↔
+                </span>
+                <span className="inline-flex items-center text-white text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wide" style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.25)' }}>
+                  Solo
+                </span>
+              </div>
+              <h2 className="text-xl font-black text-white">Protocolo Lógico 🧠</h2>
+              <p className="text-white/75 text-sm mt-1 leading-relaxed">
+                A base espacial intercepta transmissões cifradas do cosmos. Decodifique cada sinal lógico — identifique Tautologias, Contradições e Contingências — e determine se a fórmula é VERDADEIRA ou FALSA!
+              </p>
+              <p className="text-white/55 text-xs mt-3 font-medium">
+                🌟 Tautologia &nbsp;·&nbsp; 🕳️ Contradição &nbsp;·&nbsp; 🪐 Contingência &nbsp;·&nbsp; Implicação &nbsp;·&nbsp; Equivalência
+              </p>
+            </div>
+          </div>
+        </button>
       </div>
 
       {/* Ranking button */}
