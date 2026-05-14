@@ -127,7 +127,7 @@ Kuhaku/
 <table align="center" width="780">
   <tr><th align="center">🏠 Tela Inicial</th></tr>
   <tr><td align="center"><b>Página de entrada do Kuhaku — o astronauta escolhe sua missão entre os quatro modos de jogo disponíveis.</b></td></tr>
-  <tr><td align="center"><img src="img/telainicial.jpeg" width="750" alt="Tela Inicial"/></td></tr>
+  <tr><td align="center"><img src="img/tela_inicial.jpeg" width="750" alt="Tela Inicial"/></td></tr>
 </table>
 
 <br>
@@ -158,7 +158,9 @@ Kuhaku/
 
 <table align="center" width="780">
   <tr><th align="center">🧠 Protocolo Lógico</th></tr>
+
   <tr><td align="center"><b>A base espacial intercepta transmissões cifradas do cosmos. O astronauta decodifica cada sinal lógico avaliando fórmulas proposicionais (∧ ∨ ¬ → ↔) como VERDADEIRAS ou FALSAS. Cada transmissão revela seu tipo — 🌟 Tautologia (sempre ativa), 🕳️ Contradição (buraco negro lógico) ou 🪐 Contingência (sinal variável). Dificuldades: 🌍 Cadete (8 transmissões · P,Q · ∧∨¬), 🚀 Piloto (10 · P,Q,R · ∧∨¬→), 👨‍🚀 Comandante (12 · todos os operadores · ∧∨¬→↔).</b></td></tr>
+  <tr><td align="center"><img src="./img/lógica.jpeg" alt="lógica"><td></tr>
 </table>
 
 <br>
@@ -166,7 +168,7 @@ Kuhaku/
 <table align="center" width="780">
   <tr><th align="center">🏆 Hall da Fama</th></tr>
   <tr><td align="center"><b>Ranking Galáctico com a pontuação de todos os astronautas por modalidade — filtre por Batalha de Sinais, Operação Resgate, Mapas Estelares ou Protocolo Lógico.</b></td></tr>
-  <tr><td align="center"><img src="img/ranking_halldafama2.jpeg" width="750" alt="Hall da Fama"/></td></tr>
+  <tr><td align="center"><img src="img/hall_da_fama.jpeg" width="750" alt="Hall da Fama"/></td></tr>
 </table>
 
 <h2 align="center">🕹️ Comandos</h2>
