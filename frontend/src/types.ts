@@ -1,5 +1,5 @@
 export type Tela = 'home' | 'setup' | 'game' | 'result' | 'ranking';
-export type Modo = 'solo' | 'vs' | 'memoria' | 'logica';
+export type Modo = 'solo' | 'vs' | 'memoria' | 'logica' | 'precedencia';
 export type Dificuldade = 'EASY' | 'MEDIUM' | 'HARD';
 export type Direcao = 'higher' | 'lower' | 'correct';
 

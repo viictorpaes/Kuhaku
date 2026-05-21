@@ -140,6 +140,39 @@ export function Home({ onSelectMode, onOpenRanking }: HomeProps)
             </div>
           </div>
         </button>
+
+        {/* Hierarquia de Comandos — full width */}
+        <button
+          onClick={() => onSelectMode('precedencia')}
+          className="w-full text-left rounded-3xl overflow-hidden transition-all duration-200 hover:scale-[1.02] hover:shadow-2xl active:scale-[0.99]"
+          style={{ background: 'linear-gradient(135deg, #1e1040 0%, #2d1b69 50%, #1a0f3e 100%)', border: '1px solid rgba(167,139,250,0.30)', boxShadow: '0 8px 32px rgba(139,92,246,0.15)' }}
+        >
+          <div className="p-6 flex gap-4 items-start">
+            <div className="shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-xl" style={{ background: 'rgba(139,92,246,0.20)', border: '1px solid rgba(167,139,250,0.40)' }}>
+              ⚙️
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex gap-2 mb-2 flex-wrap">
+                <span className="inline-flex items-center gap-1 text-white text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wide" style={{ background: 'rgba(139,92,246,0.20)' }}>
+                  🪐 HIERARQUIA DE COMANDOS
+                </span>
+                <span className="inline-flex items-center text-white text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wide" style={{ background: 'rgba(139,92,246,0.12)', border: '1px solid rgba(167,139,250,0.25)' }}>
+                  ∧ ∨ → ↔
+                </span>
+                <span className="inline-flex items-center text-white text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wide" style={{ background: 'rgba(139,92,246,0.12)', border: '1px solid rgba(167,139,250,0.25)' }}>
+                  Solo
+                </span>
+              </div>
+              <h2 className="text-xl font-black text-white">Hierarquia de Comandos ⚙️</h2>
+              <p className="text-white/75 text-sm mt-1 leading-relaxed">
+                O computador da nave perdeu os parênteses das equações lógicas! Adicione os parênteses corretos para restaurar a ordem de precedência dos operadores e salvar os sistemas críticos.
+              </p>
+              <p className="text-white/55 text-xs mt-3 font-medium">
+                ( ) Parênteses &nbsp;·&nbsp; ∧ antes de ∨ &nbsp;·&nbsp; ∨ antes de → &nbsp;·&nbsp; → antes de ↔ &nbsp;·&nbsp; Associatividade
+              </p>
+            </div>
+          </div>
+        </button>
       </div>
 
       {/* Ranking button */}

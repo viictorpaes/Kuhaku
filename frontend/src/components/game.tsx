@@ -4,7 +4,7 @@ import
 {
   RANGE_LABEL, DIF_LABEL, DIF_COLOR,
   MAX_TENTATIVAS_SOLO, MAX_TENTATIVAS_VS, TOTAL_ROUNDS_VS, RANGE_MAX,
-  MEMORIA_GRID, LOGICA_CONFIG,
+  MEMORIA_GRID, LOGICA_CONFIG, PARENTESES_CONFIG,
 } from '../constants';
 
 // ─── MOTOR DE LÓGICA PROPOSICIONAL ────────────────────────────────────────────
@@ -1600,6 +1600,461 @@ function LogicaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, on
   );
 }
 
+// ─── HIERARQUIA DE COMANDOS — JOGO DE PRECEDÊNCIA DE OPERADORES ───────────────
+
+interface ExercicioParenteses {
+  flat: string[];
+  correta: string;
+  dica: string;
+}
+
+const POOL_EASY: ExercicioParenteses[] = [
+  { flat: ['P', '∧', 'Q', '∨', 'R'],         correta: '(P ∧ Q) ∨ R',       dica: '∧ tem maior precedência que ∨ — conjunção agrupa antes da disjunção.' },
+  { flat: ['P', '∨', 'Q', '∧', 'R'],         correta: 'P ∨ (Q ∧ R)',       dica: '∧ tem maior precedência que ∨ — conjunção agrupa antes da disjunção.' },
+  { flat: ['P', '∧', 'Q', '∧', 'R'],         correta: '(P ∧ Q) ∧ R',       dica: '∧ é associativo à esquerda — agrupa da esquerda para a direita.' },
+  { flat: ['P', '∨', 'Q', '∨', 'R'],         correta: '(P ∨ Q) ∨ R',       dica: '∨ é associativo à esquerda — agrupa da esquerda para a direita.' },
+  { flat: ['¬P', '∧', 'Q', '∨', 'R'],        correta: '(¬P ∧ Q) ∨ R',      dica: '¬P é atômico. ∧ agrupa antes de ∨.' },
+  { flat: ['P', '∨', '¬Q', '∧', 'R'],        correta: 'P ∨ (¬Q ∧ R)',      dica: '¬Q é atômico. ∧ tem maior precedência que ∨.' },
+  { flat: ['¬P', '∨', 'Q', '∧', '¬R'],       correta: '¬P ∨ (Q ∧ ¬R)',     dica: '∧ tem maior precedência que ∨.' },
+  { flat: ['¬P', '∧', 'Q', '∧', 'R'],        correta: '(¬P ∧ Q) ∧ R',      dica: '∧ é associativo à esquerda.' },
+];
+
+const POOL_MEDIUM: ExercicioParenteses[] = [
+  { flat: ['P', '∧', 'Q', '→', 'R'],                        correta: '(P ∧ Q) → R',          dica: '∧ tem maior precedência que → — conjunção agrupa antes da implicação.' },
+  { flat: ['P', '→', 'Q', '∧', 'R'],                        correta: 'P → (Q ∧ R)',          dica: '∧ tem maior precedência que → — conjunção agrupa antes da implicação.' },
+  { flat: ['P', '∨', 'Q', '→', 'R'],                        correta: '(P ∨ Q) → R',          dica: '∨ tem maior precedência que → — disjunção agrupa antes da implicação.' },
+  { flat: ['P', '→', 'Q', '∨', 'R'],                        correta: 'P → (Q ∨ R)',          dica: '∨ tem maior precedência que →.' },
+  { flat: ['¬P', '∧', 'Q', '→', 'R'],                       correta: '(¬P ∧ Q) → R',         dica: '∧ tem maior precedência que →.' },
+  { flat: ['P', '∧', 'Q', '→', 'R', '∨', '¬P'],            correta: '(P ∧ Q) → (R ∨ ¬P)',   dica: '∧ e ∨ agrupam antes de →. Ambos os lados da implicação precisam de parênteses.' },
+  { flat: ['¬P', '∨', 'Q', '→', 'R', '∧', 'P'],            correta: '(¬P ∨ Q) → (R ∧ P)',   dica: '∧ e ∨ têm maior precedência que →.' },
+  { flat: ['P', '→', 'Q', '→', 'R'],                        correta: 'P → (Q → R)',           dica: '→ é associativo à direita — agrupa da direita para a esquerda.' },
+  { flat: ['P', '∧', '¬Q', '→', 'R', '∨', 'P'],            correta: '(P ∧ ¬Q) → (R ∨ P)',   dica: '∧ e ∨ agrupam antes de →.' },
+  { flat: ['P', '∨', '¬Q', '→', '¬R', '∧', 'Q'],           correta: '(P ∨ ¬Q) → (¬R ∧ Q)',  dica: '∧ e ∨ têm maior precedência que →.' },
+];
+
+const POOL_HARD: ExercicioParenteses[] = [
+  { flat: ['P', '∧', 'Q', '↔', 'R'],                                       correta: '(P ∧ Q) ↔ R',                     dica: '∧ tem maior precedência que ↔.' },
+  { flat: ['P', '↔', 'Q', '∧', 'R'],                                       correta: 'P ↔ (Q ∧ R)',                     dica: '∧ tem maior precedência que ↔.' },
+  { flat: ['P', '→', 'Q', '↔', 'R'],                                       correta: '(P → Q) ↔ R',                     dica: '→ tem maior precedência que ↔.' },
+  { flat: ['P', '↔', 'Q', '→', 'R'],                                       correta: 'P ↔ (Q → R)',                     dica: '→ tem maior precedência que ↔.' },
+  { flat: ['P', '∧', 'Q', '→', 'R', '↔', '¬P'],                           correta: '((P ∧ Q) → R) ↔ ¬P',             dica: '∧ agrupa antes de →, e → agrupa antes de ↔.' },
+  { flat: ['¬P', '∧', 'Q', '∨', 'R', '→', 'P', '↔', 'Q'],                correta: '(((¬P ∧ Q) ∨ R) → P) ↔ Q',       dica: '∧ > ∨ > → > ↔ — aplique em ordem de maior para menor precedência.' },
+  { flat: ['P', '∧', 'Q', '∨', '¬R', '→', '¬P', '↔', 'Q'],               correta: '(((P ∧ Q) ∨ ¬R) → ¬P) ↔ Q',      dica: '∧ > ∨ > → > ↔.' },
+  { flat: ['¬P', '∨', 'Q', '∧', 'R', '→', 'P', '↔', '¬Q'],               correta: '((¬P ∨ (Q ∧ R)) → P) ↔ ¬Q',      dica: '∧ agrupa antes de ∨, depois → e por fim ↔.' },
+  { flat: ['P', '∨', 'Q', '∧', 'R', '↔', 'P', '→', '¬Q'],                correta: '(P ∨ (Q ∧ R)) ↔ (P → ¬Q)',        dica: '∧ agrupa antes de ∨, e → agrupa antes de ↔.' },
+  { flat: ['¬P', '∧', 'Q', '→', 'P', '∨', 'R', '↔', 'Q'],                correta: '((¬P ∧ Q) → (P ∨ R)) ↔ Q',        dica: '∧ e ∨ agrupam antes de →, que agrupa antes de ↔.' },
+  { flat: ['P', '∧', '¬Q', '∨', 'R', '→', 'P', '↔', '¬Q'],               correta: '(((P ∧ ¬Q) ∨ R) → P) ↔ ¬Q',      dica: '∧ > ∨ > → > ↔.' },
+  { flat: ['¬P', '∨', '¬Q', '∧', 'R', '→', '¬P', '↔', 'R'],              correta: '((¬P ∨ (¬Q ∧ R)) → ¬P) ↔ R',     dica: '∧ agrupa antes de ∨, depois → e por fim ↔.' },
+];
+
+const POOL_PREC: Record<Dificuldade, ExercicioParenteses[]> = {
+  EASY: POOL_EASY,
+  MEDIUM: POOL_MEDIUM,
+  HARD: POOL_HARD,
+};
+
+function normalizar(s: string) { return s.replace(/\s+/g, ''); }
+
+function gerarExerciciosPrecedencia(dif: Dificuldade): ExercicioParenteses[] {
+  const pool = [...POOL_PREC[dif]].sort(() => Math.random() - 0.5);
+  return pool.slice(0, PARENTESES_CONFIG[dif].count);
+}
+
+function PrecedenciaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, onNovoJogo }: GameProps)
+{
+  const [exercicios] = useState<ExercicioParenteses[]>(() => gerarExerciciosPrecedencia(dificuldade));
+  const [atual, setAtual] = useState(0);
+  const [tokens, setTokens] = useState<string[]>(() => [...exercicios[0].flat]);
+  const [history, setHistory] = useState<string[][]>([]);
+  const [selStart, setSelStart] = useState<number | null>(null);
+  const [selEnd, setSelEnd] = useState<number | null>(null);
+  const [resultado, setResultado] = useState<'correto' | 'errado' | null>(null);
+  const [erros, setErros] = useState(0);
+  const [acertos, setAcertos] = useState(0);
+  const [encerrado, setEncerrado] = useState(false);
+  const [finalizando, setFinalizando] = useState(false);
+  const [saveNome, setSaveNome] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [savedPosition, setSavedPosition] = useState<{ position: number | null; total: number } | null>(null);
+  const [saveErro, setSaveErro] = useState('');
+  const finishRef = useRef(false);
+
+  const exercicio = exercicios[atual];
+  const total = exercicios.length;
+
+  const handleTokenClick = (index: number) => {
+    if (resultado !== null) return;
+    if (selStart === null) {
+      setSelStart(index);
+      setSelEnd(null);
+    } else if (selEnd !== null) {
+      setSelStart(index);
+      setSelEnd(null);
+    } else {
+      if (index === selStart) {
+        setSelStart(null);
+      } else if (index > selStart) {
+        setSelEnd(index);
+      } else {
+        setSelStart(index);
+      }
+    }
+  };
+
+  const addParens = () => {
+    if (selStart === null || selEnd === null || selEnd <= selStart) return;
+    const newTokens = [
+      ...tokens.slice(0, selStart),
+      '(',
+      ...tokens.slice(selStart, selEnd + 1),
+      ')',
+      ...tokens.slice(selEnd + 1),
+    ];
+    setHistory(h => [...h, tokens]);
+    setTokens(newTokens);
+    setSelStart(null);
+    setSelEnd(null);
+  };
+
+  const undo = () => {
+    if (history.length === 0) return;
+    setTokens(history[history.length - 1]);
+    setHistory(h => h.slice(0, -1));
+    setSelStart(null);
+    setSelEnd(null);
+  };
+
+  const resetExpr = () => {
+    setTokens([...exercicio.flat]);
+    setHistory([]);
+    setSelStart(null);
+    setSelEnd(null);
+  };
+
+  const verificar = () => {
+    if (resultado !== null) return;
+    const resposta = normalizar(tokens.join(''));
+    const esperada = normalizar(exercicio.correta);
+    const correto = resposta === esperada;
+    setResultado(correto ? 'correto' : 'errado');
+    if (correto) setAcertos(a => a + 1);
+    else setErros(e => e + 1);
+  };
+
+  const proximo = async () => {
+    if (atual + 1 >= total) {
+      setEncerrado(true);
+      if (!finishRef.current) {
+        finishRef.current = true;
+        fetch(`${apiUrl}/api/games/${gameId}/finish`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ won: true, mistakes: erros }),
+        }).catch(() => {});
+      }
+    } else {
+      const next = atual + 1;
+      setAtual(next);
+      setTokens([...exercicios[next].flat]);
+      setHistory([]);
+      setSelStart(null);
+      setSelEnd(null);
+      setResultado(null);
+    }
+  };
+
+  const handleNovo = async () => {
+    setFinalizando(true);
+    try { await onNovoJogo(); } finally { setFinalizando(false); }
+  };
+
+  const handleSalvar = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const nome = saveNome.trim();
+    if (!nome) { setSaveErro('Digite um apelido de astronauta'); return; }
+    setSaving(true);
+    setSaveErro('');
+    try {
+      const res = await fetch(`${apiUrl}/api/games/${gameId}/save`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: nome }),
+      });
+      const data = await res.json();
+      if (data.saved) {
+        setSavedPosition({ position: data.position ?? null, total: data.total });
+        onOpenRanking('PRECEDENCE_PUZZLE');
+      } else {
+        setSaveErro('Não foi possível salvar. Tente novamente.');
+      }
+    } catch {
+      setSaveErro('Erro de conexão com a estação');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // ── Tela de missão concluída ───────────────────────────────────────────────
+  if (encerrado) {
+    const perfeita = erros === 0;
+    return (
+      <div className="min-h-screen text-white flex flex-col" style={{ background: BG, fontFamily: "'Inter', system-ui, sans-serif" }}>
+        <GameHeader onBack={onBack} onOpenRanking={onOpenRanking} />
+        <main className="flex-1 flex flex-col items-center justify-center px-4 py-8">
+          <div className="w-full max-w-md bg-[#0c1729] border border-white/10 rounded-3xl p-8 text-center shadow-2xl">
+            <div className="text-5xl mb-4">{perfeita ? '🏆' : acertos >= total / 2 ? '⚙️' : '🪐'}</div>
+            <h2 className="text-2xl font-black text-white mb-1">
+              {perfeita ? 'Hierarquia Restaurada!' : 'Sistemas Recalibrados!'}
+            </h2>
+            <p className="text-slate-400 text-sm mb-6">
+              {p1} · {PARENTESES_CONFIG[dificuldade].label} · Hierarquia de Comandos
+            </p>
+            <div className="flex gap-3 mb-6">
+              <div className="flex-1 rounded-2xl p-4" style={{ background: 'rgba(167,139,250,0.10)', border: '1px solid rgba(167,139,250,0.30)' }}>
+                <p className="text-3xl font-black" style={{ color: '#a78bfa' }}>{acertos}</p>
+                <p className="text-xs text-slate-400 mt-1">⚙️ Corretas</p>
+              </div>
+              <div className="flex-1 rounded-2xl p-4"
+                style={erros > 0
+                  ? { background: 'rgba(248,113,113,0.10)', border: '1px solid rgba(248,113,113,0.30)' }
+                  : { background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.10)' }}>
+                <p className="text-3xl font-black" style={{ color: erros > 0 ? '#f87171' : '#94a3b8' }}>{erros}</p>
+                <p className="text-xs text-slate-400 mt-1">🔇 Erros</p>
+              </div>
+              <div className="flex-1 rounded-2xl p-4" style={{ background: 'rgba(139,92,246,0.10)', border: '1px solid rgba(139,92,246,0.25)' }}>
+                <p className="text-3xl font-black" style={{ color: '#8b5cf6' }}>{total}</p>
+                <p className="text-xs text-slate-400 mt-1">🪐 Expressões</p>
+              </div>
+            </div>
+            <button
+              onClick={handleNovo}
+              disabled={finalizando}
+              className="w-full py-3 rounded-xl font-bold text-sm text-white transition hover:opacity-90 mb-3 disabled:opacity-50"
+              style={{ background: 'linear-gradient(135deg, #3b1fa8, #7c3aed)', boxShadow: '0 4px 16px rgba(139,92,246,0.25)' }}
+            >
+              {finalizando ? '🪐 Iniciando...' : '🔄 Nova missão de precedência'}
+            </button>
+            {savedPosition ? (
+              <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-center">
+                {savedPosition.position != null
+                  ? <><p className="text-amber-300 font-bold text-sm">🏆 #{savedPosition.position} de {savedPosition.total} astronautas!</p>
+                     <button onClick={() => onOpenRanking('PRECEDENCE_PUZZLE')} className="mt-1 text-xs text-amber-400 underline underline-offset-2 hover:text-amber-300 transition">Ver ranking completo →</button></>
+                  : <p className="text-violet-300 font-bold text-sm">✅ Resultado salvo na base espacial!</p>
+                }
+              </div>
+            ) : (
+              <form onSubmit={handleSalvar}>
+                <p className="text-slate-400 text-xs mb-2">Registrar no Hall da Fama:</p>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={saveNome}
+                    onChange={(e) => setSaveNome(e.target.value)}
+                    placeholder="Apelido do astronauta"
+                    maxLength={30}
+                    className="flex-1 bg-white/5 border border-white/15 focus:border-violet-500 rounded-xl px-3 py-2 text-sm text-white focus:outline-none transition"
+                  />
+                  <button
+                    type="submit"
+                    disabled={saving || !saveNome.trim()}
+                    className="px-4 py-2 rounded-xl font-bold text-xs text-white disabled:opacity-40 transition hover:opacity-90"
+                    style={{ background: 'linear-gradient(135deg, #3b1fa8, #7c3aed)' }}
+                  >
+                    {saving ? '...' : '💾 Salvar'}
+                  </button>
+                </div>
+                {saveErro && <p className="text-red-400 text-xs mt-1">{saveErro}</p>}
+              </form>
+            )}
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // ── Tela de jogo ──────────────────────────────────────────────────────────
+  const canAddParens = selStart !== null && selEnd !== null && selEnd > selStart;
+
+  return (
+    <div className="min-h-screen text-white flex flex-col" style={{ background: BG, fontFamily: "'Inter', system-ui, sans-serif" }}>
+      <GameHeader onBack={onBack} onOpenRanking={onOpenRanking} />
+
+      {/* Barra de progresso */}
+      <div className="flex items-center gap-3 px-5 py-3 flex-wrap">
+        <span className="text-xs font-bold px-3 py-1.5 rounded-full border"
+          style={{ background: 'rgba(139,92,246,0.12)', borderColor: 'rgba(167,139,250,0.30)', color: '#a78bfa' }}>
+          ⚙️ Expressão {atual + 1}/{total}
+        </span>
+        <span className="text-xs font-bold px-3 py-1.5 rounded-full border"
+          style={{ background: 'rgba(167,139,250,0.10)', borderColor: 'rgba(167,139,250,0.25)', color: '#a78bfa' }}>
+          ✅ {acertos} corretas
+        </span>
+        <span className="text-xs font-bold px-3 py-1.5 rounded-full border"
+          style={erros > 0
+            ? { background: 'rgba(248,113,113,0.10)', borderColor: 'rgba(248,113,113,0.30)', color: '#f87171' }
+            : { background: 'rgba(255,255,255,0.05)', borderColor: 'rgba(255,255,255,0.10)', color: '#94a3b8' }}>
+          ❌ {erros} erros
+        </span>
+        <div className="ml-auto flex-1 max-w-[120px] h-1.5 bg-white/10 rounded-full overflow-hidden">
+          <div className="h-full rounded-full transition-all" style={{ width: `${(atual / total) * 100}%`, background: '#7c3aed' }} />
+        </div>
+      </div>
+
+      <main className="flex-1 flex flex-col items-center px-4 pb-8 pt-2 max-w-2xl mx-auto w-full gap-4">
+
+        {/* Referência de precedência */}
+        <div className="w-full rounded-2xl p-4 border" style={{ background: 'rgba(139,92,246,0.08)', borderColor: 'rgba(167,139,250,0.25)' }}>
+          <p className="text-[10px] uppercase tracking-widest font-bold mb-2" style={{ color: '#a78bfa' }}>
+            🪐 Ordem de Precedência (maior → menor)
+          </p>
+          <div className="flex gap-2 flex-wrap items-center text-xs font-mono">
+            <span className="px-2 py-1 rounded-lg font-black text-white" style={{ background: 'rgba(167,139,250,0.20)', border: '1px solid rgba(167,139,250,0.40)' }}>¬</span>
+            <span className="text-slate-500">›</span>
+            <span className="px-2 py-1 rounded-lg font-black text-white" style={{ background: 'rgba(139,92,246,0.20)', border: '1px solid rgba(139,92,246,0.40)' }}>∧</span>
+            <span className="text-slate-500">›</span>
+            <span className="px-2 py-1 rounded-lg font-black text-white" style={{ background: 'rgba(109,40,217,0.20)', border: '1px solid rgba(109,40,217,0.40)' }}>∨</span>
+            <span className="text-slate-500">›</span>
+            <span className="px-2 py-1 rounded-lg font-black text-white" style={{ background: 'rgba(91,33,182,0.25)', border: '1px solid rgba(91,33,182,0.45)' }}>→</span>
+            <span className="text-slate-500">›</span>
+            <span className="px-2 py-1 rounded-lg font-black text-white" style={{ background: 'rgba(76,29,149,0.30)', border: '1px solid rgba(76,29,149,0.50)' }}>↔</span>
+            <span className="text-slate-400 ml-2 text-[10px]">· → associa à direita · demais associam à esquerda</span>
+          </div>
+        </div>
+
+        {/* Expressão interativa */}
+        <div className="w-full rounded-2xl p-6 border border-white/10" style={{ background: '#0a1428' }}>
+          <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-4">
+            ⚙️ Expressão — clique no 1º e no último token do agrupamento
+          </p>
+          <div className="flex flex-wrap gap-2 items-center justify-center min-h-[52px]">
+            {tokens.map((tok, i) => {
+              const isParen = tok === '(' || tok === ')';
+              const isStart = selStart === i;
+              const isEnd = selEnd === i;
+              const inRange = selStart !== null && selEnd !== null && i > selStart && i < selEnd;
+
+              let style: React.CSSProperties;
+              let cls = 'px-3 py-2 rounded-xl font-mono font-black text-base cursor-pointer select-none transition-all duration-100 ';
+
+              if (resultado !== null) {
+                cls += 'cursor-default ';
+                if (isParen) {
+                  style = { background: resultado === 'correto' ? 'rgba(74,222,128,0.15)' : 'rgba(248,113,113,0.12)', border: `1px solid ${resultado === 'correto' ? 'rgba(74,222,128,0.30)' : 'rgba(248,113,113,0.25)'}`, color: resultado === 'correto' ? '#4ade80' : '#f87171' };
+                } else {
+                  style = { background: 'rgba(139,92,246,0.12)', border: '1px solid rgba(139,92,246,0.25)', color: '#c4b5fd' };
+                }
+              } else if (isStart) {
+                cls += 'scale-110 ';
+                style = { background: 'rgba(251,191,36,0.30)', border: '2px solid rgba(251,191,36,0.80)', color: '#fbbf24' };
+              } else if (isEnd) {
+                cls += 'scale-110 ';
+                style = { background: 'rgba(251,146,60,0.30)', border: '2px solid rgba(251,146,60,0.80)', color: '#fb923c' };
+              } else if (inRange) {
+                style = { background: 'rgba(251,191,36,0.12)', border: '1px solid rgba(251,191,36,0.40)', color: '#fde68a' };
+              } else if (isParen) {
+                style = { background: 'rgba(100,116,139,0.15)', border: '1px solid rgba(100,116,139,0.30)', color: '#94a3b8' };
+              } else {
+                cls += 'hover:scale-105 ';
+                style = { background: 'rgba(139,92,246,0.15)', border: '1px solid rgba(139,92,246,0.35)', color: '#e2e8f0' };
+              }
+
+              return (
+                <span
+                  key={i}
+                  className={cls}
+                  style={style}
+                  onClick={() => handleTokenClick(i)}
+                >
+                  {tok}
+                </span>
+              );
+            })}
+          </div>
+
+          {/* Instrução de seleção */}
+          <p className="text-center text-xs mt-3" style={{ color: '#64748b' }}>
+            {resultado !== null
+              ? ''
+              : selStart === null
+                ? 'Clique no 1º token do agrupamento'
+                : selEnd === null
+                  ? 'Agora clique no último token do agrupamento'
+                  : 'Pronto! Clique em  ( )  para adicionar os parênteses'}
+          </p>
+        </div>
+
+        {/* Controles */}
+        {resultado === null && (
+          <div className="w-full flex gap-2">
+            <button
+              onClick={addParens}
+              disabled={!canAddParens}
+              className="flex-1 py-3 rounded-xl font-black text-sm transition hover:opacity-90 disabled:opacity-30"
+              style={{ background: canAddParens ? 'linear-gradient(135deg, #3b1fa8, #7c3aed)' : 'rgba(139,92,246,0.15)', border: '1px solid rgba(139,92,246,0.40)', color: '#e2e8f0', boxShadow: canAddParens ? '0 4px 16px rgba(139,92,246,0.25)' : 'none' }}
+            >
+              ( ) Agrupar
+            </button>
+            <button
+              onClick={undo}
+              disabled={history.length === 0}
+              className="px-4 py-3 rounded-xl font-bold text-sm transition hover:opacity-90 disabled:opacity-30"
+              style={{ background: 'rgba(100,116,139,0.15)', border: '1px solid rgba(100,116,139,0.30)', color: '#94a3b8' }}
+            >
+              ↩ Desfazer
+            </button>
+            <button
+              onClick={resetExpr}
+              disabled={history.length === 0}
+              className="px-4 py-3 rounded-xl font-bold text-sm transition hover:opacity-90 disabled:opacity-30"
+              style={{ background: 'rgba(100,116,139,0.15)', border: '1px solid rgba(100,116,139,0.30)', color: '#94a3b8' }}
+            >
+              ⟳ Limpar
+            </button>
+            <button
+              onClick={verificar}
+              className="flex-1 py-3 rounded-xl font-black text-sm transition hover:opacity-90"
+              style={{ background: 'rgba(139,92,246,0.20)', border: '2px solid rgba(167,139,250,0.50)', color: '#a78bfa' }}
+            >
+              ✓ Verificar
+            </button>
+          </div>
+        )}
+
+        {/* Feedback */}
+        {resultado !== null && (
+          <div className="w-full">
+            <div className="rounded-2xl p-5 mb-3 border"
+              style={resultado === 'correto'
+                ? { background: 'rgba(74,222,128,0.10)', borderColor: 'rgba(74,222,128,0.40)' }
+                : { background: 'rgba(248,113,113,0.10)', borderColor: 'rgba(248,113,113,0.40)' }}>
+              <p className="text-xl font-black mb-2" style={{ color: resultado === 'correto' ? '#4ade80' : '#f87171' }}>
+                {resultado === 'correto' ? '⚙️ Hierarquia restaurada!' : '🔇 Sequência incorreta!'}
+              </p>
+              {resultado === 'errado' && (
+                <div className="mb-3">
+                  <p className="text-xs text-slate-400 mb-1">Resposta correta:</p>
+                  <p className="font-mono font-black text-base" style={{ color: '#c4b5fd' }}>{exercicio.correta}</p>
+                </div>
+              )}
+              <p className="text-sm text-slate-300 leading-relaxed">
+                <span className="font-bold" style={{ color: '#a78bfa' }}>💡 </span>
+                {exercicio.dica}
+              </p>
+            </div>
+            <button
+              onClick={proximo}
+              className="w-full py-4 rounded-2xl font-black text-white text-base transition hover:opacity-90 active:scale-[0.98]"
+              style={{ background: 'linear-gradient(135deg, #3b1fa8, #7c3aed)', boxShadow: '0 4px 16px rgba(139,92,246,0.20)' }}
+            >
+              {atual + 1 >= total ? '🏁 Ver resultado da missão' : '🪐 Próxima expressão →'}
+            </button>
+          </div>
+        )}
+      </main>
+    </div>
+  );
+}
+
 // ─── EXPORT ───────────────────────────────────────────────────────────────────
 
 export function Game(props: GameProps)
@@ -1607,5 +2062,6 @@ export function Game(props: GameProps)
   if (props.modo === 'vs') return <VsGame {...props} />;
   if (props.modo === 'memoria') return <MemoriaGame {...props} />;
   if (props.modo === 'logica') return <LogicaGame {...props} />;
+  if (props.modo === 'precedencia') return <PrecedenciaGame {...props} />;
   return <SoloGame {...props} />;
 }

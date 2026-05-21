@@ -51,3 +51,10 @@ export const LOGICA_CONFIG: Record<Dificuldade, { count: number; label: string; 
   MEDIUM: { count: 10, label: '🚀 Piloto',      description: 'P, Q, R · ∧ ∨ ¬ → · 10 transmissões'    },
   HARD:   { count: 12, label: '👨‍🚀 Comandante',  description: 'P, Q, R · ∧ ∨ ¬ → ↔ · 12 transmissões'  },
 };
+
+export const PARENTESES_CONFIG: Record<Dificuldade, { count: number; label: string; description: string }> =
+{
+  EASY:   { count: 8,  label: '🌍 Cadete',     description: '∧ ∨ · 8 expressões'           },
+  MEDIUM: { count: 10, label: '🚀 Piloto',      description: '∧ ∨ → · 10 expressões'        },
+  HARD:   { count: 12, label: '👨‍🚀 Comandante',  description: '∧ ∨ → ↔ · 12 expressões'     },
+};

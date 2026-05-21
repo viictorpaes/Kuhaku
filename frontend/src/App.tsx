@@ -48,9 +48,10 @@ export function App()
     const isVs = modo === 'vs';
     const isMemoria = modo === 'memoria';
     const isLogica = modo === 'logica';
+    const isPrecedencia = modo === 'precedencia';
     const id = await criarJogo(
       config.dificuldade,
-      isVs ? 'VS_GUESS' : isMemoria ? 'CARD_GUESS' : isLogica ? 'LOGIC_PUZZLE' : undefined,
+      isVs ? 'VS_GUESS' : isMemoria ? 'CARD_GUESS' : isLogica ? 'LOGIC_PUZZLE' : isPrecedencia ? 'PRECEDENCE_PUZZLE' : undefined,
     );
     setGameId(id);
     setTela('game');
@@ -81,8 +82,9 @@ export function App()
   const novoJogoSolo = useCallback(async () =>
   {
     const gameType =
-      modo === 'memoria' ? 'CARD_GUESS' :
-      modo === 'logica'  ? 'LOGIC_PUZZLE' : undefined;
+      modo === 'memoria'    ? 'CARD_GUESS' :
+      modo === 'logica'     ? 'LOGIC_PUZZLE' :
+      modo === 'precedencia'? 'PRECEDENCE_PUZZLE' : undefined;
     const id = await criarJogo(dificuldade!, gameType);
     setGameId(id);
   }, [dificuldade, modo]);
