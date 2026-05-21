@@ -26,6 +26,7 @@ enum GameType {
   VS_GUESS
   CARD_GUESS
   LOGIC_PUZZLE
+  PRECEDENCE_PUZZLE
 }
 
 model Game {

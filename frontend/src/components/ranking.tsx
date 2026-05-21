@@ -15,15 +15,16 @@ interface RankingProps
   initialFilter?: GameTypeFilter;
 }
 
-export type GameTypeFilter = 'all' | 'NUMBER_GUESS' | 'VS_GUESS' | 'CARD_GUESS' | 'LOGIC_PUZZLE';
+export type GameTypeFilter = 'all' | 'NUMBER_GUESS' | 'VS_GUESS' | 'CARD_GUESS' | 'LOGIC_PUZZLE' | 'PRECEDENCE_PUZZLE';
 
 const TABS: { label: string; value: GameTypeFilter }[] =
 [
-  { label: '🌌 Galáxia',           value: 'all'            },
-  { label: '📡 Batalha de Sinais', value: 'VS_GUESS'       },
-  { label: '🔭 Operação Resgate',  value: 'NUMBER_GUESS'   },
-  { label: '🌕 Mapas Estrelares',  value: 'CARD_GUESS'     },
-  { label: '🧠 Protocolo Lógico',  value: 'LOGIC_PUZZLE'   },
+  { label: '🌌 Galáxia',               value: 'all'                },
+  { label: '📡 Batalha de Sinais',     value: 'VS_GUESS'           },
+  { label: '🔭 Operação Resgate',      value: 'NUMBER_GUESS'       },
+  { label: '🌕 Mapas Estrelares',      value: 'CARD_GUESS'         },
+  { label: '🧠 Protocolo Lógico',      value: 'LOGIC_PUZZLE'       },
+  { label: '⚙️ Hierarquia de Cmds',    value: 'PRECEDENCE_PUZZLE'  },
 ];
 
 const BG = 'radial-gradient(ellipse at 50% 0%, rgba(6,182,212,0.12) 0%, transparent 50%), linear-gradient(180deg, #020818 0%, #0a0f1e 100%)';
@@ -31,20 +32,22 @@ const MEDALHAS = ['🥇', '🥈', '🥉'];
 
 const SUBTITULO: Record<GameTypeFilter, string> =
 {
-  all:          '🌌 Ranking Galáctico — todos os astronautas',
-  VS_GUESS:     '📡 Batalha de Sinais — ambos se cadastram ao final',
-  NUMBER_GUESS: '🔭 Operação Resgate — missões solo',
-  CARD_GUESS:   '🌕 Mapas Estelares — jogo da memória',
-  LOGIC_PUZZLE: '🧠 Protocolo Lógico — menor número de erros',
+  all:               '🌌 Ranking Galáctico — todos os astronautas',
+  VS_GUESS:          '📡 Batalha de Sinais — ambos se cadastram ao final',
+  NUMBER_GUESS:      '🔭 Operação Resgate — missões solo',
+  CARD_GUESS:        '🌕 Mapas Estelares — jogo da memória',
+  LOGIC_PUZZLE:      '🧠 Protocolo Lógico — menor número de erros',
+  PRECEDENCE_PUZZLE: '⚙️ Hierarquia de Comandos — precedência de operadores',
 };
 
 const BADGE_LABEL: Record<GameTypeFilter, string> =
 {
-  all:          '🌌 Geral',
-  VS_GUESS:     '📡 Batalha',
-  NUMBER_GUESS: '🔭 Resgate',
-  CARD_GUESS:   '🌕 Mapas',
-  LOGIC_PUZZLE: '🧠 Protocolo',
+  all:               '🌌 Geral',
+  VS_GUESS:          '📡 Batalha',
+  NUMBER_GUESS:      '🔭 Resgate',
+  CARD_GUESS:        '🌕 Mapas',
+  LOGIC_PUZZLE:      '🧠 Protocolo',
+  PRECEDENCE_PUZZLE: '⚙️ Hierarquia',
 };
 
 
