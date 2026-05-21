@@ -182,6 +182,7 @@ git clone https://github.com/viictorpaes/Kuhaku
 ```
 
 <h3 align="center">Rodar localmente <br>
+<b> <i>referenciado na issue</i></b> <br>
 <img src="https://img.shields.io/badge/Local_Host-111827?style=flat-square&logo=readme&logoColor=white"/>
 </h3>
 
@@ -406,7 +407,7 @@ npm run format
   <img src="https://img.shields.io/badge/Vite-6.2.0-purple?style=for-the-badge&logo=vite&logoColor=purple"/> <br>
   <img src="https://img.shields.io/badge/Prisma-7.8.0-5A67D8?style=for-the-badge&logo=prisma&logoColor=5A67D8"/>
   <img src="https://img.shields.io/badge/PostgreSQL-8.16.3-336791?style=for-the-badge&logo=postgresql&logoColor=white"/> <br>
-  <img src="https://img.shields.io/badge/RxJS-7.8.1-B7178C?style=for-the-badge&logo=reactivex&logoColor=purple"/>
+  <img src="https://img.shields.io/badge/RxTS-7.8.1-B7178C?style=for-the-badge&logo=reactivex&logoColor=purple"/>
   <img src="https://img.shields.io/badge/tsx-4.20.5-yellow?style=for-the-badge&logo=typescript&logoColor=yellow"/> <br>
   <img src="https://img.shields.io/badge/Docker-Engine-2496ED?style=for-the-badge&logo=docker&logoColor=2496ED"/>
 </p>
@@ -418,15 +419,15 @@ npm run format
 <img src="https://img.shields.io/badge/-Controller-111827?style=flat&logo=typescript&logoColor=F7DF1E" height="18"/>
 </h2>
  
-### ![Controller](https://img.shields.io/badge/Controller-TypeScript-white?style=flat-square&logo=typescript) `.controller.ts`
+### ![Controller](https://img.shields.io/badge/Controller-TypeScript-yellow?style=flat-square&logo=typescript&logoColor=yellow) `.controller.ts`
  
-Camada de **entrada da API**. Recebe as requisições HTTP e define as rotas (`@Get`, `@Post`, `@Put`, `@Delete`). Não contém lógica de negócio — apenas delega ao Service. É aqui que os decorators do Swagger (`@ApiOperation`, `@ApiResponse`) são aplicados.
+Camada de **entrada da API**. Recebe as requisições HTTP e define as rotas (`@Get`, `@Post`, `@Put`, `@Delete`). Não contém lógica de negócio — apenas delega ao Service. É aqui que decorators de documentação e metadados de rota são aplicados.
  
 **Arquivos neste projeto:** `app.controller.ts` `game.controller.ts` `auth.controller.ts` `user.controller.ts`
  
 ---
  
-### ![Service](https://img.shields.io/badge/Service-TypeScript-white?style=flat-square&logo=typescript) `.service.ts`
+### ![Service](https://img.shields.io/badge/Service-TypeScript-blue?style=flat-square&logo=typescript&logoColor=blue) `.service.ts`
  
 Camada de **lógica de negócio**. Processa os dados recebidos do Controller, aplica as regras da aplicação (validações, hash de senha com `bcrypt`, geração de JWT) e comunica com o banco via Prisma. Injetado no Controller via `@Injectable()`.
  
@@ -434,7 +435,7 @@ Camada de **lógica de negócio**. Processa os dados recebidos do Controller, ap
  
 ---
  
-### ![Module](https://img.shields.io/badge/Module-TypeScript-white?style=flat-square&logo=typescript) `.module.ts`
+### ![Module](https://img.shields.io/badge/Module-TypeScript-red?style=flat-square&logo=typescript&logoColor=red) `.module.ts`
  
 **Unidade de organização** do NestJS. Agrupa e registra o Controller e o Service de um domínio (`imports`, `providers`, `controllers`, `exports`). Permite que outros módulos reutilizem os providers via `exports`. O `AppModule` é o módulo raiz que importa todos os demais.
  
@@ -497,8 +498,6 @@ export class GameController
   constructor(private readonly gameService: GameService) 
   {}
 
-  // ── usuários ──────────────────────────────────────
-
   @Post('users')
   async criarUsuario(@Body() dto: CreateUserDto)
   {
@@ -517,8 +516,6 @@ export class GameController
     return this.gameService.removeUser(id);
   }
 
-  // ── jogos ─────────────────────────────────────────
-
   @Post('games')
   async criarJogo(@Body() dto: CreateGameDto)
   {
@@ -530,7 +527,6 @@ export class GameController
   {
     return this.gameService.makeGuess(id, dto.value);
   }
-
 
   @Post('games/:id/finish')
   async encerrarJogo(@Param('id') id: string, @Body() body?: { won?: boolean })
@@ -556,8 +552,6 @@ export class GameController
     return this.gameService.getGameSummary(id);
   }
 
-  // ── consultas de usuário ──────────────────────────
-
   @Get('users/:id/games')
   async listarJogosDoUsuario(@Param('id') id: string)
   {
@@ -581,8 +575,6 @@ export class GameController
   {
     return this.gameService.getUserSummary(id);
   }
-
-  // ── ranking ───────────────────────────────────────
 
   @Get('ranking/global')
   async rankingGlobal(@Query('limit') limit?: string, @Query('gameType') gameType?: string)
@@ -623,7 +615,6 @@ export class GameModule {}
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateGameDto, Difficulty, GameType } from '../dto/create-game.dto';
-// ── helpers de número ──────────────────────────────────────────────────────
 
 function getLimitByDifficulty(difficulty: Difficulty): number
 {
@@ -654,8 +645,6 @@ function getNumberFeedback(diff: number, limit: number): string
   return 'frio ❄️';
 }
 
-// ── service ────────────────────────────────────────────────────────────────
-
 @Injectable()
 export class GameService
 {
@@ -671,8 +660,8 @@ export class GameService
 
   async makeGuess(gameId: string, value: number): Promise<any>
   {
-    // VS_GUESS usa 12 tentativas totais; NUMBER_GUESS usa getMaxAttempts(difficulty) → 5/7/10
-    // retorna { feedback, direction, attemptsLeft } ou { gameOver: true, target } quando esgotado
+    // maxAttempts: 12 para VS_GUESS, getMaxAttempts(difficulty) para NUMBER_GUESS
+    // retorna { feedback, direction, attemptsLeft } ou { gameOver: true, target }
   }
 
   async finishGame(gameId: string, won?: boolean): Promise<any>
@@ -680,7 +669,6 @@ export class GameService
     const updateData: Record<string, any> = {};
     if (!game.endedAt)     updateData.endedAt = new Date();
     if (won !== undefined) updateData.won = won;
-    // ...
   }
 }
 ```
@@ -1016,7 +1004,6 @@ export function Home({ onSelectMode, onOpenRanking }: HomeProps)
         <span className="text-white">Kuha</span><span style={{ color: '#06b6d4' }}>ku</span>
       </h1>
 
-      {/* Card VS — destaque full width */}
       <button onClick={() => onSelectMode('vs')} className="w-full rounded-3xl p-6 ..."
         style={{ background: 'linear-gradient(135deg, #0284c7, #0ea5e9, #06b6d4, #0891b2)' }}>
         📡 Batalha de Sinais — 2 astronautas · 3 rodadas
@@ -1053,24 +1040,11 @@ export function Setup({ modo, onStart, onBack, onOpenRanking }: SetupProps)
 ```ts
 // components/game.tsx — tela de jogo (3 modos) + tela de resultado VS
 
-// VsGame (Batalha de Sinais): alternância de turnos entre p1/p2, histórico de palpites, placar por rodada
-// displayScore antecipa o +1 quando roundOver.winner é definido (sem esperar o clique em "avançar")
-// rodada encerra quando direction === 'correct' (acerto) ou dados.gameOver === true (tentativas esgotadas no backend)
-// em ambos os casos exibe o card de round-over com botão salvar/avançar para próxima rodada
-// SoloGame (Operação Resgate): barra de progresso, feedback de sinal, SaveRankingPanel ao vencer/perder
-// MemoriaGame (Mapas Estelares): grid flip, detecção de pares, cronômetro, contador de erros
-// ao completar todos os pares chama POST /api/games/:id/finish com { won: true }
-// ao salvar no ranking (handleSalvar), chama onOpenRanking('CARD_GUESS') → redireciona para a aba de Jogo da Memória
-// SaveRankingPanel — reutilizado nos 3 modos + VsResultScreen
-// onOpenRanking recebe filtro opcional para abrir o ranking já na aba correta
-
-// Validação dos modos de número:
-const max = RANGE_MAX[dificuldade];
-if (isNaN(valor) || valor < 1 || valor > max)
-{
-  setErro(`Digite um número entre 1 e ${max}`);
-  return;
-}
+// VsGame: displayScore antecipa o +1 quando roundOver.winner é definido (sem esperar o clique em "avançar")
+// rodada encerra quando direction === 'correct' ou dados.gameOver === true (tentativas esgotadas no backend)
+// MemoriaGame: ao completar todos os pares chama POST /api/games/:id/finish com { won: true }
+// ao salvar (handleSalvar), chama onOpenRanking('CARD_GUESS') → abre o ranking já na aba correta
+// SaveRankingPanel — reutilizado nos 3 modos + VsResultScreen; onOpenRanking recebe filtro opcional
 
 // displayScore (VsGame): preview do placar antes do avanço de rodada
 const displayScore =
@@ -1118,20 +1092,21 @@ export function Game(props: GameProps)
 
 ```ts
 // components/ranking.tsx — Hall da Fama com filtro por missão
-// Tabs: 🌌 Galáxia | 📡 Batalha de Sinais (VS_GUESS) | 🔭 Operação Resgate (NUMBER_GUESS) | 🧩 Jogo da Memória (CARD_GUESS)
+// Tabs: 🌌 Galáxia | 📡 Batalha de Sinais (VS_GUESS) | 🔭 Operação Resgate (NUMBER_GUESS) | 🌕 Mapas Estelares (CARD_GUESS) | 🧠 Protocolo Lógico (LOGIC_PUZZLE)
 // GET /api/ranking/global?limit=10&gameType=<filtro>
-// Ordenação: menor média de tentativas = melhor posição
+// Ordenação: menor média de tentativas = melhor posição (LOGIC_PUZZLE: menor nº de erros)
 // Medalhas: 🥇🥈🥉 para top 3 · posição numérica para o restante
 // initialFilter: abre o ranking já na aba correta (usado pelo MemoriaGame após save)
 
-export type GameTypeFilter = 'all' | 'NUMBER_GUESS' | 'VS_GUESS' | 'CARD_GUESS';
+export type GameTypeFilter = 'all' | 'NUMBER_GUESS' | 'VS_GUESS' | 'CARD_GUESS' | 'LOGIC_PUZZLE';
 
 const TABS: { label: string; value: GameTypeFilter }[] =
 [
-  { label: '🌌 Galáxia',          value: 'all'          },
+  { label: '🌌 Galáxia',           value: 'all'          },
   { label: '📡 Batalha de Sinais', value: 'VS_GUESS'     },
   { label: '🔭 Operação Resgate',  value: 'NUMBER_GUESS' },
-  { label: '🧩 Jogo da Memória',   value: 'CARD_GUESS'   },
+  { label: '🌕 Mapas Estelares',   value: 'CARD_GUESS'   },
+  { label: '🧠 Protocolo Lógico',  value: 'LOGIC_PUZZLE' },
 ];
 
 const SUBTITULO: Record<GameTypeFilter, string> =
@@ -1139,7 +1114,8 @@ const SUBTITULO: Record<GameTypeFilter, string> =
   all:          '🌌 Ranking Galáctico — todos os astronautas',
   VS_GUESS:     '📡 Batalha de Sinais — ambos se cadastram ao final',
   NUMBER_GUESS: '🔭 Operação Resgate — missões solo',
-  CARD_GUESS:   '🧩 Jogo da Memória — menor tempo e menos erros',
+  CARD_GUESS:   '🌕 Mapas Estelares — jogo da memória',
+  LOGIC_PUZZLE: '🧠 Protocolo Lógico — menor número de erros',
 };
 
 const BADGE_LABEL: Record<GameTypeFilter, string> =
@@ -1147,7 +1123,8 @@ const BADGE_LABEL: Record<GameTypeFilter, string> =
   all:          '🌌 Geral',
   VS_GUESS:     '📡 Batalha',
   NUMBER_GUESS: '🔭 Resgate',
-  CARD_GUESS:   '🧩 Memória',
+  CARD_GUESS:   '🌕 Mapas',
+  LOGIC_PUZZLE: '🧠 Protocolo',
 };
 
 interface RankingProps
