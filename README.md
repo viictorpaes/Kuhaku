@@ -430,7 +430,7 @@ npm run format
 <img src="https://img.shields.io/badge/-Controller-111827?style=flat&logo=typescript&logoColor=F7DF1E" height="18"/>
 </h2>
  
-### ![Controller](https://img.shields.io/badge/Controller-TypeScript-yellow?style=flat-square&logo=typescript&logoColor=yellow) `.controller.ts`
+### ![Controller](https://img.shields.io/badge/Controller-TypeScript-F7DF1E?style=flat-square&logo=typescript&logoColor=F7DF1E) `.controller.ts`
  
 Camada de **entrada da API**. Recebe as requisições HTTP e define as rotas (`@Get`, `@Post`, `@Put`, `@Delete`). Não contém lógica de negócio — apenas delega ao Service. É aqui que decorators de documentação e metadados de rota são aplicados.
  
@@ -438,7 +438,7 @@ Camada de **entrada da API**. Recebe as requisições HTTP e define as rotas (`@
  
 ---
  
-### ![Service](https://img.shields.io/badge/Service-TypeScript-blue?style=flat-square&logo=typescript&logoColor=blue) `.service.ts`
+### ![Service](https://img.shields.io/badge/Service-TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=3178C6) `.service.ts`
  
 Camada de **lógica de negócio**. Processa os dados recebidos do Controller, aplica as regras da aplicação (validações, hash de senha com `bcrypt`, geração de JWT) e comunica com o banco via Prisma. Injetado no Controller via `@Injectable()`.
  
@@ -446,9 +446,9 @@ Camada de **lógica de negócio**. Processa os dados recebidos do Controller, ap
  
 ---
  
-### ![Module](https://img.shields.io/badge/Module-TypeScript-red?style=flat-square&logo=typescript&logoColor=red) `.module.ts`
+### ![Module](https://img.shields.io/badge/Module-TypeScript-E0234E?style=flat-square&logo=typescript&logoColor=E0234E) `.module.ts`
  
-**Unidade de organização** do NestJS. Agrupa e registra o Controller e o Service de um domínio (`imports`, `providers`, `controllers`, `exports`). Permite que outros módulos reutilizem os providers via `exports`. O `AppModule` é o módulo raiz que importa todos os demais.
+**Unidade de organização** do NestJS. Agrupa e registra o Controller e o Service de um domínio (`imports`, `providers`, `controllers`, `exports`). Permite que outros módulos reutilizem os providers via <b>`exports`</b>. O `AppModule` é o módulo raiz que importa todos os demais.
  
 **Arquivos neste projeto:** `app.module.ts` `game.module.ts` `auth.module.ts` `user.module.ts`
 
@@ -1105,13 +1105,15 @@ export function Setup({ modo, onStart, onBack, onOpenRanking }: SetupProps)
 ```
 
 ```ts
-// components/game.tsx — tela de jogo (3 modos) + tela de resultado VS
+// components/game.tsx — tela de jogo (6 modos) + tela de resultado VS
 
 // VsGame: displayScore antecipa o +1 quando roundOver.winner é definido (sem esperar o clique em "avançar")
 // rodada encerra quando direction === 'correct' ou dados.gameOver === true (tentativas esgotadas no backend)
 // MemoriaGame: ao completar todos os pares chama POST /api/games/:id/finish com { won: true }
 // ao salvar (handleSalvar), chama onOpenRanking('CARD_GUESS') → abre o ranking já na aba correta
-// SaveRankingPanel — reutilizado nos 3 modos + VsResultScreen; onOpenRanking recebe filtro opcional
+// LogicaGame: avalia fórmulas proposicionais V/F com timer por questão; classifica em Tautologia/Contradição/Contingência
+// PrecedenciaGame: o jogador insere parênteses clicando nos tokens; verificar() compara com normalizar()
+// SaveRankingPanel — reutilizado nos 5 modos solo + VsResultScreen; onOpenRanking recebe filtro opcional
 
 // displayScore (VsGame): preview do placar antes do avanço de rodada
 const displayScore =
@@ -1120,7 +1122,7 @@ const displayScore =
   p2: score.p2 + (roundOver?.winner === 2 ? 1 : 0),
 };
 
-// SaveRankingPanel — exibido após vitória/derrota (reutilizado nos 3 modos + VsResultScreen)
+// SaveRankingPanel — exibido após vitória/derrota (reutilizado nos 5 modos solo + VsResultScreen)
 // savedPosition: { position: number | null; total: number } | null
 //   null          → exibe formulário de apelido
 //   position != null → 🏆 #X de Y jogadores
@@ -1147,13 +1149,16 @@ function SaveRankingPanel({ saveNome, setSaveNome, saving, savedPosition, saveEr
 // VsResultScreen — resultado final com save para AMBOS os jogadores
 // gameIdP1: primeiro round ganho por P1 (fallback: rounds[0])
 // gameIdP2: primeiro round ganho por P2 (fallback: primeiro round diferente do gameIdP1)
-export function VsResultScreen({ p1, p2, finalScore, vsRoundResults, apiUrl, ... }) { ... }
+export function VsResultScreen({ p1, p2, finalScore, vsRoundResults, apiUrl, ... })
+{ ... }
 
 export function Game(props: GameProps)
 {
   if (props.modo === 'vs')          return <VsGame {...props} />;
   if (props.modo === 'memoria')     return <MemoriaGame {...props} />;
   if (props.modo === 'memoria-vs')  return <MemoriaVsGame {...props} />;
+  if (props.modo === 'logica')      return <LogicaGame {...props} />;
+  if (props.modo === 'precedencia') return <PrecedenciaGame {...props} />;
   return <SoloGame {...props} />;
 }
 ```

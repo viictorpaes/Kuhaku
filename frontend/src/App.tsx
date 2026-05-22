@@ -22,6 +22,7 @@ async function criarJogo(dificuldade: Dificuldade, gameType?: string, customRang
       ...(customRange && { customRange }),
     }),
   });
+
   const game = await res.json();
   return game.id;
 }
@@ -63,9 +64,9 @@ export function App()
     const isPrecedencia = modo === 'precedencia';
 
     const gameType =
-      isVs          ? 'VS_GUESS'          :
+      isVs          ? 'VS_GUESS' :
       (isMemoria || isMemoriaVs) ? 'CARD_GUESS' :
-      isLogica      ? 'LOGIC_PUZZLE'      :
+      isLogica      ? 'LOGIC_PUZZLE' :
       isPrecedencia ? 'PRECEDENCE_PUZZLE' : undefined;
 
     const id = await criarJogo(config.dificuldade, gameType, config.rangeMax);
@@ -78,8 +79,12 @@ export function App()
     setVsRoundResults((prev) => [...prev, { gameId: gameId!, winner }]);
 
     const newScore = { ...score };
-    if (winner === 1) newScore.p1++;
-    if (winner === 2) newScore.p2++;
+
+    if (winner === 1) 
+      newScore.p1++;
+    if (winner === 2) 
+      newScore.p2++;
+
     setScore(newScore);
 
     if (round >= TOTAL_ROUNDS_VS)
@@ -87,29 +92,35 @@ export function App()
       setFinalScore(newScore);
       setTela('result');
     }
+
     else
     {
       setRound((r) => r + 1);
       const id = await criarJogo(dificuldade!, 'VS_GUESS');
       setGameId(id);
     }
+
   }, [round, score, dificuldade, gameId]);
 
   const novoJogoSolo = useCallback(async () =>
   {
     const gameType =
-      modo === 'memoria'    ? 'CARD_GUESS'          :
-      modo === 'memoria-vs' ? 'CARD_GUESS'          :
-      modo === 'logica'     ? 'LOGIC_PUZZLE'        :
-      modo === 'precedencia'? 'PRECEDENCE_PUZZLE'   : undefined;
+      modo === 'memoria'    ? 'CARD_GUESS' :
+      modo === 'memoria-vs' ? 'CARD_GUESS' :
+      modo === 'logica'     ? 'LOGIC_PUZZLE' :
+      modo === 'precedencia'? 'PRECEDENCE_PUZZLE' : undefined;
     const id = await criarJogo(dificuldade!, gameType, rangeMaxCustom);
     setGameId(id);
   }, [dificuldade, modo, rangeMaxCustom]);
 
-  useEffect(() => {
-    if (tela === 'game' || tela === 'result') {
+  useEffect(() => 
+  {
+    if (tela === 'game' || tela === 'result') 
+    {
       starWarsTheme.stop();
-    } else {
+    } 
+    else 
+    {
       starWarsTheme.start();
     }
   }, [tela]);

@@ -33,14 +33,17 @@ function avaliar(e: Expr, v: Vals): boolean
 
 type Classificacao = 'TAUTOLOGIA' | 'CONTRADIÇÃO' | 'CONTINGÊNCIA';
 
-function classificar(e: Expr): Classificacao {
+function classificar(e: Expr): Classificacao
+{
   let temVerd = false, temFalso = false;
   for (const P of [false, true])
     for (const Q of [false, true])
       for (const R of [false, true]) 
       {
-        if (avaliar(e, { P, Q, R })) temVerd = true;
-        else temFalso = true;
+        if (avaliar(e, { P, Q, R })) 
+          temVerd = true;
+        else 
+          temFalso = true;
       }
   if (!temFalso)  
     return 'TAUTOLOGIA';
@@ -126,7 +129,8 @@ function embaralhar<T>(arr: T[]): T[]
   return a;
 }
 
-function gerarQuestoes(dificuldade: Dificuldade): Questao[] {
+function gerarQuestoes(dificuldade: Dificuldade): Questao[]
+{
   const total = LOGICA_CONFIG[dificuldade].count;
   const maxIdx = dificuldade === 'EASY' ? FACIL_MAX : dificuldade === 'MEDIUM' ? MEDIO_MAX : MODELOS.length;
   const selecionados = embaralhar(MODELOS.slice(0, maxIdx)).slice(0, total);
@@ -161,9 +165,9 @@ interface GameProps
   onNovoJogo: () => Promise<void>;
 }
 
-// ─── HELPERS VISUAIS ──────────────────────────────────────────────────────────
 
-function TimerBar({ seconds, maxSeconds }: { seconds: number; maxSeconds: number }) {
+function TimerBar({ seconds, maxSeconds }: { seconds: number; maxSeconds: number }) 
+{
   const pct = Math.max(0, (seconds / maxSeconds)) * 100;
   const cor = seconds <= 5 ? '#ef4444' : seconds <= 10 ? '#f97316' : seconds <= Math.ceil(maxSeconds * 0.4) ? '#eab308' : '#22c55e';
   return (
@@ -182,8 +186,11 @@ function TimerBar({ seconds, maxSeconds }: { seconds: number; maxSeconds: number
   );
 }
 
-function StreakBadge({ streak }: { streak: number }) {
-  if (streak < 3) return null;
+function StreakBadge({ streak }: { streak: number }) 
+{
+  if (streak < 3) 
+    return null;
+  
   const { emojis, label } =
     streak >= 10 ? { emojis: '🔥🔥🔥', label: `${streak}× LENDÁRIO` } :
     streak >= 5  ? { emojis: '🔥🔥',   label: `${streak}× EM CHAMAS` } :
@@ -204,8 +211,11 @@ const P2_COLOR = '#f97316';
 
 function direcaoLabel(d: Direcao): string
 {
-  if (d === 'higher') return '⬆️ Frequência mais alta!';
-  if (d === 'lower')  return '⬇️ Frequência mais baixa!';
+  if (d === 'higher') 
+    return '⬆️ Frequência mais alta!';
+  if (d === 'lower')  
+    return '⬇️ Frequência mais baixa!';
+
   return '📡 Sinal estabelecido!';
 }
 
@@ -254,7 +264,8 @@ function GameHeader({ onBack, onOpenRanking }: { onBack: () => void; onOpenRanki
 {
   const [muted, setMuted] = useState(() => starWarsTheme.muted);
 
-  const handleMute = () => {
+  const handleMute = () =>
+  {
     if (muted) { starWarsTheme.unmute(); setMuted(false); }
     else        { starWarsTheme.mute();   setMuted(true);  }
   };
@@ -292,7 +303,6 @@ function GameHeader({ onBack, onOpenRanking }: { onBack: () => void; onOpenRanki
   );
 }
 
-// ─── VS GAME ──────────────────────────────────────────────────────────────────
 
 function VsGame({ gameId, dificuldade, p1, p2, round, score, apiUrl, onBack, onOpenRanking, onRoundEnd }: GameProps)
 {
@@ -311,16 +321,21 @@ function VsGame({ gameId, dificuldade, p1, p2, round, score, apiUrl, onBack, onO
   const nomeAtual = jogadorAtual === 1 ? p1 : p2;
   const corAtual = jogadorAtual === 1 ? P1_COLOR : P2_COLOR;
 
-  useEffect(() => {
-    if (!roundOver) inputRef.current?.focus();
+  useEffect(() => 
+  {
+    if (!roundOver) 
+      inputRef.current?.focus();
   }, [jogadorAtual, roundOver]);
 
-  useEffect(() => {
+  useEffect(() => 
+  {
     if (roundOver) { clearInterval(turnoTimerRef.current); return; }
     setTurnoTimer(TIMER_VS_TURNO);
     turnoTimerRef.current = setInterval(() => {
-      setTurnoTimer((t) => {
-        if (t <= 1) {
+      setTurnoTimer((t) => 
+      {
+        if (t <= 1) 
+        {
           clearInterval(turnoTimerRef.current);
           return 0;
         }
@@ -330,14 +345,19 @@ function VsGame({ gameId, dificuldade, p1, p2, round, score, apiUrl, onBack, onO
     return () => clearInterval(turnoTimerRef.current);
   }, [jogadorAtual, roundOver]);
 
-  useEffect(() => {
+  useEffect(() => 
+  {
     if (turnoTimer !== 0 || roundOver) return;
     const timeout: Palpite = { valor: -1, feedback: 'tempo esgotado ⏱️', direcao: 'timeout', jogador: jogadorAtual };
-    setHistorico((prev) => {
+    setHistorico((prev) =>
+    {
       const novoHistorico = [timeout, ...prev];
-      if (novoHistorico.length >= maxTentativas) {
+      if (novoHistorico.length >= maxTentativas)
+      {
         setRoundOver({ winner: null, advancing: false });
-      } else {
+      }
+      else
+      {
         setJogadorAtual((j) => (j === 1 ? 2 : 1));
       }
       return novoHistorico;
@@ -461,7 +481,8 @@ function VsGame({ gameId, dificuldade, p1, p2, round, score, apiUrl, onBack, onO
       <main className="flex-1 flex flex-col gap-4 px-4 pb-8 max-w-lg mx-auto w-full">
 
         {/* Turn card + timer */}
-        {!isRoundOver && (
+        {!isRoundOver && 
+        (
           <div className="rounded-2xl p-5 border transition-all"
             style={{
               background: jogadorAtual === 1 ? 'rgba(6,182,212,0.10)' : 'rgba(99,102,241,0.12)',
@@ -512,7 +533,8 @@ function VsGame({ gameId, dificuldade, p1, p2, round, score, apiUrl, onBack, onO
         )}
 
         {/* Feedback from last guess */}
-        {lastPalpite && !isRoundOver && (
+        {lastPalpite && !isRoundOver && 
+        (
           <div
             className="rounded-2xl p-4 text-center border"
             style={{ background: feedbackBg(lastPalpite.feedback), borderColor: feedbackBorder(lastPalpite.feedback) }}
@@ -651,8 +673,6 @@ function SaveRankingPanel({ saveNome, setSaveNome, saving, savedPosition, saveEr
   );
 }
 
-// ─── SOLO GAME ────────────────────────────────────────────────────────────────
-
 function SoloGame({ gameId, dificuldade, apiUrl, onBack, onOpenRanking, onNovoJogo, timerSegundos, rangeMax }: GameProps)
 {
   const [palpite, setPalpite] = useState('');
@@ -681,40 +701,48 @@ function SoloGame({ gameId, dificuldade, apiUrl, onBack, onOpenRanking, onNovoJo
   const { bg: difBg, btn: difBtn } = DIF_COLOR[dificuldade];
   const rangeLabel = rangeMax ? `Canal 1-${rangeMax.toLocaleString('pt-BR')}` : RANGE_LABEL[dificuldade];
 
-  const iniciarContagem = useCallback(() => {
+  const iniciarContagem = useCallback(() => 
+  {
     if (!timerSegundos) return;
     clearInterval(tentativaTimerRef.current);
-    tentativaTimerRef.current = setInterval(() => {
-      setTentativaTimer((t) => {
+    tentativaTimerRef.current = setInterval(() => 
+    {
+      setTentativaTimer((t) => 
+      {
         if (t <= 1) { clearInterval(tentativaTimerRef.current); return 0; }
         return t - 1;
       });
     }, 1000);
   }, [timerSegundos]);
 
-  useEffect(() => {
-    if (!ganhou && !perdeu) inputRef.current?.focus();
+  useEffect(() =>
+  {
+    if (!ganhou && !perdeu) 
+      inputRef.current?.focus();
   }, [ganhou, perdeu]);
 
-  // Start timer once on mount; wrong guesses do NOT reset it
-  useEffect(() => {
+  useEffect(() => 
+  {
     if (!timerSegundos || ganhou || perdeu) return;
     setTentativaTimer(timerSegundos);
     iniciarContagem();
     return () => clearInterval(tentativaTimerRef.current);
   }, [ganhou, perdeu, timerSegundos, iniciarContagem]);
 
-  useEffect(() => {
+  useEffect(() => 
+  {
     if (!timerSegundos || tentativaTimer !== 0 || ganhou || perdeu) return;
     const novo: Palpite = { valor: -1, feedback: 'tempo esgotado ⏱️', direcao: 'timeout', jogador: 1 };
     let ended = false;
-    setHistorico((prev) => {
+    setHistorico((prev) =>
+    {
       const novoH = [novo, ...prev];
       if (novoH.length >= maxTentativas) { setPerdeu(true); ended = true; }
       return novoH;
     });
-    // Restart timer for the next attempt after timeout
-    if (!ended) {
+   
+    if (!ended) 
+    {
       setTentativaTimer(timerSegundos);
       iniciarContagem();
     }
@@ -757,7 +785,6 @@ function SoloGame({ gameId, dificuldade, apiUrl, onBack, onOpenRanking, onNovoJo
 
       if (dados.direction === 'correct') { playArcadeCorrect(); setGanhou(true); return; }
       if (novoHistorico.length >= maxTentativas) { playArcadeError(); setPerdeu(true); return; }
-      // Wrong guess: resume countdown from where it was (no reset)
       playArcadeError();
       iniciarContagem();
     }
@@ -991,8 +1018,6 @@ function SoloGame({ gameId, dificuldade, apiUrl, onBack, onOpenRanking, onNovoJo
   );
 }
 
-// ─── MEMORIA GAME ─────────────────────────────────────────────────────────────
-
 function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, onNovoJogo }: GameProps)
 {
   const { cols, rows, label, pairs: totalPairs } = MEMORIA_GRID[dificuldade];
@@ -1026,11 +1051,15 @@ function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, o
   const [saveErro, setSaveErro] = useState('');
   const finishCalledRef = useRef(false);
 
-  useEffect(() => {
+  useEffect(() =>
+  {
     if (!iniciou || ganhou || gameOver) return;
-    timerRef.current = setInterval(() => {
-      setTimerRestante((t) => {
-        if (t <= 1) {
+    timerRef.current = setInterval(() =>
+    {
+      setTimerRestante((t) =>
+      {
+        if (t <= 1)
+        {
           clearInterval(timerRef.current);
           setGameOver(true);
           return 0;
@@ -1046,7 +1075,8 @@ function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, o
   const handleClique = (idx: number) =>
   {
     if (bloqueado || viradas.includes(idx) || reveladas.has(idx) || ganhou || gameOver) return;
-    if (!iniciou) setIniciou(true);
+    if (!iniciou) 
+      setIniciou(true);
 
     const novasViradas = [...viradas, idx];
     setViradas(novasViradas);
@@ -1055,8 +1085,9 @@ function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, o
     {
       setBloqueado(true);
       const [a, b] = novasViradas;
-      if (cartas[a] === cartas[b]) 
+      if (cartas[a] === cartas[b])
       {
+        playArcadeCorrect();
         const novasReveladas = new Set(reveladas);
         novasReveladas.add(a);
         novasReveladas.add(b);
@@ -1082,6 +1113,7 @@ function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, o
       }
       else
       {
+        playArcadeError();
         setErros((e) => e + 1);
         setParesErrados([a, b]);
         setTimeout(() =>
@@ -1118,7 +1150,8 @@ function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, o
   {
     e.preventDefault();
     const nome = saveNome.trim();
-    if (!nome) { setSaveErro('Digite um apelid: '); return; }
+    if (!nome) 
+      { setSaveErro('Digite um apelid: '); return; }
     setSaving(true);
     setSaveErro('');
     try
@@ -1178,7 +1211,8 @@ function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, o
       </div>
 
       {/* Game over banner */}
-      {gameOver && (
+      {gameOver && 
+      (
         <div className="mx-4 mb-2 rounded-2xl p-5 text-center border"
           style={{ background: 'rgba(239,68,68,0.10)', borderColor: 'rgba(239,68,68,0.40)' }}>
           <p className="text-3xl mb-2">💀</p>
@@ -1234,7 +1268,8 @@ function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, o
             width: '100%',
           }}
         >
-          {cartas.map((num, idx) => {
+          {cartas.map((num, idx) => 
+          {
             const isErrada = paresErrados.includes(idx);
             const isVirada = viradas.includes(idx) && !isErrada;
             const isRevelada = reveladas.has(idx);
@@ -1278,7 +1313,6 @@ function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, o
   );
 }
 
-// ─── VS RESULT SCREEN ─────────────────────────────────────────────────────────
 
 interface VsResultScreenProps
 {
@@ -1316,8 +1350,10 @@ export function VsResultScreen({ p1, p2, finalScore, vsRoundResults, apiUrl, onJ
   {
     e.preventDefault();
     const nome = saveNomeP1.trim();
-    if (!nome) { setSaveErroP1('Digite um apelido'); return; }
-    if (!gameIdP1) { setSaveErroP1('Nenhuma partida disponível'); return; }
+    if (!nome) 
+      { setSaveErroP1('Digite um apelido'); return; }
+    if (!gameIdP1) 
+      { setSaveErroP1('Nenhuma partida disponível'); return; }
     setSavingP1(true);
     setSaveErroP1('');
     try
@@ -1459,8 +1495,6 @@ export function VsResultScreen({ p1, p2, finalScore, vsRoundResults, apiUrl, onJ
   );
 }
 
-// ─── PROTOCOLO LÓGICO — JOGO DE LÓGICA PROPOSICIONAL ────────────────────────
-
 function LogicaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, onNovoJogo }: GameProps)
 {
   const [questoes] = useState<Questao[]>(() => gerarQuestoes(dificuldade));
@@ -1487,27 +1521,35 @@ function LogicaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, on
 
   const acertou = respondido !== null && respondido === questao.resposta;
 
-  const responder = useCallback((escolha: boolean) => {
+  const responder = useCallback((escolha: boolean) =>
+  {
     if (respondido !== null || timedOutRef.current) return;
     clearInterval(questaoTimerRef.current);
     setRespondido(escolha);
-    if (escolha !== questao.resposta) {
+    if (escolha !== questao.resposta)
+    {
       setErros((e) => e + 1);
       setStreak(0);
-    } else {
+    }
+    else
+    {
       setAcertos((a) => a + 1);
       setStreak((s) => s + 1);
     }
   }, [respondido, questao]);
 
-  useEffect(() => {
+  useEffect(() =>
+  {
     if (respondido !== null || encerrado || timedOut) return;
     timedOutRef.current = false;
     setQuestaoTimer(TIMER_LOGICA[dificuldade]);
     clearInterval(questaoTimerRef.current);
-    questaoTimerRef.current = setInterval(() => {
-      setQuestaoTimer((t) => {
-        if (t <= 1) {
+    questaoTimerRef.current = setInterval(() =>
+    {
+      setQuestaoTimer((t) =>
+      {
+        if (t <= 1)
+        {
           clearInterval(questaoTimerRef.current);
           return 0;
         }
@@ -1517,26 +1559,33 @@ function LogicaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, on
     return () => clearInterval(questaoTimerRef.current);
   }, [atual, respondido, encerrado, timedOut, dificuldade]);
 
-  useEffect(() => {
+  useEffect(() =>
+  {
     if (questaoTimer !== 0 || respondido !== null || encerrado) return;
     timedOutRef.current = true;
     setTimedOut(true);
     setErros((e) => e + 1);
     setStreak(0);
     clearInterval(questaoTimerRef.current);
-    const t = setTimeout(() => {
+    const t = setTimeout(() =>
+    {
       setTimedOut(false);
       timedOutRef.current = false;
-      if (atual + 1 >= total) {
+      if (atual + 1 >= total)
+      {
         setEncerrado(true);
-        if (!finishRef.current) {
+        if (!finishRef.current)
+        {
           finishRef.current = true;
-          fetch(`${apiUrl}/api/games/${gameId}/finish`, {
+          fetch(`${apiUrl}/api/games/${gameId}/finish`,
+          {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ won: true, mistakes: erros + 1 }),
           }).catch(() => {});
         }
-      } else {
+      }
+      else
+      {
         setAtual((i) => i + 1);
         setRespondido(null);
       }
@@ -1544,51 +1593,68 @@ function LogicaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, on
     return () => clearTimeout(t);
   }, [questaoTimer, respondido, encerrado, atual, total, apiUrl, gameId, erros]);
 
-  const proximo = async () => {
-    if (atual + 1 >= total) {
+  const proximo = async () =>
+  {
+    if (atual + 1 >= total)
+    {
       setEncerrado(true);
-      if (!finishRef.current) {
+      if (!finishRef.current)
+      {
         finishRef.current = true;
         const totalErros = erros + (respondido !== questao.resposta ? 1 : 0);
-        fetch(`${apiUrl}/api/games/${gameId}/finish`, {
+        fetch(`${apiUrl}/api/games/${gameId}/finish`,
+        {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ won: true, mistakes: totalErros }),
         }).catch(() => {});
       }
-    } else {
+    }
+    else
+    {
       setAtual((i) => i + 1);
       setRespondido(null);
     }
   };
 
-  const handleNovo = async () => {
+  const handleNovo = async () =>
+  {
     setFinalizando(true);
     try { await onNovoJogo(); } finally { setFinalizando(false); }
   };
 
-  const handleSalvar = async (e: React.FormEvent) => {
+  const handleSalvar = async (e: React.FormEvent) =>
+  {
     e.preventDefault();
     const nome = saveNome.trim();
     if (!nome) { setSaveErro('Digite um apelido de astronauta'); return; }
     setSaving(true);
     setSaveErro('');
-    try {
-      const res = await fetch(`${apiUrl}/api/games/${gameId}/save`, {
+    try
+    {
+      const res = await fetch(`${apiUrl}/api/games/${gameId}/save`,
+      {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: nome }),
       });
       const data = await res.json();
-      if (data.saved) {
+      if (data.saved)
+      {
         setSavedPosition({ position: data.position ?? null, total: data.total });
         onOpenRanking('LOGIC_PUZZLE');
-      } else {
+      }
+      else
+      {
         setSaveErro('Não foi possível salvar. Tente novamente.');
       }
-    } catch {
+    }
+    catch
+    {
       setSaveErro('Erro de conexão com a estação');
-    } finally {
+    }
+    finally
+    {
       setSaving(false);
     }
   };
@@ -1596,8 +1662,8 @@ function LogicaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, on
   const vLabel = (b: boolean) => b ? 'VERDADEIRA' : 'FALSA';
   const vColor = (b: boolean) => b ? '#4ade80' : '#f87171';
 
-  // ── Tela de missão concluída ───────────────────────────────────────────────
-  if (encerrado) {
+  if (encerrado) 
+  {
     const falhas = erros;
     const decodificadas = acertos;
     const perfeita = falhas === 0;
@@ -1679,7 +1745,6 @@ function LogicaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, on
     );
   }
 
-  // ── Transmissão atual ──────────────────────────────────────────────────────
   return (
     <div className="min-h-screen text-white flex flex-col" style={{ background: BG, fontFamily: "'Inter', system-ui, sans-serif" }}>
       <GameHeader onBack={onBack} onOpenRanking={onOpenRanking} />
@@ -1795,7 +1860,8 @@ function LogicaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, on
             </div>
           </div>
         )}
-        {respondido !== null && (
+        {respondido !== null && 
+        (
           <div className="w-full">
             {/* Feedback espacial */}
             <div className="rounded-2xl p-4 mb-3 text-center border"
@@ -1840,9 +1906,9 @@ function LogicaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, on
   );
 }
 
-// ─── HIERARQUIA DE COMANDOS — JOGO DE PRECEDÊNCIA DE OPERADORES ───────────────
 
-interface ExercicioParenteses {
+interface ExercicioParenteses
+{
   flat: string[];
   correta: string;
   dica: string;
@@ -1887,7 +1953,8 @@ const POOL_HARD: ExercicioParenteses[] = [
   { flat: ['¬P', '∨', '¬Q', '∧', 'R', '→', '¬P', '↔', 'R'],              correta: '((¬P ∨ (¬Q ∧ R)) → ¬P) ↔ R',     dica: '∧ agrupa antes de ∨, depois → e por fim ↔.' },
 ];
 
-const POOL_PREC: Record<Dificuldade, ExercicioParenteses[]> = {
+const POOL_PREC: Record<Dificuldade, ExercicioParenteses[]> =
+{
   EASY: POOL_EASY,
   MEDIUM: POOL_MEDIUM,
   HARD: POOL_HARD,
@@ -1895,7 +1962,8 @@ const POOL_PREC: Record<Dificuldade, ExercicioParenteses[]> = {
 
 function normalizar(s: string) { return s.replace(/\s+/g, ''); }
 
-function gerarExerciciosPrecedencia(dif: Dificuldade): ExercicioParenteses[] {
+function gerarExerciciosPrecedencia(dif: Dificuldade): ExercicioParenteses[]
+{
   const pool = [...POOL_PREC[dif]].sort(() => Math.random() - 0.5);
   return pool.slice(0, PARENTESES_CONFIG[dif].count);
 }
@@ -1926,12 +1994,15 @@ function PrecedenciaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRankin
   const exercicio = exercicios[atual];
   const total = exercicios.length;
 
-  useEffect(() => {
+  useEffect(() =>
+  {
     if (resultado !== null || encerrado || timedOut) return;
     setExpressaoTimer(TIMER_PRECEDENCIA[dificuldade]);
     clearInterval(expressaoTimerRef.current);
-    expressaoTimerRef.current = setInterval(() => {
-      setExpressaoTimer((t) => {
+    expressaoTimerRef.current = setInterval(() =>
+    {
+      setExpressaoTimer((t) =>
+      {
         if (t <= 1) { clearInterval(expressaoTimerRef.current); return 0; }
         return t - 1;
       });
@@ -1939,24 +2010,31 @@ function PrecedenciaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRankin
     return () => clearInterval(expressaoTimerRef.current);
   }, [atual, resultado, encerrado, timedOut, dificuldade]);
 
-  useEffect(() => {
+  useEffect(() =>
+  {
     if (expressaoTimer !== 0 || resultado !== null || encerrado) return;
     setTimedOut(true);
     setErros((e) => e + 1);
     setStreak(0);
     clearInterval(expressaoTimerRef.current);
-    const t = setTimeout(() => {
+    const t = setTimeout(() =>
+    {
       setTimedOut(false);
-      if (atual + 1 >= total) {
+      if (atual + 1 >= total)
+      {
         setEncerrado(true);
-        if (!finishRef.current) {
+        if (!finishRef.current)
+        {
           finishRef.current = true;
-          fetch(`${apiUrl}/api/games/${gameId}/finish`, {
+          fetch(`${apiUrl}/api/games/${gameId}/finish`,
+          {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ won: true, mistakes: erros + 1 }),
           }).catch(() => {});
         }
-      } else {
+      }
+      else
+      {
         const next = atual + 1;
         setAtual(next);
         setTokens([...exercicios[next].flat]);
@@ -1969,26 +2047,38 @@ function PrecedenciaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRankin
     return () => clearTimeout(t);
   }, [expressaoTimer, resultado, encerrado, atual, total, apiUrl, gameId, erros, exercicios]);
 
-  const handleTokenClick = (index: number) => {
+  const handleTokenClick = (index: number) =>
+  {
     if (resultado !== null) return;
-    if (selStart === null) {
+    if (selStart === null)
+    {
       setSelStart(index);
       setSelEnd(null);
-    } else if (selEnd !== null) {
+    }
+    else if (selEnd !== null)
+    {
       setSelStart(index);
       setSelEnd(null);
-    } else {
-      if (index === selStart) {
+    }
+    else
+    {
+      if (index === selStart)
+      {
         setSelStart(null);
-      } else if (index > selStart) {
+      }
+      else if (index > selStart)
+      {
         setSelEnd(index);
-      } else {
+      }
+      else
+      {
         setSelStart(index);
       }
     }
   };
 
-  const addParens = () => {
+  const addParens = () =>
+  {
     if (selStart === null || selEnd === null || selEnd <= selStart) return;
     const newTokens = [
       ...tokens.slice(0, selStart),
@@ -2003,7 +2093,8 @@ function PrecedenciaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRankin
     setSelEnd(null);
   };
 
-  const undo = () => {
+  const undo = () =>
+  {
     if (history.length === 0) return;
     setTokens(history[history.length - 1]);
     setHistory(h => h.slice(0, -1));
@@ -2011,14 +2102,16 @@ function PrecedenciaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRankin
     setSelEnd(null);
   };
 
-  const resetExpr = () => {
+  const resetExpr = () =>
+  {
     setTokens([...exercicio.flat]);
     setHistory([]);
     setSelStart(null);
     setSelEnd(null);
   };
 
-  const verificar = () => {
+  const verificar = () =>
+  {
     if (resultado !== null) return;
     clearInterval(expressaoTimerRef.current);
     const resposta = normalizar(tokens.join(''));
@@ -2029,18 +2122,24 @@ function PrecedenciaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRankin
     else { setErros(e => e + 1); setStreak(0); }
   };
 
-  const proximo = async () => {
-    if (atual + 1 >= total) {
+  const proximo = async () =>
+  {
+    if (atual + 1 >= total)
+    {
       setEncerrado(true);
-      if (!finishRef.current) {
+      if (!finishRef.current)
+      {
         finishRef.current = true;
-        fetch(`${apiUrl}/api/games/${gameId}/finish`, {
+        fetch(`${apiUrl}/api/games/${gameId}/finish`,
+        {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ won: true, mistakes: erros }),
         }).catch(() => {});
       }
-    } else {
+    }
+    else
+    {
       const next = atual + 1;
       setAtual(next);
       setTokens([...exercicios[next].flat]);
@@ -2051,39 +2150,50 @@ function PrecedenciaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRankin
     }
   };
 
-  const handleNovo = async () => {
+  const handleNovo = async () =>
+  {
     setFinalizando(true);
     try { await onNovoJogo(); } finally { setFinalizando(false); }
   };
 
-  const handleSalvar = async (e: React.FormEvent) => {
+  const handleSalvar = async (e: React.FormEvent) =>
+  {
     e.preventDefault();
     const nome = saveNome.trim();
     if (!nome) { setSaveErro('Digite um apelido de astronauta'); return; }
     setSaving(true);
     setSaveErro('');
-    try {
-      const res = await fetch(`${apiUrl}/api/games/${gameId}/save`, {
+    try
+    {
+      const res = await fetch(`${apiUrl}/api/games/${gameId}/save`,
+      {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: nome }),
       });
       const data = await res.json();
-      if (data.saved) {
+      if (data.saved)
+      {
         setSavedPosition({ position: data.position ?? null, total: data.total });
         onOpenRanking('PRECEDENCE_PUZZLE');
-      } else {
+      }
+      else
+      {
         setSaveErro('Não foi possível salvar. Tente novamente.');
       }
-    } catch {
+    }
+    catch
+    {
       setSaveErro('Erro de conexão com a estação');
-    } finally {
+    }
+    finally
+    {
       setSaving(false);
     }
   };
 
-  // ── Tela de missão concluída ───────────────────────────────────────────────
-  if (encerrado) {
+  if (encerrado) 
+  {
     const perfeita = erros === 0;
     return (
       <div className="min-h-screen text-white flex flex-col" style={{ background: BG, fontFamily: "'Inter', system-ui, sans-serif" }}>
@@ -2160,7 +2270,6 @@ function PrecedenciaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRankin
     );
   }
 
-  // ── Tela de jogo ──────────────────────────────────────────────────────────
   const canAddParens = selStart !== null && selEnd !== null && selEnd > selStart;
 
   return (
@@ -2358,11 +2467,10 @@ function PrecedenciaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRankin
   );
 }
 
-// ─── MEMÓRIA VS (DUELO DE MAPAS) ──────────────────────────────────────────────
-
 type FaseDuelo = 'p1' | 'transicao' | 'p2' | 'resultado';
 
-interface EstatsJogador {
+interface EstatsJogador 
+{
   pares: number;
   erros: number;
   timerRestante: number;
@@ -2374,10 +2482,12 @@ function MemoriaVsGame({ gameId, dificuldade, p1, p2, apiUrl, onBack, onOpenRank
   const { cols, rows, pairs: totalPairs } = MEMORIA_GRID[dificuldade];
   const totalCards = cols * rows;
 
-  const gerarCartas = () => {
+  const gerarCartas = () =>
+  {
     const nums = Array.from({ length: totalPairs }, (_, i) => i + 1);
     const pares = [...nums, ...nums];
-    for (let i = pares.length - 1; i > 0; i--) {
+    for (let i = pares.length - 1; i > 0; i--)
+    {
       const j = Math.floor(Math.random() * (i + 1));
       [pares[i], pares[j]] = [pares[j], pares[i]];
     }
@@ -2407,7 +2517,8 @@ function MemoriaVsGame({ gameId, dificuldade, p1, p2, apiUrl, onBack, onOpenRank
   const paresEncontrados = reveladas.size / 2;
   const nomeAtual = fase === 'p2' ? p2 : p1;
 
-  const resetForP2 = useCallback(() => {
+  const resetForP2 = useCallback(() =>
+  {
     setReveladas(new Set());
     setViradas([]);
     setErros(0);
@@ -2419,10 +2530,13 @@ function MemoriaVsGame({ gameId, dificuldade, p1, p2, apiUrl, onBack, onOpenRank
     clearInterval(timerRef.current);
   }, []);
 
-  useEffect(() => {
+  useEffect(() =>
+  {
     if (!iniciou || ganhou || gameOver) return;
-    timerRef.current = setInterval(() => {
-      setTimerRestante((t) => {
+    timerRef.current = setInterval(() =>
+    {
+      setTimerRestante((t) =>
+      {
         if (t <= 1) { clearInterval(timerRef.current); setGameOver(true); return 0; }
         return t - 1;
       });
@@ -2430,17 +2544,21 @@ function MemoriaVsGame({ gameId, dificuldade, p1, p2, apiUrl, onBack, onOpenRank
     return () => clearInterval(timerRef.current);
   }, [iniciou, ganhou, gameOver]);
 
-  const handleClique = (idx: number) => {
+  const handleClique = (idx: number) =>
+  {
     if (bloqueado || viradas.includes(idx) || reveladas.has(idx) || ganhou || gameOver) return;
     if (!iniciou) setIniciou(true);
 
     const novasViradas = [...viradas, idx];
     setViradas(novasViradas);
 
-    if (novasViradas.length === 2) {
+    if (novasViradas.length === 2)
+    {
       setBloqueado(true);
       const [a, b] = novasViradas;
-      if (cartas[a] === cartas[b]) {
+      if (cartas[a] === cartas[b])
+      {
+        playArcadeCorrect();
         const novasReveladas = new Set(reveladas);
         novasReveladas.add(a);
         novasReveladas.add(b);
@@ -2448,25 +2566,34 @@ function MemoriaVsGame({ gameId, dificuldade, p1, p2, apiUrl, onBack, onOpenRank
         setViradas([]);
         setBloqueado(false);
         setTimerRestante((t) => t + MEMORIA_BONUS_PAR);
-        if (novasReveladas.size === totalCards) {
+        if (novasReveladas.size === totalCards)
+        {
           setGanhou(true);
           clearInterval(timerRef.current);
           const stats = { pares: totalPairs, erros, timerRestante: timerRestante + MEMORIA_BONUS_PAR, eliminou: false };
-          if (fase === 'p1') {
-            if (!finishP1Ref.current) {
+          if (fase === 'p1')
+          {
+            if (!finishP1Ref.current)
+            {
               finishP1Ref.current = true;
               fetch(`${apiUrl}/api/games/${gameId}/finish`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ won: true }) }).catch(() => {});
             }
             setStatsP1(stats);
-          } else {
-            if (!finishP2Ref.current) {
+          }
+          else
+          {
+            if (!finishP2Ref.current)
+            {
               finishP2Ref.current = true;
               if (gameIdP2) fetch(`${apiUrl}/api/games/${gameIdP2}/finish`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ won: true }) }).catch(() => {});
             }
             setFase('resultado');
           }
         }
-      } else {
+      }
+      else
+      {
+        playArcadeError();
         setErros((e) => e + 1);
         setParesErrados([a, b]);
         setTimeout(() => { setViradas([]); setParesErrados([]); setBloqueado(false); }, 900);
@@ -2474,17 +2601,23 @@ function MemoriaVsGame({ gameId, dificuldade, p1, p2, apiUrl, onBack, onOpenRank
     }
   };
 
-  useEffect(() => {
+  useEffect(() =>
+  {
     if (!gameOver) return;
     const stats = { pares: paresEncontrados, erros, timerRestante: 0, eliminou: true };
-    if (fase === 'p1') {
-      if (!finishP1Ref.current) {
+    if (fase === 'p1')
+    {
+      if (!finishP1Ref.current)
+      {
         finishP1Ref.current = true;
         fetch(`${apiUrl}/api/games/${gameId}/finish`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ won: false }) }).catch(() => {});
       }
       setStatsP1(stats);
-    } else {
-      if (!finishP2Ref.current) {
+    }
+    else
+    {
+      if (!finishP2Ref.current)
+      {
         finishP2Ref.current = true;
         if (gameIdP2) fetch(`${apiUrl}/api/games/${gameIdP2}/finish`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ won: false }) }).catch(() => {});
       }
@@ -2492,21 +2625,26 @@ function MemoriaVsGame({ gameId, dificuldade, p1, p2, apiUrl, onBack, onOpenRank
     }
   }, [gameOver]);
 
-  const handlePassarParaP2 = async () => {
+  const handlePassarParaP2 = async () =>
+  {
     resetForP2();
-    try {
-      const res = await fetch(`${apiUrl}/api/games`, {
+    try
+    {
+      const res = await fetch(`${apiUrl}/api/games`,
+      {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ difficulty: dificuldade, gameType: 'CARD_GUESS' }),
       });
       const g = await res.json();
       setGameIdP2(g.id);
-    } catch {/* ok */}
+    }
+    catch {/* ok */}
     setFase('p2');
   };
 
-  const vencedor = (): string | null => {
+  const vencedor = (): string | null => 
+  {
     if (!statsP1) return null;
     const p2Stats = { pares: ganhou ? totalPairs : paresEncontrados, erros, timerRestante: ganhou ? timerRestante : 0, eliminou: gameOver };
     if (statsP1.eliminou && p2Stats.eliminou) return null;
@@ -2522,7 +2660,8 @@ function MemoriaVsGame({ gameId, dificuldade, p1, p2, apiUrl, onBack, onOpenRank
     ? { pares: ganhou ? totalPairs : paresEncontrados, erros, timerRestante: ganhou ? timerRestante : 0, eliminou: gameOver }
     : null;
 
-  if (fase === 'transicao' && statsP1) {
+  if (fase === 'transicao' && statsP1) 
+  {
     return (
       <div className="min-h-screen text-white flex flex-col items-center justify-center px-4"
         style={{ background: BG, fontFamily: "'Inter', system-ui, sans-serif" }}>
@@ -2627,7 +2766,8 @@ function MemoriaVsGame({ gameId, dificuldade, p1, p2, apiUrl, onBack, onOpenRank
       </div>
 
       {/* Game over / win banners */}
-      {gameOver && (
+      {gameOver && 
+      (
         <div className="mx-4 mb-2 rounded-2xl p-4 text-center border"
           style={{ background: 'rgba(239,68,68,0.10)', borderColor: 'rgba(239,68,68,0.40)' }}>
           <p className="font-black text-red-400">💀 {nomeAtual} foi eliminado! Tempo esgotado.</p>
@@ -2638,7 +2778,8 @@ function MemoriaVsGame({ gameId, dificuldade, p1, p2, apiUrl, onBack, onOpenRank
           </button>
         </div>
       )}
-      {ganhou && (
+      {ganhou && 
+      (
         <div className="mx-4 mb-2 rounded-2xl p-4 text-center border"
           style={{ background: 'rgba(16,185,129,0.1)', borderColor: 'rgba(16,185,129,0.35)' }}>
           <p className="font-black text-cyan-400">🛸 {nomeAtual} completou o tabuleiro! +{timerRestante}s</p>
@@ -2659,7 +2800,8 @@ function MemoriaVsGame({ gameId, dificuldade, p1, p2, apiUrl, onBack, onOpenRank
           maxWidth: cols >= 6 ? '480px' : '380px',
           width: '100%',
         }}>
-          {cartas.map((num, idx) => {
+          {cartas.map((num, idx) => 
+          {
             const isErrada = paresErrados.includes(idx);
             const isVirada = viradas.includes(idx) && !isErrada;
             const isRevelada = reveladas.has(idx);

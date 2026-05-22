@@ -3,9 +3,11 @@ import type { Modo, Dificuldade, ConfigJogo } from '../types';
 import {
   RANGE_LABEL, DIF_LABEL, MAX_TENTATIVAS_SOLO, MEMORIA_GRID, LOGICA_CONFIG,
   PARENTESES_CONFIG, TIMER_LOGICA, TIMER_PRECEDENCIA, MEMORIA_TIMER_INICIAL, MEMORIA_BONUS_PAR,
+  TIMER_VS_TURNO,
 } from '../constants';
 
-interface SetupProps {
+interface SetupProps 
+{
   modo: Modo;
   onStart: (config: ConfigJogo) => Promise<void>;
   onBack: () => void;
@@ -42,9 +44,8 @@ function GameHeader({ onBack, onOpenRanking }: { onBack: () => void; onOpenRanki
   );
 }
 
-// ─── CUSTOM RANGE OPTIONS ─────────────────────────────────────────────────────
-
-const RANGE_PRESETS = [
+const RANGE_PRESETS = 
+[
   { label: '1-100',    value: 100   },
   { label: '1-500',    value: 500   },
   { label: '1-1.000',  value: 1000  },
@@ -53,7 +54,8 @@ const RANGE_PRESETS = [
   { label: '1-100k',   value: 100000},
 ];
 
-const TIMER_PRESETS = [
+const TIMER_PRESETS = 
+[
   { label: 'Sem limite', value: null },
   { label: '60s',        value: 60  },
   { label: '30s',        value: 30  },
@@ -66,8 +68,6 @@ function calcTentativasCustom(range: number): number {
   return Math.max(3, Math.ceil(Math.log2(range) * 1.5));
 }
 
-// ─── VS — BATALHA DE SINAIS SETUP ─────────────────────────────────────────────
-
 function VsSetup({ onStart, onBack, onOpenRanking }: SetupProps) {
   const [dificuldade, setDificuldade] = useState<Dificuldade>('MEDIUM');
   const [p1, setP1] = useState('');
@@ -75,19 +75,26 @@ function VsSetup({ onStart, onBack, onOpenRanking }: SetupProps) {
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState('');
 
-  const handleStart = async () => {
+  const handleStart = async () => 
+  {
     setErro('');
     setLoading(true);
-    try {
-      await onStart({ dificuldade, p1: p1.trim() || 'Astronauta 1', p2: p2.trim() || 'Astronauta 2' });
-    } catch {
+    try 
+    {
+      await onStart({ dificuldade, p1: p1.trim() || 'Astronauta 1', p2: p2.trim() || 'Astronauta 2', timerSegundos: TIMER_VS_TURNO });
+    } 
+    catch 
+    {
       setErro('Erro ao criar missão. Verifique se o servidor está rodando.');
-    } finally {
+    } 
+    finally 
+    {
       setLoading(false);
     }
   };
 
-  const patentes: { dif: Dificuldade; border: string; bg: string; text: string }[] = [
+  const patentes: { dif: Dificuldade; border: string; bg: string; text: string }[] = 
+  [
     { dif: 'EASY',   border: '#0891b2', bg: 'rgba(8,145,178,0.15)',   text: '#67e8f9' },
     { dif: 'MEDIUM', border: '#1d4ed8', bg: 'rgba(29,78,216,0.15)',   text: '#93c5fd' },
     { dif: 'HARD',   border: '#7c3aed', bg: 'rgba(124,58,237,0.15)',  text: '#c4b5fd' },
@@ -109,7 +116,7 @@ function VsSetup({ onStart, onBack, onOpenRanking }: SetupProps) {
         {/* Timer info */}
         <div className="flex items-center gap-2 mb-6 px-4 py-2 rounded-full"
           style={{ background: 'rgba(6,182,212,0.10)', border: '1px solid rgba(6,182,212,0.25)' }}>
-          <span className="text-cyan-400 font-black text-sm">⏱ 30s por turno</span>
+          <span className="text-cyan-400 font-black text-sm">⏱ {TIMER_VS_TURNO}s por turno</span>
           <span className="text-slate-500 text-xs">· Tempo esgotado = turno perdido</span>
         </div>
 
@@ -186,26 +193,31 @@ function VsSetup({ onStart, onBack, onOpenRanking }: SetupProps) {
   );
 }
 
-// ─── OPERAÇÃO RESGATE (SOLO) SETUP ────────────────────────────────────────────
 
-function SoloSetup({ onStart, onBack, onOpenRanking }: SetupProps) {
+function SoloSetup({ onStart, onBack, onOpenRanking }: SetupProps) 
+{
   const [loading, setLoading] = useState<Dificuldade | 'custom' | null>(null);
   const [showCustom, setShowCustom] = useState(false);
   const [customRange, setCustomRange] = useState(1000);
   const [customTimer, setCustomTimer] = useState<number | null>(30);
 
-  const handleStart = async (dif: Dificuldade) => {
+  const handleStart = async (dif: Dificuldade) => 
+  {
     setLoading(dif);
     try {
       await onStart({ dificuldade: dif, p1: 'Astronauta', p2: '' });
-    } finally {
+    } 
+    finally 
+    {
       setLoading(null);
     }
   };
 
-  const handleCustomStart = async () => {
+  const handleCustomStart = async () => 
+  {
     setLoading('custom');
-    try {
+    try 
+    {
       await onStart({
         dificuldade: 'HARD',
         p1: 'Astronauta',
@@ -213,12 +225,15 @@ function SoloSetup({ onStart, onBack, onOpenRanking }: SetupProps) {
         rangeMax: customRange,
         timerSegundos: customTimer,
       });
-    } finally {
+    } 
+    finally 
+    {
       setLoading(null);
     }
   };
 
-  const cards: { dif: Dificuldade; emoji: string; bg: string; shadow: string }[] = [
+  const cards: { dif: Dificuldade; emoji: string; bg: string; shadow: string }[] = 
+  [
     { dif: 'EASY',   emoji: '🌍', bg: '#0e4f6e', shadow: 'rgba(6,182,212,0.35)'  },
     { dif: 'MEDIUM', emoji: '🚀', bg: '#1e3a8a', shadow: 'rgba(29,78,216,0.35)'  },
     { dif: 'HARD',   emoji: '👨‍🚀', bg: '#4c1d95', shadow: 'rgba(124,58,237,0.35)' },
@@ -291,7 +306,8 @@ function SoloSetup({ onStart, onBack, onOpenRanking }: SetupProps) {
                 Frequência máxima (range)
               </p>
               <div className="grid grid-cols-3 gap-2">
-                {RANGE_PRESETS.map(({ label, value }) => (
+                {RANGE_PRESETS.map(({ label, value }) => 
+                (
                   <button
                     key={value}
                     onClick={() => setCustomRange(value)}
@@ -360,21 +376,26 @@ function SoloSetup({ onStart, onBack, onOpenRanking }: SetupProps) {
   );
 }
 
-// ─── MAPAS ESTELARES (MEMÓRIA SOLO) SETUP ─────────────────────────────────────
 
-function MemoriaSetup({ onStart, onBack, onOpenRanking }: SetupProps) {
+function MemoriaSetup({ onStart, onBack, onOpenRanking }: SetupProps) 
+{
   const [loading, setLoading] = useState<Dificuldade | null>(null);
 
-  const handleStart = async (dif: Dificuldade) => {
+  const handleStart = async (dif: Dificuldade) => 
+  {
     setLoading(dif);
-    try {
+    try 
+    {
       await onStart({ dificuldade: dif, p1: 'Astronauta', p2: '' });
-    } finally {
+    } 
+    finally 
+    {
       setLoading(null);
     }
   };
 
-  const cards: { dif: Dificuldade; emoji: string; bg: string; shadow: string }[] = [
+  const cards: { dif: Dificuldade; emoji: string; bg: string; shadow: string }[] = 
+  [
     { dif: 'EASY',   emoji: '🌕', bg: '#0e4f6e', shadow: 'rgba(6,182,212,0.35)'  },
     { dif: 'MEDIUM', emoji: '🪐', bg: '#1e3a8a', shadow: 'rgba(29,78,216,0.35)'  },
     { dif: 'HARD',   emoji: '🌌', bg: '#3b0764', shadow: 'rgba(124,58,237,0.35)' },
@@ -426,27 +447,31 @@ function MemoriaSetup({ onStart, onBack, onOpenRanking }: SetupProps) {
   );
 }
 
-// ─── DUELO DE MAPAS (MEMÓRIA 1v1) SETUP ──────────────────────────────────────
 
-function MemoriaVsSetup({ onStart, onBack, onOpenRanking }: SetupProps) {
+function MemoriaVsSetup({ onStart, onBack, onOpenRanking }: SetupProps) 
+{
   const [loading, setLoading] = useState<Dificuldade | null>(null);
   const [p1, setP1] = useState('');
   const [p2, setP2] = useState('');
 
   const handleStart = async (dif: Dificuldade) => {
     setLoading(dif);
-    try {
+    try 
+    {
       await onStart({
         dificuldade: dif,
         p1: p1.trim() || 'Astronauta 1',
         p2: p2.trim() || 'Astronauta 2',
       });
-    } finally {
+    } 
+    finally 
+    {
       setLoading(null);
     }
   };
 
-  const cards: { dif: Dificuldade; emoji: string; bg: string; shadow: string }[] = [
+  const cards: { dif: Dificuldade; emoji: string; bg: string; shadow: string }[] = 
+  [
     { dif: 'EASY',   emoji: '🌕', bg: '#0e4f6e', shadow: 'rgba(6,182,212,0.35)'  },
     { dif: 'MEDIUM', emoji: '🪐', bg: '#1e3a8a', shadow: 'rgba(29,78,216,0.35)'  },
     { dif: 'HARD',   emoji: '🌌', bg: '#3b0764', shadow: 'rgba(124,58,237,0.35)' },
@@ -530,8 +555,6 @@ function MemoriaVsSetup({ onStart, onBack, onOpenRanking }: SetupProps) {
     </div>
   );
 }
-
-// ─── PROTOCOLO LÓGICO SETUP ───────────────────────────────────────────────────
 
 function LogicaSetup({ onStart, onBack, onOpenRanking }: SetupProps) {
   const [loading, setLoading] = useState<Dificuldade | null>(null);
@@ -622,16 +645,19 @@ function LogicaSetup({ onStart, onBack, onOpenRanking }: SetupProps) {
   );
 }
 
-// ─── HIERARQUIA DE COMANDOS (PRECEDÊNCIA) SETUP ───────────────────────────────
 
-function PrecedenciaSetup({ onStart, onBack, onOpenRanking }: SetupProps) {
+function PrecedenciaSetup({ onStart, onBack, onOpenRanking }: SetupProps) 
+{
   const [loading, setLoading] = useState<Dificuldade | null>(null);
 
   const handleStart = async (dif: Dificuldade) => {
     setLoading(dif);
-    try {
+    try 
+    {
       await onStart({ dificuldade: dif, p1: 'Astronauta', p2: '' });
-    } finally {
+    } 
+    finally 
+    {
       setLoading(null);
     }
   };
@@ -711,7 +737,8 @@ function PrecedenciaSetup({ onStart, onBack, onOpenRanking }: SetupProps) {
   );
 }
 
-export function Setup(props: SetupProps) {
+export function Setup(props: SetupProps) 
+{
   if (props.modo === 'vs')         return <VsSetup {...props} />;
   if (props.modo === 'memoria')    return <MemoriaSetup {...props} />;
   if (props.modo === 'memoria-vs') return <MemoriaVsSetup {...props} />;

@@ -57,12 +57,12 @@ export function Home({ onSelectMode, onOpenRanking }: HomeProps)
                   2 Astronautas
                 </span>
                 <span className="inline-flex items-center bg-white/20 text-white text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wide">
-                  ⏱ Timer 30s
+                  ⏱ Timer 15s
                 </span>
               </div>
               <h2 className="text-xl font-black text-white">Batalha de Sinais 📡</h2>
               <p className="text-white/80 text-sm mt-1 leading-relaxed">
-                Dois astronautas, mesma frequência secreta. Alternando palpites com timer de 30s — quem sintonizar primeiro vence a rodada!
+                Dois astronautas, mesma frequência secreta. Alternando palpites com timer de 15s — quem sintonizar primeiro vence a rodada!
               </p>
               <p className="text-white/70 text-xs mt-3 font-medium">
                 + 3 Rodadas &nbsp;·&nbsp; + Cadete / Piloto / Comandante &nbsp;·&nbsp; + Placar ao vivo
