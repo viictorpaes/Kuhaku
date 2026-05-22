@@ -1,30 +1,31 @@
-const audio = new Audio('src/components/song/StarWarsMainTheme.mp3');
-audio.loop = true;
-audio.volume = 1.0;
+const mainaudio = new Audio('src/components/song/StarWarsMainTheme.mp3');
+mainaudio.loop = true;
+mainaudio.volume = 1.0;
 
 export const starWarsTheme = 
 {
-  get muted() { return audio.muted; },
+  get muted() { return mainaudio.muted; },
   start() 
   {
-    if (audio.paused) audio.play().catch(() => {});
+    if (mainaudio.paused) mainaudio.play().catch(() => {});
   },
 
   stop() 
   {
-    audio.pause();
-    audio.currentTime = 0;
+    mainaudio.pause();
+    mainaudio.currentTime = 0;
   },
 
-  mute() { audio.muted = true; },
-  unmute() { audio.muted = false; },
+  mute() { mainaudio.muted = true; },
+  unmute() { mainaudio.muted = false; },
 };
 
 let _audioCtx: AudioContext | null = null;
 
 function getAudioCtx(): AudioContext
 {
-  if (!_audioCtx) _audioCtx = new AudioContext();
+  if (!_audioCtx) 
+    _audioCtx = new AudioContext();
   return _audioCtx;
 }
 

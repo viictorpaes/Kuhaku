@@ -59,7 +59,6 @@ export const PARENTESES_CONFIG: Record<Dificuldade, { count: number; label: stri
   HARD:   { count: 12, label: '👨‍🚀 Comandante',  description: '∧ ∨ → ↔ · 12 expressões'     },
 };
 
-
 export const TIMER_VS_TURNO = 15;
 
 export const TIMER_LOGICA: Record<Dificuldade, number> =
@@ -76,5 +75,5 @@ export const TIMER_PRECEDENCIA: Record<Dificuldade, number> =
   HARD:   25,
 };
 
-export const MEMORIA_TIMER_INICIAL = 60;
+export const MEMORIA_TIMER_INICIAL = 30;
 export const MEMORIA_BONUS_PAR = 25;
