@@ -1,4 +1,4 @@
-<h1 align="center">Jogo da Adivinhação (Kuhaku 🧑🏻‍🚀) <br>
+<h1 align="center"> Kuhaku 🧑🏻‍🚀⚔️🪐 <br>
 <img src="./img/logo_atualizada.jpeg" width="450" alt="logo"></h1>
 
 <h2 align="center">💻⛏️ Tecnologias e Ferramentas Utilizadas: </h2>
