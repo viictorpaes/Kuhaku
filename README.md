@@ -106,7 +106,6 @@ Kuhaku/
 │   ├── tsconfig.json <img src="https://img.shields.io/badge/TypeScript-Config-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>
 │   ├── tsconfig.node.json <img src="https://img.shields.io/badge/TypeScript-Node_Config-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>
 │   ├── vite.config.d.ts <img src="https://img.shields.io/badge/Vite-Types-111827?style=flat&logo=vite&logoColor=purple" height="18"/>
-│   ├── vite.config.js <img src="https://img.shields.io/badge/-Vite_JS-111827?style=flat&logo=vite&logoColor=purple" height="18"/>
 │   └── vite.config.ts <img src="https://img.shields.io/badge/-Vite_TS-111827?style=flat&logo=vite&logoColor=purple" height="18"/>
 │
 ├── docs <img src="https://img.shields.io/badge/Docs-111827?style=flat&logo=markdown&logoColor=blue" height="18"/>/
