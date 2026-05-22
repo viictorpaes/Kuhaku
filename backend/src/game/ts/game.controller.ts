@@ -11,8 +11,6 @@ export class GameController
   constructor(private readonly gameService: GameService) 
   {}
 
-  // ── usuários ──────────────────────────────────────
-
   @Post('users')
   async criarUsuario(@Body() dto: CreateUserDto)
   {
@@ -30,8 +28,6 @@ export class GameController
   {
     return this.gameService.removeUser(id);
   }
-
-  // ── jogos ─────────────────────────────────────────
 
   @Post('games')
   async criarJogo(@Body() dto: CreateGameDto)
@@ -58,8 +54,6 @@ export class GameController
     return this.gameService.saveGameToRanking(id, body.name);
   }
 
-  // ── consultas de jogo ─────────────────────────────
-
   @Get('games/:id/history')
   async obterHistoricoDoJogo(@Param('id') id: string)
   {
@@ -71,8 +65,6 @@ export class GameController
   {
     return this.gameService.getGameSummary(id);
   }
-
-  // ── consultas de usuário ──────────────────────────
 
   @Get('users/:id/games')
   async listarJogosDoUsuario(@Param('id') id: string)
@@ -97,8 +89,6 @@ export class GameController
   {
     return this.gameService.getUserSummary(id);
   }
-
-  // ── ranking ───────────────────────────────────────
 
   @Get('ranking/global')
   async rankingGlobal(@Query('limit') limit?: string, @Query('gameType') gameType?: string)

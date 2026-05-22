@@ -12,7 +12,8 @@ const API_BASE_URL =
   (import.meta.env.MODE === 'development' ? 'http://localhost:3001' : '');
 (window as any).API_BASE_URL = API_BASE_URL;
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render
+(
   <React.StrictMode>
     <App />
   </React.StrictMode>,

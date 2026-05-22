@@ -6,4 +6,5 @@ export class CreateGameDto
   userId?: string;
   difficulty!: Difficulty;
   gameType?: GameType;
+  customRange?: number;
 }

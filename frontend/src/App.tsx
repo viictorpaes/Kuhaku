@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Home } from './components/home';
 import { Setup } from './components/setup';
 import { Game, VsResultScreen } from './components/game';
@@ -6,16 +6,21 @@ import { Ranking } from './components/ranking';
 import type { GameTypeFilter } from './components/ranking';
 import type { Tela, Modo, Dificuldade, ConfigJogo } from './types';
 import { TOTAL_ROUNDS_VS } from './constants';
+import { starWarsTheme } from './ts/audio';
 
 const API_URL = (window as any).API_BASE_URL ?? 'http://localhost:3001';
 
-async function criarJogo(dificuldade: Dificuldade, gameType?: string): Promise<string>
+async function criarJogo(dificuldade: Dificuldade, gameType?: string, customRange?: number): Promise<string>
 {
   const res = await fetch(`${API_URL}/api/games`,
   {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ difficulty: dificuldade, ...(gameType && { gameType }) }),
+    body: JSON.stringify({
+      difficulty: dificuldade,
+      ...(gameType    && { gameType }),
+      ...(customRange && { customRange }),
+    }),
   });
   const game = await res.json();
   return game.id;
@@ -29,6 +34,9 @@ export function App()
   const [gameId, setGameId] = useState<string | null>(null);
   const [p1, setP1] = useState('Jogador 1');
   const [p2, setP2] = useState('Jogador 2');
+
+  const [timerSegundos, setTimerSegundos] = useState<number | null | undefined>(undefined);
+  const [rangeMaxCustom, setRangeMaxCustom] = useState<number | undefined>(undefined);
 
   const [round, setRound] = useState(1);
   const [score, setScore] = useState({ p1: 0, p2: 0 });
@@ -45,14 +53,22 @@ export function App()
     setScore({ p1: 0, p2: 0 });
     setFinalScore(null);
     setVsRoundResults([]);
-    const isVs = modo === 'vs';
-    const isMemoria = modo === 'memoria';
-    const isLogica = modo === 'logica';
+    setTimerSegundos(config.timerSegundos);
+    setRangeMaxCustom(config.rangeMax);
+
+    const isVs         = modo === 'vs';
+    const isMemoria    = modo === 'memoria';
+    const isMemoriaVs  = modo === 'memoria-vs';
+    const isLogica     = modo === 'logica';
     const isPrecedencia = modo === 'precedencia';
-    const id = await criarJogo(
-      config.dificuldade,
-      isVs ? 'VS_GUESS' : isMemoria ? 'CARD_GUESS' : isLogica ? 'LOGIC_PUZZLE' : isPrecedencia ? 'PRECEDENCE_PUZZLE' : undefined,
-    );
+
+    const gameType =
+      isVs          ? 'VS_GUESS'          :
+      (isMemoria || isMemoriaVs) ? 'CARD_GUESS' :
+      isLogica      ? 'LOGIC_PUZZLE'      :
+      isPrecedencia ? 'PRECEDENCE_PUZZLE' : undefined;
+
+    const id = await criarJogo(config.dificuldade, gameType, config.rangeMax);
     setGameId(id);
     setTela('game');
   }, [modo]);
@@ -82,12 +98,21 @@ export function App()
   const novoJogoSolo = useCallback(async () =>
   {
     const gameType =
-      modo === 'memoria'    ? 'CARD_GUESS' :
-      modo === 'logica'     ? 'LOGIC_PUZZLE' :
-      modo === 'precedencia'? 'PRECEDENCE_PUZZLE' : undefined;
-    const id = await criarJogo(dificuldade!, gameType);
+      modo === 'memoria'    ? 'CARD_GUESS'          :
+      modo === 'memoria-vs' ? 'CARD_GUESS'          :
+      modo === 'logica'     ? 'LOGIC_PUZZLE'        :
+      modo === 'precedencia'? 'PRECEDENCE_PUZZLE'   : undefined;
+    const id = await criarJogo(dificuldade!, gameType, rangeMaxCustom);
     setGameId(id);
-  }, [dificuldade, modo]);
+  }, [dificuldade, modo, rangeMaxCustom]);
+
+  useEffect(() => {
+    if (tela === 'game' || tela === 'result') {
+      starWarsTheme.stop();
+    } else {
+      starWarsTheme.start();
+    }
+  }, [tela]);
 
   const voltarParaHome = () =>
   {
@@ -99,6 +124,8 @@ export function App()
     setScore({ p1: 0, p2: 0 });
     setFinalScore(null);
     setVsRoundResults([]);
+    setTimerSegundos(undefined);
+    setRangeMaxCustom(undefined);
   };
 
   if (tela === 'ranking')
@@ -147,6 +174,8 @@ export function App()
         round={round}
         score={score}
         apiUrl={API_URL}
+        timerSegundos={timerSegundos}
+        rangeMax={rangeMaxCustom}
         onBack={voltarParaHome}
         onOpenRanking={(filter) => { setRankingFilter(filter as GameTypeFilter | undefined); setTela('ranking'); }}
         onRoundEnd={onRoundEnd}

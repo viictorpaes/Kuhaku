@@ -3,7 +3,7 @@ import type { Dificuldade } from './types';
 export const TOTAL_ROUNDS_VS = 3;
 export const MAX_TENTATIVAS_VS = 12;
 
-export const MAX_TENTATIVAS_SOLO: Record<Dificuldade, number> = 
+export const MAX_TENTATIVAS_SOLO: Record<Dificuldade, number> =
 {
   EASY: 5,
   MEDIUM: 8,
@@ -24,7 +24,7 @@ export const DIF_LABEL: Record<Dificuldade, string> =
   HARD:   '👨‍🚀 Comandante',
 };
 
-export const RANGE_MAX: Record<Dificuldade, number> = 
+export const RANGE_MAX: Record<Dificuldade, number> =
 {
   EASY: 10,
   MEDIUM: 50,
@@ -58,3 +58,23 @@ export const PARENTESES_CONFIG: Record<Dificuldade, { count: number; label: stri
   MEDIUM: { count: 10, label: '🚀 Piloto',      description: '∧ ∨ → · 10 expressões'        },
   HARD:   { count: 12, label: '👨‍🚀 Comandante',  description: '∧ ∨ → ↔ · 12 expressões'     },
 };
+
+
+export const TIMER_VS_TURNO = 15;
+
+export const TIMER_LOGICA: Record<Dificuldade, number> =
+{
+  EASY:   30,
+  MEDIUM: 20,
+  HARD:   15,
+};
+
+export const TIMER_PRECEDENCIA: Record<Dificuldade, number> =
+{
+  EASY:   45,
+  MEDIUM: 35,
+  HARD:   25,
+};
+
+export const MEMORIA_TIMER_INICIAL = 60;
+export const MEMORIA_BONUS_PAR = 25;

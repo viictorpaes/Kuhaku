@@ -56,10 +56,13 @@ export function Home({ onSelectMode, onOpenRanking }: HomeProps)
                 <span className="inline-flex items-center bg-white/20 text-white text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wide">
                   2 Astronautas
                 </span>
+                <span className="inline-flex items-center bg-white/20 text-white text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wide">
+                  ⏱ Timer 30s
+                </span>
               </div>
               <h2 className="text-xl font-black text-white">Batalha de Sinais 📡</h2>
               <p className="text-white/80 text-sm mt-1 leading-relaxed">
-                Dois astronautas, mesma frequência secreta. Alternando palpites — quem sintonizar primeiro vence a rodada!
+                Dois astronautas, mesma frequência secreta. Alternando palpites com timer de 30s — quem sintonizar primeiro vence a rodada!
               </p>
               <p className="text-white/70 text-xs mt-3 font-medium">
                 + 3 Rodadas &nbsp;·&nbsp; + Cadete / Piloto / Comandante &nbsp;·&nbsp; + Placar ao vivo
@@ -68,7 +71,7 @@ export function Home({ onSelectMode, onOpenRanking }: HomeProps)
           </div>
         </button>
 
-        {/* Bottom row */}
+        {/* Bottom row — solo + memoria */}
         <div className="grid grid-cols-2 gap-4">
 
           {/* Operação Resgate */}
@@ -82,9 +85,12 @@ export function Home({ onSelectMode, onOpenRanking }: HomeProps)
             </div>
             <h2 className="text-base font-black text-white leading-tight">Operação Resgate</h2>
             <p className="text-slate-400 text-xs mt-1">Solo · frequência secreta · 3 patentes</p>
-            <div className="mt-4">
+            <div className="mt-4 flex flex-col gap-1.5">
               <span className="inline-flex items-center gap-1 bg-cyan-500/10 text-cyan-400 text-[10px] font-bold px-2.5 py-1 rounded-full" style={{ border: '1px solid rgba(6,182,212,0.3)' }}>
-                📡 Sistema de sinal inteligente
+                📡 Sinal inteligente
+              </span>
+              <span className="inline-flex items-center gap-1 bg-cyan-500/10 text-cyan-400 text-[10px] font-bold px-2.5 py-1 rounded-full" style={{ border: '1px solid rgba(6,182,212,0.3)' }}>
+                🎯 Modo Livre (range+timer)
               </span>
             </div>
           </button>
@@ -99,14 +105,50 @@ export function Home({ onSelectMode, onOpenRanking }: HomeProps)
               🌕
             </div>
             <h2 className="text-base font-black text-white leading-tight">Mapas Estelares</h2>
-            <p className="text-slate-400 text-xs mt-1">Solo · pares de coordenadas · 4×4 / 4×5 / 6×6</p>
-            <div className="mt-4">
+            <p className="text-slate-400 text-xs mt-1">Solo · pares · timer progressivo</p>
+            <div className="mt-4 flex flex-col gap-1.5">
               <span className="inline-flex items-center gap-1 bg-indigo-500/10 text-indigo-400 text-[10px] font-bold px-2.5 py-1 rounded-full" style={{ border: '1px solid rgba(99,102,241,0.3)' }}>
-                ⭐ Pontuação por velocidade
+                ⏱ 60s + 25s/par
+              </span>
+              <span className="inline-flex items-center gap-1 bg-indigo-500/10 text-indigo-400 text-[10px] font-bold px-2.5 py-1 rounded-full" style={{ border: '1px solid rgba(99,102,241,0.3)' }}>
+                💀 Game over = 0s
               </span>
             </div>
           </button>
         </div>
+
+        {/* Duelo de Mapas 1v1 — full width */}
+        <button
+          onClick={() => onSelectMode('memoria-vs')}
+          className="w-full text-left rounded-3xl overflow-hidden transition-all duration-200 hover:scale-[1.02] hover:shadow-2xl active:scale-[0.99]"
+          style={{ background: 'linear-gradient(135deg, #1a0533 0%, #2d0a5a 50%, #1a0845 100%)', border: '1px solid rgba(232,121,249,0.30)', boxShadow: '0 8px 32px rgba(168,85,247,0.15)' }}
+        >
+          <div className="p-6 flex gap-4 items-start">
+            <div className="shrink-0 w-12 h-12 rounded-xl flex items-center justify-center text-xl" style={{ background: 'rgba(168,85,247,0.20)', border: '1px solid rgba(232,121,249,0.40)' }}>
+              ⚔️
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex gap-2 mb-2 flex-wrap">
+                <span className="inline-flex items-center gap-1 text-white text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wide" style={{ background: 'rgba(168,85,247,0.25)' }}>
+                  ⚔️ DUELO DE MAPAS
+                </span>
+                <span className="inline-flex items-center text-white text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wide" style={{ background: 'rgba(168,85,247,0.15)', border: '1px solid rgba(232,121,249,0.25)' }}>
+                  2 Astronautas
+                </span>
+                <span className="inline-flex items-center text-white text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wide" style={{ background: 'rgba(168,85,247,0.15)', border: '1px solid rgba(232,121,249,0.25)' }}>
+                  ⏱ Timer progressivo
+                </span>
+              </div>
+              <h2 className="text-xl font-black text-white">Duelo de Mapas ⚔️</h2>
+              <p className="text-white/75 text-sm mt-1 leading-relaxed">
+                Dois astronautas, mesmo tabuleiro, tempos diferentes. Cada um enfrenta o timer progressivo. Quem memorizar mais rápido com menos erros conquista a vitória!
+              </p>
+              <p className="text-white/55 text-xs mt-3 font-medium">
+                🌕 Pares de coordenadas &nbsp;·&nbsp; ⏱ 60s + 25s/par &nbsp;·&nbsp; 💀 0s = eliminado &nbsp;·&nbsp; Melhor tempo vence
+              </p>
+            </div>
+          </div>
+        </button>
 
         {/* Protocolo Lógico — full width */}
         <button
@@ -127,15 +169,15 @@ export function Home({ onSelectMode, onOpenRanking }: HomeProps)
                   ∧ ∨ ¬ → ↔
                 </span>
                 <span className="inline-flex items-center text-white text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wide" style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.25)' }}>
-                  Solo
+                  ⏱ Timer por questão
                 </span>
               </div>
               <h2 className="text-xl font-black text-white">Protocolo Lógico 🧠</h2>
               <p className="text-white/75 text-sm mt-1 leading-relaxed">
-                A base espacial intercepta transmissões cifradas do cosmos. Decodifique cada sinal lógico — identifique Tautologias, Contradições e Contingências — e determine se a fórmula é VERDADEIRA ou FALSA!
+                A base espacial intercepta transmissões cifradas do cosmos. Decodifique cada sinal lógico com timer por questão — Tautologias, Contradições e Contingências!
               </p>
               <p className="text-white/55 text-xs mt-3 font-medium">
-                🌟 Tautologia &nbsp;·&nbsp; 🕳️ Contradição &nbsp;·&nbsp; 🪐 Contingência &nbsp;·&nbsp; Implicação &nbsp;·&nbsp; Equivalência
+                🌟 Tautologia &nbsp;·&nbsp; 🕳️ Contradição &nbsp;·&nbsp; 🪐 Contingência &nbsp;·&nbsp; 🔥 Streak Combo
               </p>
             </div>
           </div>
@@ -160,15 +202,15 @@ export function Home({ onSelectMode, onOpenRanking }: HomeProps)
                   ∧ ∨ → ↔
                 </span>
                 <span className="inline-flex items-center text-white text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wide" style={{ background: 'rgba(139,92,246,0.12)', border: '1px solid rgba(167,139,250,0.25)' }}>
-                  Solo
+                  ⏱ Timer por expressão
                 </span>
               </div>
               <h2 className="text-xl font-black text-white">Hierarquia de Comandos ⚙️</h2>
               <p className="text-white/75 text-sm mt-1 leading-relaxed">
-                O computador da nave perdeu os parênteses das equações lógicas! Adicione os parênteses corretos para restaurar a ordem de precedência dos operadores e salvar os sistemas críticos.
+                O computador da nave perdeu os parênteses das equações lógicas! Adicione os parênteses corretos com timer por expressão e mantenha o streak para bônus!
               </p>
               <p className="text-white/55 text-xs mt-3 font-medium">
-                ( ) Parênteses &nbsp;·&nbsp; ∧ antes de ∨ &nbsp;·&nbsp; ∨ antes de → &nbsp;·&nbsp; → antes de ↔ &nbsp;·&nbsp; Associatividade
+                ( ) Parênteses &nbsp;·&nbsp; ∧ antes de ∨ &nbsp;·&nbsp; ∨ antes de → &nbsp;·&nbsp; 🔥 Streak Combo
               </p>
             </div>
           </div>

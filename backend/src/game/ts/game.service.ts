@@ -32,14 +32,11 @@ function getNumberFeedback(diff: number, limit: number): string
     return 'frio ❄️';
 }
 
-// ──────────────── service ────────────────
-
 @Injectable()
 export class GameService
 {
   constructor(private readonly prismaService: PrismaService) {}
 
-  // ── usuários ──────────────────────────────────────
 
   async createUser(email: string, name?: string)
   {
@@ -62,12 +59,11 @@ export class GameService
     return this.prismaService.prisma.user.delete({ where: { id: userId } });
   }
 
-  // ── criação de jogo ───────────────────────────────
 
   async createGame(dto: CreateGameDto)
   {
     const gameType: GameType = dto.gameType ?? 'NUMBER_GUESS';
-    const limit = getLimitByDifficulty(dto.difficulty);
+    const limit = dto.customRange ?? getLimitByDifficulty(dto.difficulty);
     const target = gameType === 'LOGIC_PUZZLE' ? 0 : Math.floor(Math.random() * limit) + 1;
 
     if (dto.userId)
@@ -86,6 +82,7 @@ export class GameService
           gameType,
           difficulty: dto.difficulty,
           target,
+          maxRange:   dto.customRange ?? null,
           attempts:   0,
           won:        false,
         },
@@ -103,7 +100,7 @@ export class GameService
         return { message: 'Jogo já foi concluído ✅' };
 
     const difficulty = game.difficulty as Difficulty;
-    const limit  = getLimitByDifficulty(difficulty);
+    const limit  = (game as any).maxRange ?? getLimitByDifficulty(difficulty);
 
     if (!Number.isInteger(value) || value < 1 || value > limit)
       throw new BadRequestException(`Palpite deve ser um inteiro entre: 1 e ${limit} para dificuldade ${difficulty}`);
@@ -187,8 +184,6 @@ export class GameService
     };
   }
 
-  // ── histórico e resumo ────────────────────────────
-
   async getGameHistory(gameId: string)
   {
     const [game, guesses] = await Promise.all
@@ -259,8 +254,6 @@ export class GameService
       }
     );
   }
-
-  // ── estatísticas e ranking ────────────────────────
 
   async getUserStats(userId: string)
   {

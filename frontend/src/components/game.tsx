@@ -1,13 +1,15 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import type { Dificuldade, Modo, Palpite, Direcao } from '../types';
+import { starWarsTheme, playArcadeError, playArcadeCorrect } from '../ts/audio';
 import
 {
   RANGE_LABEL, DIF_LABEL, DIF_COLOR,
   MAX_TENTATIVAS_SOLO, MAX_TENTATIVAS_VS, TOTAL_ROUNDS_VS, RANGE_MAX,
   MEMORIA_GRID, LOGICA_CONFIG, PARENTESES_CONFIG,
+  TIMER_VS_TURNO, TIMER_LOGICA, TIMER_PRECEDENCIA,
+  MEMORIA_TIMER_INICIAL, MEMORIA_BONUS_PAR,
 } from '../constants';
 
-// ─── MOTOR DE LÓGICA PROPOSICIONAL ────────────────────────────────────────────
 
 type Expr =
   | { tipo: 'atomo'; nome: 'P' | 'Q' | 'R' }
@@ -16,8 +18,10 @@ type Expr =
 
 type Vals = { P: boolean; Q: boolean; R: boolean };
 
-function avaliar(e: Expr, v: Vals): boolean {
-  switch (e.tipo) {
+function avaliar(e: Expr, v: Vals): boolean 
+{
+  switch (e.tipo) 
+  {
     case 'atomo':   return v[e.nome];
     case 'nao':     return !avaliar(e.expr, v);
     case 'e':       return avaliar(e.esq, v) && avaliar(e.dir, v);
@@ -33,16 +37,18 @@ function classificar(e: Expr): Classificacao {
   let temVerd = false, temFalso = false;
   for (const P of [false, true])
     for (const Q of [false, true])
-      for (const R of [false, true]) {
+      for (const R of [false, true]) 
+      {
         if (avaliar(e, { P, Q, R })) temVerd = true;
         else temFalso = true;
       }
-  if (!temFalso) return 'TAUTOLOGIA';
-  if (!temVerd)  return 'CONTRADIÇÃO';
+  if (!temFalso)  
+    return 'TAUTOLOGIA';
+  if (!temVerd) 
+    return 'CONTRADIÇÃO';
   return 'CONTINGÊNCIA';
 }
 
-// ── construtores ──────────────────────────────────────────────────────────────
 const P: Expr = { tipo: 'atomo', nome: 'P' };
 const Q: Expr = { tipo: 'atomo', nome: 'Q' };
 const R: Expr = { tipo: 'atomo', nome: 'R' };
@@ -52,8 +58,8 @@ const OU   = (l: Expr, r: Expr): Expr        => ({ tipo: 'ou',      esq: l, dir:
 const IMP  = (l: Expr, r: Expr): Expr        => ({ tipo: 'implica', esq: l, dir: r });
 const SSE  = (l: Expr, r: Expr): Expr        => ({ tipo: 'sse',     esq: l, dir: r });
 
-// ── banco de questões ─────────────────────────────────────────────────────────
-interface ModeloQuestao {
+interface ModeloQuestao 
+{
   formula: string;
   expr: Expr;
   usaR: boolean;
@@ -61,7 +67,8 @@ interface ModeloQuestao {
   conectivos: string;
 }
 
-const MODELOS: ModeloQuestao[] = [
+const MODELOS: ModeloQuestao[] = 
+[
   // FÁCIL — P, Q com ∧ ∨ ¬
   { formula: 'P ∧ Q',      expr: E(P,Q),             usaR: false, topico: 'Conjunção (∧)',                 conectivos: '∧' },
   { formula: 'P ∨ Q',      expr: OU(P,Q),             usaR: false, topico: 'Disjunção (∨)',                 conectivos: '∨' },
@@ -100,16 +107,19 @@ const MODELOS: ModeloQuestao[] = [
 const FACIL_MAX  = 12;
 const MEDIO_MAX  = 22;
 
-interface Questao {
+interface Questao 
+{
   modelo: ModeloQuestao;
   vals: Vals;
   resposta: boolean;
   classificacao: Classificacao;
 }
 
-function embaralhar<T>(arr: T[]): T[] {
+function embaralhar<T>(arr: T[]): T[] 
+{
   const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
+  for (let i = a.length - 1; i > 0; i--) 
+  {
     const j = Math.floor(Math.random() * (i + 1));
     [a[i], a[j]] = [a[j], a[i]];
   }
@@ -132,7 +142,7 @@ const META_CLASSE: Record<Classificacao, { cor: string; borda: string; fundo: st
   CONTINGÊNCIA: { cor: '#4ade80', borda: 'rgba(74,222,128,0.35)',  fundo: 'rgba(74,222,128,0.08)',  rotulo: 'CONTINGÊNCIA', emoji: '🪐', dica: 'Sinal variável — depende das frequências de P, Q e R'               },
 };
 
-interface GameProps 
+interface GameProps
 {
   gameId: string;
   modo: Modo;
@@ -142,11 +152,49 @@ interface GameProps
   round: number;
   score: { p1: number; p2: number };
   apiUrl: string;
+  timerSegundos?: number | null;
+  rangeMax?: number;
 
   onBack: () => void;
   onOpenRanking: (filter?: string) => void;
   onRoundEnd: (winner: 1 | 2 | null) => Promise<void>;
   onNovoJogo: () => Promise<void>;
+}
+
+// ─── HELPERS VISUAIS ──────────────────────────────────────────────────────────
+
+function TimerBar({ seconds, maxSeconds }: { seconds: number; maxSeconds: number }) {
+  const pct = Math.max(0, (seconds / maxSeconds)) * 100;
+  const cor = seconds <= 5 ? '#ef4444' : seconds <= 10 ? '#f97316' : seconds <= Math.ceil(maxSeconds * 0.4) ? '#eab308' : '#22c55e';
+  return (
+    <div className="w-full">
+      <div className="flex justify-between items-center mb-1">
+        <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">⏱ Tempo</span>
+        <span className={`text-sm font-black ${seconds <= 5 ? 'text-red-400' : 'text-white'}`}
+          style={{ animation: seconds <= 5 ? 'pulse 0.5s infinite' : undefined }}>
+          {seconds}s
+        </span>
+      </div>
+      <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+        <div className="h-full rounded-full transition-all duration-1000 ease-linear" style={{ width: `${pct}%`, background: cor }} />
+      </div>
+    </div>
+  );
+}
+
+function StreakBadge({ streak }: { streak: number }) {
+  if (streak < 3) return null;
+  const { emojis, label } =
+    streak >= 10 ? { emojis: '🔥🔥🔥', label: `${streak}× LENDÁRIO` } :
+    streak >= 5  ? { emojis: '🔥🔥',   label: `${streak}× EM CHAMAS` } :
+                   { emojis: '🔥',     label: `${streak}× Sequência` };
+  return (
+    <div className="flex items-center gap-1.5 px-3 py-1 rounded-full"
+      style={{ background: 'rgba(251,146,60,0.18)', border: '1px solid rgba(251,146,60,0.45)' }}>
+      <span className="text-sm">{emojis}</span>
+      <span className="text-orange-300 font-black text-xs">{label}</span>
+    </div>
+  );
 }
 
 const BG = 'radial-gradient(ellipse at 50% 0%, rgba(6,182,212,0.10) 0%, transparent 55%), linear-gradient(180deg, #020818 0%, #0a0f1e 100%)';
@@ -202,8 +250,15 @@ function feedbackTextColor(fb: string): string
 }
 
 
-function GameHeader({ onBack, onOpenRanking }: { onBack: () => void; onOpenRanking: () => void }) 
+function GameHeader({ onBack, onOpenRanking }: { onBack: () => void; onOpenRanking: () => void })
 {
+  const [muted, setMuted] = useState(() => starWarsTheme.muted);
+
+  const handleMute = () => {
+    if (muted) { starWarsTheme.unmute(); setMuted(false); }
+    else        { starWarsTheme.mute();   setMuted(true);  }
+  };
+
   return (
     <header className="flex items-center justify-between px-5 py-4 border-b border-white/5">
       <button
@@ -216,20 +271,30 @@ function GameHeader({ onBack, onOpenRanking }: { onBack: () => void; onOpenRanki
       <span className="font-black text-sm">
         <span className="text-white">👨‍🚀 Kuha</span><span style={{ color: '#06b6d4' }}>ku</span>
       </span>
-      <button
-        onClick={onOpenRanking}
-        className="flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-full transition"
-        style={{ background: 'rgba(6,182,212,0.10)', border: '1px solid rgba(6,182,212,0.30)', color: '#67e8f9' }}
-      >
-        🏆 Ranking
-      </button>
+      <div className="flex items-center gap-2">
+        <button
+          onClick={handleMute}
+          title={muted ? 'Ativar música' : 'Silenciar música'}
+          className="flex items-center justify-center w-9 h-9 rounded-full transition"
+          style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.10)', color: muted ? '#475569' : '#94a3b8' }}
+        >
+          {muted ? '🔇' : '🔊'}
+        </button>
+        <button
+          onClick={onOpenRanking}
+          className="flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-full transition"
+          style={{ background: 'rgba(6,182,212,0.10)', border: '1px solid rgba(6,182,212,0.30)', color: '#67e8f9' }}
+        >
+          🏆 Ranking
+        </button>
+      </div>
     </header>
   );
 }
 
 // ─── VS GAME ──────────────────────────────────────────────────────────────────
 
-function VsGame({ gameId, dificuldade, p1, p2, round, score, apiUrl, onBack, onOpenRanking, onRoundEnd }: GameProps) 
+function VsGame({ gameId, dificuldade, p1, p2, round, score, apiUrl, onBack, onOpenRanking, onRoundEnd }: GameProps)
 {
   const [palpite, setPalpite] = useState('');
   const [historico, setHistorico] = useState<Palpite[]>([]);
@@ -237,6 +302,8 @@ function VsGame({ gameId, dificuldade, p1, p2, round, score, apiUrl, onBack, onO
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState('');
   const [roundOver, setRoundOver] = useState<{ winner: 1 | 2 | null; advancing: boolean } | null>(null);
+  const [turnoTimer, setTurnoTimer] = useState(TIMER_VS_TURNO);
+  const turnoTimerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const tentativasUsadas = historico.length;
@@ -244,13 +311,39 @@ function VsGame({ gameId, dificuldade, p1, p2, round, score, apiUrl, onBack, onO
   const nomeAtual = jogadorAtual === 1 ? p1 : p2;
   const corAtual = jogadorAtual === 1 ? P1_COLOR : P2_COLOR;
 
-  useEffect
-(() => 
-    {
-      if (!roundOver) 
-          inputRef.current?.focus();
-    }, [jogadorAtual, roundOver]
-);
+  useEffect(() => {
+    if (!roundOver) inputRef.current?.focus();
+  }, [jogadorAtual, roundOver]);
+
+  useEffect(() => {
+    if (roundOver) { clearInterval(turnoTimerRef.current); return; }
+    setTurnoTimer(TIMER_VS_TURNO);
+    turnoTimerRef.current = setInterval(() => {
+      setTurnoTimer((t) => {
+        if (t <= 1) {
+          clearInterval(turnoTimerRef.current);
+          return 0;
+        }
+        return t - 1;
+      });
+    }, 1000);
+    return () => clearInterval(turnoTimerRef.current);
+  }, [jogadorAtual, roundOver]);
+
+  useEffect(() => {
+    if (turnoTimer !== 0 || roundOver) return;
+    const timeout: Palpite = { valor: -1, feedback: 'tempo esgotado ⏱️', direcao: 'timeout', jogador: jogadorAtual };
+    setHistorico((prev) => {
+      const novoHistorico = [timeout, ...prev];
+      if (novoHistorico.length >= maxTentativas) {
+        setRoundOver({ winner: null, advancing: false });
+      } else {
+        setJogadorAtual((j) => (j === 1 ? 2 : 1));
+      }
+      return novoHistorico;
+    });
+    setErro('');
+  }, [turnoTimer, roundOver, jogadorAtual, maxTentativas]);
 
   const enviarPalpite = async (e: React.FormEvent) => 
   {
@@ -301,16 +394,19 @@ function VsGame({ gameId, dificuldade, p1, p2, round, score, apiUrl, onBack, onO
 
       if (dados.direction === 'correct')
       {
+        playArcadeCorrect();
         setRoundOver({ winner: jogadorAtual, advancing: false });
         return;
       }
 
       if (dados.gameOver || novoHistorico.length >= maxTentativas)
       {
+        playArcadeError();
         setRoundOver({ winner: null, advancing: false });
         return;
       }
 
+      playArcadeError();
       setJogadorAtual(jogadorAtual === 1 ? 2 : 1);
     } 
     catch 
@@ -364,24 +460,20 @@ function VsGame({ gameId, dificuldade, p1, p2, round, score, apiUrl, onBack, onO
 
       <main className="flex-1 flex flex-col gap-4 px-4 pb-8 max-w-lg mx-auto w-full">
 
-        {/* Turn card */}
-        {!isRoundOver && 
-        (
-          <div
-            className="rounded-2xl p-5 text-center border transition-all"
-            style=
-            {
-              {
-                background: jogadorAtual === 1 ? 'rgba(6,182,212,0.10)' : 'rgba(99,102,241,0.12)',
-                borderColor: jogadorAtual === 1 ? 'rgba(6,182,212,0.40)' : 'rgba(99,102,241,0.40)',
-              }
-            }
+        {/* Turn card + timer */}
+        {!isRoundOver && (
+          <div className="rounded-2xl p-5 border transition-all"
+            style={{
+              background: jogadorAtual === 1 ? 'rgba(6,182,212,0.10)' : 'rgba(99,102,241,0.12)',
+              borderColor: jogadorAtual === 1 ? 'rgba(6,182,212,0.40)' : 'rgba(99,102,241,0.40)',
+            }}
           >
-            <p className="font-black text-lg flex items-center justify-center gap-2">
+            <p className="font-black text-lg flex items-center justify-center gap-2 mb-3">
               <span className="w-3 h-3 rounded-full inline-block" style={{ background: corAtual }} />
               <span style={{ color: corAtual }}>📡 Turno de {nomeAtual}!</span>
             </p>
-            <p className="text-slate-400 text-xs mt-1">
+            <TimerBar seconds={turnoTimer} maxSeconds={TIMER_VS_TURNO} />
+            <p className="text-slate-400 text-xs mt-2 text-center">
               {RANGE_LABEL[dificuldade]} · {tentativasUsadas}/{maxTentativas} tentativas usadas
             </p>
           </div>
@@ -482,7 +574,7 @@ function VsGame({ gameId, dificuldade, p1, p2, round, score, apiUrl, onBack, onO
                   }}
                 >
                   <span className="w-2 h-2 rounded-full" style={{ background: p.jogador === 1 ? P1_COLOR : P2_COLOR }} />
-                  {p.direcao === 'higher' ? '↑' : p.direcao === 'lower' ? '↓' : '✓'} {p.valor}
+                  {p.direcao === 'timeout' ? '⏱' : p.direcao === 'higher' ? '↑' : p.direcao === 'lower' ? '↓' : '✓'} {p.direcao === 'timeout' ? 'tempo' : p.valor}
                 </span>
               ))}
             </div>
@@ -492,8 +584,6 @@ function VsGame({ gameId, dificuldade, p1, p2, round, score, apiUrl, onBack, onO
     </div>
   );
 }
-
-// ─── SAVE RANKING PANEL ───────────────────────────────────────────────────────
 
 interface SaveRankingPanelProps 
 {
@@ -563,7 +653,7 @@ function SaveRankingPanel({ saveNome, setSaveNome, saving, savedPosition, saveEr
 
 // ─── SOLO GAME ────────────────────────────────────────────────────────────────
 
-function SoloGame({ gameId, dificuldade, apiUrl, onBack, onOpenRanking, onNovoJogo }: GameProps) 
+function SoloGame({ gameId, dificuldade, apiUrl, onBack, onOpenRanking, onNovoJogo, timerSegundos, rangeMax }: GameProps)
 {
   const [palpite, setPalpite] = useState('');
   const [historico, setHistorico] = useState<Palpite[]>([]);
@@ -576,35 +666,73 @@ function SoloGame({ gameId, dificuldade, apiUrl, onBack, onOpenRanking, onNovoJo
   const [saving, setSaving] = useState(false);
   const [savedPosition, setSavedPosition] = useState<{ position: number | null; total: number } | null>(null);
   const [saveErro, setSaveErro] = useState('');
+  const [tentativaTimer, setTentativaTimer] = useState<number>(timerSegundos ?? 0);
+  const tentativaTimerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const maxTentativas = MAX_TENTATIVAS_SOLO[dificuldade];
+  const effectiveRangeMax = rangeMax ?? RANGE_MAX[dificuldade];
+  const maxTentativas = rangeMax
+    ? Math.max(3, Math.ceil(Math.log2(rangeMax) * 1.5))
+    : MAX_TENTATIVAS_SOLO[dificuldade];
   const tentativasUsadas = historico.length;
   const restantes = maxTentativas - tentativasUsadas;
   const progresso = tentativasUsadas / maxTentativas;
   const lastPalpite = historico[0];
   const { bg: difBg, btn: difBtn } = DIF_COLOR[dificuldade];
+  const rangeLabel = rangeMax ? `Canal 1-${rangeMax.toLocaleString('pt-BR')}` : RANGE_LABEL[dificuldade];
 
-  useEffect
-  (() => 
-    {
-      if (!ganhou && !perdeu) inputRef.current?.focus();
-    }, [ganhou, perdeu]
-  );
+  const iniciarContagem = useCallback(() => {
+    if (!timerSegundos) return;
+    clearInterval(tentativaTimerRef.current);
+    tentativaTimerRef.current = setInterval(() => {
+      setTentativaTimer((t) => {
+        if (t <= 1) { clearInterval(tentativaTimerRef.current); return 0; }
+        return t - 1;
+      });
+    }, 1000);
+  }, [timerSegundos]);
+
+  useEffect(() => {
+    if (!ganhou && !perdeu) inputRef.current?.focus();
+  }, [ganhou, perdeu]);
+
+  // Start timer once on mount; wrong guesses do NOT reset it
+  useEffect(() => {
+    if (!timerSegundos || ganhou || perdeu) return;
+    setTentativaTimer(timerSegundos);
+    iniciarContagem();
+    return () => clearInterval(tentativaTimerRef.current);
+  }, [ganhou, perdeu, timerSegundos, iniciarContagem]);
+
+  useEffect(() => {
+    if (!timerSegundos || tentativaTimer !== 0 || ganhou || perdeu) return;
+    const novo: Palpite = { valor: -1, feedback: 'tempo esgotado ⏱️', direcao: 'timeout', jogador: 1 };
+    let ended = false;
+    setHistorico((prev) => {
+      const novoH = [novo, ...prev];
+      if (novoH.length >= maxTentativas) { setPerdeu(true); ended = true; }
+      return novoH;
+    });
+    // Restart timer for the next attempt after timeout
+    if (!ended) {
+      setTentativaTimer(timerSegundos);
+      iniciarContagem();
+    }
+  }, [tentativaTimer, ganhou, perdeu, timerSegundos, maxTentativas, iniciarContagem]);
 
   const enviarPalpite = async (e: React.FormEvent) => 
   {
     e.preventDefault();
     const valor = parseInt(palpite, 10);
-    const max = RANGE_MAX[dificuldade];
-    if (isNaN(valor) || valor < 1 || valor > max) {
-      setErro(`Digite um número entre 1 e ${max}`);
+    if (isNaN(valor) || valor < 1 || valor > effectiveRangeMax) {
+      setErro(`Digite um número entre 1 e ${effectiveRangeMax.toLocaleString('pt-BR')}`);
       return;
     }
     setErro('');
     setLoading(true);
+    clearInterval(tentativaTimerRef.current);
 
-    try 
+    try
     {
       const res = await fetch(`${apiUrl}/api/games/${gameId}/guess`, {
         method: 'POST',
@@ -613,10 +741,10 @@ function SoloGame({ gameId, dificuldade, apiUrl, onBack, onOpenRanking, onNovoJo
       });
 
       const dados = await res.json();
-      if (dados.message) 
-        { setErro(dados.message); setLoading(false); return; }
+      if (dados.message)
+        { setErro(dados.message); setLoading(false); iniciarContagem(); return; }
 
-      const novo: Palpite = 
+      const novo: Palpite =
       {
         valor,
         feedback: dados.feedback,
@@ -627,14 +755,18 @@ function SoloGame({ gameId, dificuldade, apiUrl, onBack, onOpenRanking, onNovoJo
       setHistorico(novoHistorico);
       setPalpite('');
 
-      if (dados.direction === 'correct') { setGanhou(true); return; }
-      if (novoHistorico.length >= maxTentativas) { setPerdeu(true); return; }
-    } 
-    catch 
+      if (dados.direction === 'correct') { playArcadeCorrect(); setGanhou(true); return; }
+      if (novoHistorico.length >= maxTentativas) { playArcadeError(); setPerdeu(true); return; }
+      // Wrong guess: resume countdown from where it was (no reset)
+      playArcadeError();
+      iniciarContagem();
+    }
+    catch
     {
       setErro('Erro de conexão');
-    } 
-    finally 
+      iniciarContagem();
+    }
+    finally
     {
       setLoading(false);
     }
@@ -699,7 +831,7 @@ function SoloGame({ gameId, dificuldade, apiUrl, onBack, onOpenRanking, onNovoJo
       {/* Top bar */}
       <div className="flex items-center justify-between px-5 py-3">
         <span className={`${difBg} text-white text-xs font-bold px-3 py-1.5 rounded-full`}>
-          {DIF_LABEL[dificuldade]} · {RANGE_LABEL[dificuldade]}
+          {DIF_LABEL[dificuldade]} · {rangeLabel}
         </span>
         <button
           onClick={handleNovoJogo}
@@ -763,8 +895,15 @@ function SoloGame({ gameId, dificuldade, apiUrl, onBack, onOpenRanking, onNovoJo
               <div className="text-center mb-5">
                 <span className="text-3xl">📡</span>
                 <h2 className="font-black text-lg text-white mt-2">Qual é a frequência de resgate?</h2>
-                <p className="text-slate-400 text-sm">{RANGE_LABEL[dificuldade]}</p>
+                <p className="text-slate-400 text-sm">{rangeLabel}</p>
               </div>
+
+              {/* Per-attempt countdown */}
+              {timerSegundos && (
+                <div className="mb-4">
+                  <TimerBar seconds={tentativaTimer} maxSeconds={timerSegundos} />
+                </div>
+              )}
 
               {/* Progress bar */}
               <div className="mb-5">
@@ -803,10 +942,10 @@ function SoloGame({ gameId, dificuldade, apiUrl, onBack, onOpenRanking, onNovoJo
                   ref={inputRef}
                   type="number"
                   min={1}
-                  max={RANGE_MAX[dificuldade]}
+                  max={effectiveRangeMax}
                   value={palpite}
                   onChange={(e) => setPalpite(e.target.value)}
-                  placeholder={RANGE_LABEL[dificuldade]}
+                  placeholder={rangeLabel}
                   disabled={loading}
                   className="flex-1 bg-white/5 border border-white/15 focus:border-indigo-500 rounded-xl px-4 py-3.5 text-center text-xl font-black text-white focus:outline-none transition"
                   autoFocus
@@ -873,10 +1012,12 @@ function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, o
   const [cartas, setCartas] = useState<number[]>(() => gerarCartas());
   const [reveladas, setReveladas] = useState<Set<number>>(new Set());
   const [viradas, setViradas] = useState<number[]>([]);
+  const [paresErrados, setParesErrados] = useState<number[]>([]);
   const [erros, setErros] = useState(0);
   const [bloqueado, setBloqueado] = useState(false);
   const [ganhou, setGanhou] = useState(false);
-  const [tempo, setTempo] = useState(0);
+  const [gameOver, setGameOver] = useState(false);
+  const [timerRestante, setTimerRestante] = useState(MEMORIA_TIMER_INICIAL);
   const [iniciou, setIniciou] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
   const [saveNome, setSaveNome] = useState('');
@@ -885,20 +1026,26 @@ function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, o
   const [saveErro, setSaveErro] = useState('');
   const finishCalledRef = useRef(false);
 
-  useEffect(() => 
-  {
-    if (iniciou && !ganhou) 
-    {
-      timerRef.current = setInterval(() => setTempo((t) => t + 1), 1000);
-    }
+  useEffect(() => {
+    if (!iniciou || ganhou || gameOver) return;
+    timerRef.current = setInterval(() => {
+      setTimerRestante((t) => {
+        if (t <= 1) {
+          clearInterval(timerRef.current);
+          setGameOver(true);
+          return 0;
+        }
+        return t - 1;
+      });
+    }, 1000);
     return () => clearInterval(timerRef.current);
-  }, [iniciou, ganhou]);
+  }, [iniciou, ganhou, gameOver]);
 
   const paresEncontrados = reveladas.size / 2;
 
-  const handleClique = (idx: number) => 
+  const handleClique = (idx: number) =>
   {
-    if (bloqueado || viradas.includes(idx) || reveladas.has(idx) || ganhou) return;
+    if (bloqueado || viradas.includes(idx) || reveladas.has(idx) || ganhou || gameOver) return;
     if (!iniciou) setIniciou(true);
 
     const novasViradas = [...viradas, idx];
@@ -916,6 +1063,7 @@ function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, o
         setReveladas(novasReveladas);
         setViradas([]);
         setBloqueado(false);
+        setTimerRestante((t) => t + MEMORIA_BONUS_PAR);
         if (novasReveladas.size === totalCards)
         {
           setGanhou(true);
@@ -931,13 +1079,15 @@ function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, o
             }).catch(() => {});
           }
         }
-      } 
-      else 
+      }
+      else
       {
         setErros((e) => e + 1);
-        setTimeout(() => 
+        setParesErrados([a, b]);
+        setTimeout(() =>
         {
           setViradas([]);
+          setParesErrados([]);
           setBloqueado(false);
         }, 900);
       }
@@ -953,7 +1103,8 @@ function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, o
     setErros(0);
     setBloqueado(false);
     setGanhou(false);
-    setTempo(0);
+    setGameOver(false);
+    setTimerRestante(MEMORIA_TIMER_INICIAL);
     setIniciou(false);
     setSaveNome('');
     setSaving(false);
@@ -997,21 +1148,19 @@ function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, o
     }
   };
 
-  const formatTempo = (s: number) => 
-  {
-    const m = Math.floor(s / 60);
-    const sec = s % 60;
-    return `${m}:${sec.toString().padStart(2, '0')}`;
-  };
-
   return (
     <div className="min-h-screen text-white flex flex-col" style={{ background: BG, fontFamily: "'Inter', system-ui, sans-serif" }}>
       <GameHeader onBack={onBack} onOpenRanking={onOpenRanking} />
 
       {/* Stats bar */}
       <div className="flex items-center gap-2 px-5 py-3 flex-wrap">
-        <span className="bg-white/10 text-slate-300 text-xs font-bold px-3 py-1.5 rounded-full">
-          ⏱ {formatTempo(tempo)}
+        <span className={`text-xs font-bold px-3 py-1.5 rounded-full border ${timerRestante <= 10 ? 'animate-pulse' : ''}`}
+          style={timerRestante <= 10
+            ? { background: 'rgba(239,68,68,0.18)', borderColor: 'rgba(239,68,68,0.50)', color: '#f87171' }
+            : timerRestante <= 30
+            ? { background: 'rgba(249,115,22,0.15)', borderColor: 'rgba(249,115,22,0.45)', color: '#fb923c' }
+            : { background: 'rgba(34,197,94,0.12)', borderColor: 'rgba(34,197,94,0.35)', color: '#4ade80' }}>
+          ⏱ {timerRestante}s
         </span>
         <span className="text-xs font-bold px-3 py-1.5 rounded-full border"
           style={{ background: 'rgba(6,182,212,0.15)', borderColor: 'rgba(6,182,212,0.4)', color: '#67e8f9' }}>
@@ -1028,15 +1177,31 @@ function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, o
         </span>
       </div>
 
+      {/* Game over banner */}
+      {gameOver && (
+        <div className="mx-4 mb-2 rounded-2xl p-5 text-center border"
+          style={{ background: 'rgba(239,68,68,0.10)', borderColor: 'rgba(239,68,68,0.40)' }}>
+          <p className="text-3xl mb-2">💀</p>
+          <p className="font-black text-lg text-red-400">Tempo esgotado! Missão falhou!</p>
+          <p className="text-slate-400 text-sm mt-1">
+            {paresEncontrados}/{totalPairs} pares &nbsp;·&nbsp; {erros} erro{erros !== 1 ? 's' : ''}
+          </p>
+          <button onClick={handleNovo} className="mt-4 px-6 py-2.5 rounded-xl font-bold text-white text-sm transition hover:opacity-90"
+            style={{ background: 'linear-gradient(135deg, #991b1b, #ef4444)' }}>
+            🔄 Tentar novamente
+          </button>
+        </div>
+      )}
+
       {/* Win banner */}
-      {ganhou && 
+      {ganhou &&
       (
         <div className="mx-4 mb-2 rounded-2xl p-5 text-center border"
           style={{ background: 'rgba(16,185,129,0.1)', borderColor: 'rgba(16,185,129,0.35)' }}>
           <p className="text-3xl mb-2">🛸</p>
           <p className="font-black text-lg text-cyan-400">Missão cumprida, {p1}!</p>
           <p className="text-slate-400 text-sm mt-1">
-            {formatTempo(tempo)} &nbsp;·&nbsp; {erros} erro{erros !== 1 ? 's' : ''} &nbsp;·&nbsp; {totalPairs} coordenadas
+            {timerRestante}s restantes &nbsp;·&nbsp; {erros} erro{erros !== 1 ? 's' : ''} &nbsp;·&nbsp; {totalPairs} coordenadas
           </p>
           <button
             onClick={handleNovo}
@@ -1070,9 +1235,10 @@ function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, o
           }}
         >
           {cartas.map((num, idx) => {
-            const isVirada = viradas.includes(idx);
+            const isErrada = paresErrados.includes(idx);
+            const isVirada = viradas.includes(idx) && !isErrada;
             const isRevelada = reveladas.has(idx);
-            const mostrar = isVirada || isRevelada;
+            const mostrar = viradas.includes(idx) || isRevelada;
             return (
               <button
                 key={idx}
@@ -1083,17 +1249,20 @@ function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, o
                   fontSize: cols >= 6 ? '13px' : '18px',
                   background: isRevelada
                     ? 'rgba(16,185,129,0.22)'
+                    : isErrada
+                    ? 'rgba(239,68,68,0.30)'
                     : isVirada
                     ? 'rgba(99,102,241,0.35)'
                     : '#1a2d45',
                   border: isRevelada
                     ? '1.5px solid rgba(16,185,129,0.5)'
+                    : isErrada
+                    ? '1.5px solid rgba(239,68,68,0.6)'
                     : isVirada
                     ? '1.5px solid rgba(99,102,241,0.6)'
                     : '1.5px solid rgba(255,255,255,0.07)',
-                  color: isRevelada ? '#4ade80' : isVirada ? '#a5b4fc' : 'transparent',
-                  cursor: isRevelada || ganhou ? 'default' : 'pointer',
-                  transform: mostrar ? 'scale(1)' : 'scale(1)',
+                  color: isRevelada ? '#4ade80' : isErrada ? '#f87171' : isVirada ? '#a5b4fc' : 'transparent',
+                  cursor: isRevelada || ganhou || gameOver ? 'default' : 'pointer',
                 }}
               >
                 {mostrar
@@ -1305,7 +1474,12 @@ function LogicaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, on
   const [saving, setSaving] = useState(false);
   const [savedPosition, setSavedPosition] = useState<{ position: number | null; total: number } | null>(null);
   const [saveErro, setSaveErro] = useState('');
+  const [streak, setStreak] = useState(0);
+  const [timedOut, setTimedOut] = useState(false);
+  const [questaoTimer, setQuestaoTimer] = useState(TIMER_LOGICA[dificuldade]);
+  const questaoTimerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
   const finishRef = useRef(false);
+  const timedOutRef = useRef(false);
 
   const questao = questoes[atual];
   const total = questoes.length;
@@ -1313,12 +1487,62 @@ function LogicaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, on
 
   const acertou = respondido !== null && respondido === questao.resposta;
 
-  const responder = (escolha: boolean) => {
-    if (respondido !== null) return;
+  const responder = useCallback((escolha: boolean) => {
+    if (respondido !== null || timedOutRef.current) return;
+    clearInterval(questaoTimerRef.current);
     setRespondido(escolha);
-    if (escolha !== questao.resposta) setErros((e) => e + 1);
-    else setAcertos((a) => a + 1);
-  };
+    if (escolha !== questao.resposta) {
+      setErros((e) => e + 1);
+      setStreak(0);
+    } else {
+      setAcertos((a) => a + 1);
+      setStreak((s) => s + 1);
+    }
+  }, [respondido, questao]);
+
+  useEffect(() => {
+    if (respondido !== null || encerrado || timedOut) return;
+    timedOutRef.current = false;
+    setQuestaoTimer(TIMER_LOGICA[dificuldade]);
+    clearInterval(questaoTimerRef.current);
+    questaoTimerRef.current = setInterval(() => {
+      setQuestaoTimer((t) => {
+        if (t <= 1) {
+          clearInterval(questaoTimerRef.current);
+          return 0;
+        }
+        return t - 1;
+      });
+    }, 1000);
+    return () => clearInterval(questaoTimerRef.current);
+  }, [atual, respondido, encerrado, timedOut, dificuldade]);
+
+  useEffect(() => {
+    if (questaoTimer !== 0 || respondido !== null || encerrado) return;
+    timedOutRef.current = true;
+    setTimedOut(true);
+    setErros((e) => e + 1);
+    setStreak(0);
+    clearInterval(questaoTimerRef.current);
+    const t = setTimeout(() => {
+      setTimedOut(false);
+      timedOutRef.current = false;
+      if (atual + 1 >= total) {
+        setEncerrado(true);
+        if (!finishRef.current) {
+          finishRef.current = true;
+          fetch(`${apiUrl}/api/games/${gameId}/finish`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ won: true, mistakes: erros + 1 }),
+          }).catch(() => {});
+        }
+      } else {
+        setAtual((i) => i + 1);
+        setRespondido(null);
+      }
+    }, 1400);
+    return () => clearTimeout(t);
+  }, [questaoTimer, respondido, encerrado, atual, total, apiUrl, gameId, erros]);
 
   const proximo = async () => {
     if (atual + 1 >= total) {
@@ -1461,24 +1685,30 @@ function LogicaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, on
       <GameHeader onBack={onBack} onOpenRanking={onOpenRanking} />
 
       {/* Barra de progresso */}
-      <div className="flex items-center gap-3 px-5 py-3 flex-wrap">
+      <div className="flex items-center gap-2 px-5 py-3 flex-wrap">
         <span className="text-xs font-bold px-3 py-1.5 rounded-full border"
           style={{ background: 'rgba(34,197,94,0.12)', borderColor: 'rgba(34,197,94,0.30)', color: '#4ade80' }}>
-          📡 Transmissão {atual + 1}/{total}
+          📡 {atual + 1}/{total}
         </span>
         <span className="text-xs font-bold px-3 py-1.5 rounded-full border"
           style={{ background: 'rgba(74,222,128,0.10)', borderColor: 'rgba(74,222,128,0.25)', color: '#4ade80' }}>
-          🛰️ {acertos} decodificadas
+          🛰️ {acertos}
         </span>
         <span className="text-xs font-bold px-3 py-1.5 rounded-full border"
           style={erros > 0
             ? { background: 'rgba(248,113,113,0.10)', borderColor: 'rgba(248,113,113,0.30)', color: '#f87171' }
             : { background: 'rgba(255,255,255,0.05)', borderColor: 'rgba(255,255,255,0.10)', color: '#94a3b8' }}>
-          🔇 {erros} falhas
+          🔇 {erros}
         </span>
-        <div className="ml-auto flex-1 max-w-[120px] h-1.5 bg-white/10 rounded-full overflow-hidden">
-          <div className="h-full rounded-full transition-all" style={{ width: `${(atual / total) * 100}%`, background: '#22c55e' }} />
-        </div>
+        <StreakBadge streak={streak} />
+        <span className={`ml-auto text-xs font-black px-3 py-1.5 rounded-full border ${questaoTimer <= 5 ? 'animate-pulse' : ''}`}
+          style={questaoTimer <= 5
+            ? { background: 'rgba(239,68,68,0.15)', borderColor: 'rgba(239,68,68,0.40)', color: '#f87171' }
+            : questaoTimer <= 10
+            ? { background: 'rgba(249,115,22,0.12)', borderColor: 'rgba(249,115,22,0.35)', color: '#fb923c' }
+            : { background: 'rgba(34,197,94,0.08)', borderColor: 'rgba(34,197,94,0.20)', color: '#86efac' }}>
+          ⏱ {questaoTimer}s
+        </span>
       </div>
 
       <main className="flex-1 flex flex-col items-center px-4 pb-8 pt-2 max-w-lg mx-auto w-full gap-4">
@@ -1530,8 +1760,17 @@ function LogicaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, on
           <p className="text-xs text-slate-500 mt-2">Operadores lógicos: {questao.modelo.conectivos}</p>
         </div>
 
+        {/* Timeout flash */}
+        {timedOut && (
+          <div className="w-full rounded-2xl p-4 text-center border animate-pulse"
+            style={{ background: 'rgba(239,68,68,0.15)', borderColor: 'rgba(239,68,68,0.45)' }}>
+            <p className="text-red-400 font-black text-lg">⏱ Tempo esgotado!</p>
+            <p className="text-slate-400 text-xs mt-1">Próxima transmissão...</p>
+          </div>
+        )}
+
         {/* Decisão do astronauta */}
-        {respondido === null ? (
+        {respondido === null && !timedOut && (
           <div className="w-full">
             <p className="text-center text-sm text-slate-400 mb-3">
               Astronauta, esta transmissão é:
@@ -1555,7 +1794,8 @@ function LogicaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, on
               </button>
             </div>
           </div>
-        ) : (
+        )}
+        {respondido !== null && (
           <div className="w-full">
             {/* Feedback espacial */}
             <div className="rounded-2xl p-4 mb-3 text-center border"
@@ -1677,10 +1917,57 @@ function PrecedenciaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRankin
   const [saving, setSaving] = useState(false);
   const [savedPosition, setSavedPosition] = useState<{ position: number | null; total: number } | null>(null);
   const [saveErro, setSaveErro] = useState('');
+  const [streak, setStreak] = useState(0);
+  const [timedOut, setTimedOut] = useState(false);
+  const [expressaoTimer, setExpressaoTimer] = useState(TIMER_PRECEDENCIA[dificuldade]);
+  const expressaoTimerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
   const finishRef = useRef(false);
 
   const exercicio = exercicios[atual];
   const total = exercicios.length;
+
+  useEffect(() => {
+    if (resultado !== null || encerrado || timedOut) return;
+    setExpressaoTimer(TIMER_PRECEDENCIA[dificuldade]);
+    clearInterval(expressaoTimerRef.current);
+    expressaoTimerRef.current = setInterval(() => {
+      setExpressaoTimer((t) => {
+        if (t <= 1) { clearInterval(expressaoTimerRef.current); return 0; }
+        return t - 1;
+      });
+    }, 1000);
+    return () => clearInterval(expressaoTimerRef.current);
+  }, [atual, resultado, encerrado, timedOut, dificuldade]);
+
+  useEffect(() => {
+    if (expressaoTimer !== 0 || resultado !== null || encerrado) return;
+    setTimedOut(true);
+    setErros((e) => e + 1);
+    setStreak(0);
+    clearInterval(expressaoTimerRef.current);
+    const t = setTimeout(() => {
+      setTimedOut(false);
+      if (atual + 1 >= total) {
+        setEncerrado(true);
+        if (!finishRef.current) {
+          finishRef.current = true;
+          fetch(`${apiUrl}/api/games/${gameId}/finish`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ won: true, mistakes: erros + 1 }),
+          }).catch(() => {});
+        }
+      } else {
+        const next = atual + 1;
+        setAtual(next);
+        setTokens([...exercicios[next].flat]);
+        setHistory([]);
+        setSelStart(null);
+        setSelEnd(null);
+        setResultado(null);
+      }
+    }, 1400);
+    return () => clearTimeout(t);
+  }, [expressaoTimer, resultado, encerrado, atual, total, apiUrl, gameId, erros, exercicios]);
 
   const handleTokenClick = (index: number) => {
     if (resultado !== null) return;
@@ -1733,12 +2020,13 @@ function PrecedenciaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRankin
 
   const verificar = () => {
     if (resultado !== null) return;
+    clearInterval(expressaoTimerRef.current);
     const resposta = normalizar(tokens.join(''));
     const esperada = normalizar(exercicio.correta);
     const correto = resposta === esperada;
     setResultado(correto ? 'correto' : 'errado');
-    if (correto) setAcertos(a => a + 1);
-    else setErros(e => e + 1);
+    if (correto) { setAcertos(a => a + 1); setStreak(s => s + 1); }
+    else { setErros(e => e + 1); setStreak(0); }
   };
 
   const proximo = async () => {
@@ -1880,24 +2168,30 @@ function PrecedenciaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRankin
       <GameHeader onBack={onBack} onOpenRanking={onOpenRanking} />
 
       {/* Barra de progresso */}
-      <div className="flex items-center gap-3 px-5 py-3 flex-wrap">
+      <div className="flex items-center gap-2 px-5 py-3 flex-wrap">
         <span className="text-xs font-bold px-3 py-1.5 rounded-full border"
           style={{ background: 'rgba(139,92,246,0.12)', borderColor: 'rgba(167,139,250,0.30)', color: '#a78bfa' }}>
-          ⚙️ Expressão {atual + 1}/{total}
+          ⚙️ {atual + 1}/{total}
         </span>
         <span className="text-xs font-bold px-3 py-1.5 rounded-full border"
           style={{ background: 'rgba(167,139,250,0.10)', borderColor: 'rgba(167,139,250,0.25)', color: '#a78bfa' }}>
-          ✅ {acertos} corretas
+          ✅ {acertos}
         </span>
         <span className="text-xs font-bold px-3 py-1.5 rounded-full border"
           style={erros > 0
             ? { background: 'rgba(248,113,113,0.10)', borderColor: 'rgba(248,113,113,0.30)', color: '#f87171' }
             : { background: 'rgba(255,255,255,0.05)', borderColor: 'rgba(255,255,255,0.10)', color: '#94a3b8' }}>
-          ❌ {erros} erros
+          ❌ {erros}
         </span>
-        <div className="ml-auto flex-1 max-w-[120px] h-1.5 bg-white/10 rounded-full overflow-hidden">
-          <div className="h-full rounded-full transition-all" style={{ width: `${(atual / total) * 100}%`, background: '#7c3aed' }} />
-        </div>
+        <StreakBadge streak={streak} />
+        <span className={`ml-auto text-xs font-black px-3 py-1.5 rounded-full border ${expressaoTimer <= 5 ? 'animate-pulse' : ''}`}
+          style={expressaoTimer <= 5
+            ? { background: 'rgba(239,68,68,0.15)', borderColor: 'rgba(239,68,68,0.40)', color: '#f87171' }
+            : expressaoTimer <= 10
+            ? { background: 'rgba(249,115,22,0.12)', borderColor: 'rgba(249,115,22,0.35)', color: '#fb923c' }
+            : { background: 'rgba(139,92,246,0.10)', borderColor: 'rgba(167,139,250,0.25)', color: '#c4b5fd' }}>
+          ⏱ {expressaoTimer}s
+        </span>
       </div>
 
       <main className="flex-1 flex flex-col items-center px-4 pb-8 pt-2 max-w-2xl mx-auto w-full gap-4">
@@ -1920,6 +2214,15 @@ function PrecedenciaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRankin
             <span className="text-slate-400 ml-2 text-[10px]">· → associa à direita · demais associam à esquerda</span>
           </div>
         </div>
+
+        {/* Timeout flash */}
+        {timedOut && (
+          <div className="w-full rounded-2xl p-4 text-center border animate-pulse"
+            style={{ background: 'rgba(239,68,68,0.15)', borderColor: 'rgba(239,68,68,0.45)' }}>
+            <p className="text-red-400 font-black text-lg">⏱ Tempo esgotado!</p>
+            <p className="text-slate-400 text-xs mt-1">Próxima expressão...</p>
+          </div>
+        )}
 
         {/* Expressão interativa */}
         <div className="w-full rounded-2xl p-6 border border-white/10" style={{ background: '#0a1428' }}>
@@ -2055,12 +2358,340 @@ function PrecedenciaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRankin
   );
 }
 
+// ─── MEMÓRIA VS (DUELO DE MAPAS) ──────────────────────────────────────────────
+
+type FaseDuelo = 'p1' | 'transicao' | 'p2' | 'resultado';
+
+interface EstatsJogador {
+  pares: number;
+  erros: number;
+  timerRestante: number;
+  eliminou: boolean;
+}
+
+function MemoriaVsGame({ gameId, dificuldade, p1, p2, apiUrl, onBack, onOpenRanking }: GameProps)
+{
+  const { cols, rows, pairs: totalPairs } = MEMORIA_GRID[dificuldade];
+  const totalCards = cols * rows;
+
+  const gerarCartas = () => {
+    const nums = Array.from({ length: totalPairs }, (_, i) => i + 1);
+    const pares = [...nums, ...nums];
+    for (let i = pares.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pares[i], pares[j]] = [pares[j], pares[i]];
+    }
+    return pares;
+  };
+
+  const [fase, setFase] = useState<FaseDuelo>('p1');
+  const [cartasP1] = useState<number[]>(() => gerarCartas());
+  const [cartasP2] = useState<number[]>(() => gerarCartas());
+  const cartas = fase === 'p2' || fase === 'resultado' ? cartasP2 : cartasP1;
+
+  const [reveladas, setReveladas] = useState<Set<number>>(new Set());
+  const [viradas, setViradas] = useState<number[]>([]);
+  const [paresErrados, setParesErrados] = useState<number[]>([]);
+  const [erros, setErros] = useState(0);
+  const [bloqueado, setBloqueado] = useState(false);
+  const [ganhou, setGanhou] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
+  const [timerRestante, setTimerRestante] = useState(MEMORIA_TIMER_INICIAL);
+  const [iniciou, setIniciou] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
+  const [statsP1, setStatsP1] = useState<EstatsJogador | null>(null);
+  const [gameIdP2, setGameIdP2] = useState<string | null>(null);
+  const finishP1Ref = useRef(false);
+  const finishP2Ref = useRef(false);
+
+  const paresEncontrados = reveladas.size / 2;
+  const nomeAtual = fase === 'p2' ? p2 : p1;
+
+  const resetForP2 = useCallback(() => {
+    setReveladas(new Set());
+    setViradas([]);
+    setErros(0);
+    setBloqueado(false);
+    setGanhou(false);
+    setGameOver(false);
+    setTimerRestante(MEMORIA_TIMER_INICIAL);
+    setIniciou(false);
+    clearInterval(timerRef.current);
+  }, []);
+
+  useEffect(() => {
+    if (!iniciou || ganhou || gameOver) return;
+    timerRef.current = setInterval(() => {
+      setTimerRestante((t) => {
+        if (t <= 1) { clearInterval(timerRef.current); setGameOver(true); return 0; }
+        return t - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timerRef.current);
+  }, [iniciou, ganhou, gameOver]);
+
+  const handleClique = (idx: number) => {
+    if (bloqueado || viradas.includes(idx) || reveladas.has(idx) || ganhou || gameOver) return;
+    if (!iniciou) setIniciou(true);
+
+    const novasViradas = [...viradas, idx];
+    setViradas(novasViradas);
+
+    if (novasViradas.length === 2) {
+      setBloqueado(true);
+      const [a, b] = novasViradas;
+      if (cartas[a] === cartas[b]) {
+        const novasReveladas = new Set(reveladas);
+        novasReveladas.add(a);
+        novasReveladas.add(b);
+        setReveladas(novasReveladas);
+        setViradas([]);
+        setBloqueado(false);
+        setTimerRestante((t) => t + MEMORIA_BONUS_PAR);
+        if (novasReveladas.size === totalCards) {
+          setGanhou(true);
+          clearInterval(timerRef.current);
+          const stats = { pares: totalPairs, erros, timerRestante: timerRestante + MEMORIA_BONUS_PAR, eliminou: false };
+          if (fase === 'p1') {
+            if (!finishP1Ref.current) {
+              finishP1Ref.current = true;
+              fetch(`${apiUrl}/api/games/${gameId}/finish`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ won: true }) }).catch(() => {});
+            }
+            setStatsP1(stats);
+          } else {
+            if (!finishP2Ref.current) {
+              finishP2Ref.current = true;
+              if (gameIdP2) fetch(`${apiUrl}/api/games/${gameIdP2}/finish`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ won: true }) }).catch(() => {});
+            }
+            setFase('resultado');
+          }
+        }
+      } else {
+        setErros((e) => e + 1);
+        setParesErrados([a, b]);
+        setTimeout(() => { setViradas([]); setParesErrados([]); setBloqueado(false); }, 900);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (!gameOver) return;
+    const stats = { pares: paresEncontrados, erros, timerRestante: 0, eliminou: true };
+    if (fase === 'p1') {
+      if (!finishP1Ref.current) {
+        finishP1Ref.current = true;
+        fetch(`${apiUrl}/api/games/${gameId}/finish`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ won: false }) }).catch(() => {});
+      }
+      setStatsP1(stats);
+    } else {
+      if (!finishP2Ref.current) {
+        finishP2Ref.current = true;
+        if (gameIdP2) fetch(`${apiUrl}/api/games/${gameIdP2}/finish`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ won: false }) }).catch(() => {});
+      }
+      setFase('resultado');
+    }
+  }, [gameOver]);
+
+  const handlePassarParaP2 = async () => {
+    resetForP2();
+    try {
+      const res = await fetch(`${apiUrl}/api/games`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ difficulty: dificuldade, gameType: 'CARD_GUESS' }),
+      });
+      const g = await res.json();
+      setGameIdP2(g.id);
+    } catch {/* ok */}
+    setFase('p2');
+  };
+
+  const vencedor = (): string | null => {
+    if (!statsP1) return null;
+    const p2Stats = { pares: ganhou ? totalPairs : paresEncontrados, erros, timerRestante: ganhou ? timerRestante : 0, eliminou: gameOver };
+    if (statsP1.eliminou && p2Stats.eliminou) return null;
+    if (statsP1.eliminou) return p2;
+    if (p2Stats.eliminou) return p1;
+    if (statsP1.pares !== p2Stats.pares) return statsP1.pares > p2Stats.pares ? p1 : p2;
+    if (statsP1.timerRestante !== p2Stats.timerRestante) return statsP1.timerRestante > p2Stats.timerRestante ? p1 : p2;
+    if (statsP1.erros !== p2Stats.erros) return statsP1.erros < p2Stats.erros ? p1 : p2;
+    return null;
+  };
+
+  const p2Stats = statsP1 && fase === 'resultado'
+    ? { pares: ganhou ? totalPairs : paresEncontrados, erros, timerRestante: ganhou ? timerRestante : 0, eliminou: gameOver }
+    : null;
+
+  if (fase === 'transicao' && statsP1) {
+    return (
+      <div className="min-h-screen text-white flex flex-col items-center justify-center px-4"
+        style={{ background: BG, fontFamily: "'Inter', system-ui, sans-serif" }}>
+        <div className="w-full max-w-sm bg-[#131d31] border border-white/10 rounded-3xl p-8 text-center shadow-2xl">
+          <div className="text-5xl mb-4">⚔️</div>
+          <h2 className="text-2xl font-black text-white mb-2">Vez de {p2}!</h2>
+          <p className="text-slate-400 text-sm mb-6">Resultado de {p1}:</p>
+          <div className="flex gap-3 mb-6">
+            <div className="flex-1 rounded-2xl p-3" style={{ background: 'rgba(99,102,241,0.10)', border: '1px solid rgba(99,102,241,0.30)' }}>
+              <p className="text-2xl font-black text-indigo-400">{statsP1.pares}/{totalPairs}</p>
+              <p className="text-[10px] text-slate-400 mt-1">Pares</p>
+            </div>
+            <div className="flex-1 rounded-2xl p-3" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.10)' }}>
+              <p className="text-2xl font-black" style={{ color: statsP1.eliminou ? '#f87171' : '#4ade80' }}>
+                {statsP1.eliminou ? '💀' : `${statsP1.timerRestante}s`}
+              </p>
+              <p className="text-[10px] text-slate-400 mt-1">{statsP1.eliminou ? 'Eliminado' : 'Restante'}</p>
+            </div>
+            <div className="flex-1 rounded-2xl p-3" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.10)' }}>
+              <p className="text-2xl font-black text-red-400">{statsP1.erros}</p>
+              <p className="text-[10px] text-slate-400 mt-1">Erros</p>
+            </div>
+          </div>
+          <button onClick={handlePassarParaP2}
+            className="w-full py-4 rounded-2xl font-black text-white text-base transition hover:opacity-90"
+            style={{ background: 'linear-gradient(135deg, #6d28d9, #a855f7)', boxShadow: '0 4px 20px rgba(168,85,247,0.35)' }}>
+            ⚔️ Começar — {p2}!
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (fase === 'resultado' && statsP1 && p2Stats) {
+    const win = vencedor();
+    return (
+      <div className="min-h-screen text-white flex flex-col items-center justify-center px-4"
+        style={{ background: BG, fontFamily: "'Inter', system-ui, sans-serif" }}>
+        <div className="w-full max-w-sm bg-[#131d31] border border-white/10 rounded-3xl p-8 text-center shadow-2xl">
+          <div className="text-5xl mb-4">{win ? '🏆' : '🤝'}</div>
+          <h2 className="text-2xl font-black text-white mb-1">
+            {win ? `${win} venceu o Duelo!` : 'Duelo empatado!'}
+          </h2>
+          <p className="text-slate-400 text-sm mb-6">Batalha de Mapas Estelares</p>
+          <div className="flex gap-3 mb-6">
+            {[{ nome: p1, stats: statsP1, cor: '#06b6d4' }, { nome: p2, stats: p2Stats, cor: '#a855f7' }].map(({ nome, stats, cor }) => (
+              <div key={nome} className="flex-1 rounded-2xl p-4" style={{ border: `1px solid ${cor}40`, background: `${cor}10` }}>
+                <p className="text-xs text-slate-400 truncate mb-2">{nome}</p>
+                <p className="text-xl font-black" style={{ color: cor }}>{stats.pares}/{totalPairs}</p>
+                <p className="text-xs text-slate-400">pares</p>
+                <p className="text-sm font-bold mt-1" style={{ color: stats.eliminou ? '#f87171' : '#4ade80' }}>
+                  {stats.eliminou ? '💀 elim.' : `⏱ ${stats.timerRestante}s`}
+                </p>
+                <p className="text-xs text-red-400">❌ {stats.erros}</p>
+              </div>
+            ))}
+          </div>
+          <div className="flex flex-col gap-2">
+            <button onClick={onBack}
+              className="w-full py-3 rounded-xl font-bold text-sm text-white transition hover:opacity-90"
+              style={{ background: 'linear-gradient(135deg, #6d28d9, #a855f7)' }}>
+              🏠 Menu Principal
+            </button>
+            <button onClick={() => onOpenRanking('CARD_GUESS')}
+              className="w-full bg-white/5 hover:bg-white/10 border border-white/10 py-3 rounded-xl font-semibold text-sm text-slate-300 transition">
+              🏆 Ver Ranking
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen text-white flex flex-col" style={{ background: BG, fontFamily: "'Inter', system-ui, sans-serif" }}>
+      <GameHeader onBack={onBack} onOpenRanking={onOpenRanking} />
+
+      {/* Stats bar */}
+      <div className="flex items-center gap-2 px-5 py-3 flex-wrap">
+        <span className="text-xs font-bold px-3 py-1.5 rounded-full border"
+          style={{ background: fase === 'p2' ? 'rgba(168,85,247,0.15)' : 'rgba(6,182,212,0.15)', borderColor: fase === 'p2' ? 'rgba(168,85,247,0.4)' : 'rgba(6,182,212,0.4)', color: fase === 'p2' ? '#c084fc' : '#67e8f9' }}>
+          {fase === 'p2' ? '🚀' : '👨‍🚀'} {nomeAtual}
+        </span>
+        <span className={`text-xs font-bold px-3 py-1.5 rounded-full border ${timerRestante <= 10 ? 'animate-pulse' : ''}`}
+          style={timerRestante <= 10
+            ? { background: 'rgba(239,68,68,0.18)', borderColor: 'rgba(239,68,68,0.50)', color: '#f87171' }
+            : timerRestante <= 30
+            ? { background: 'rgba(249,115,22,0.15)', borderColor: 'rgba(249,115,22,0.45)', color: '#fb923c' }
+            : { background: 'rgba(34,197,94,0.12)', borderColor: 'rgba(34,197,94,0.35)', color: '#4ade80' }}>
+          ⏱ {timerRestante}s
+        </span>
+        <span className="text-xs font-bold px-3 py-1.5 rounded-full border"
+          style={{ background: 'rgba(6,182,212,0.15)', borderColor: 'rgba(6,182,212,0.4)', color: '#67e8f9' }}>
+          🌕 {paresEncontrados}/{totalPairs}
+        </span>
+        {erros > 0 && (
+          <span className="text-xs font-bold px-3 py-1.5 rounded-full border"
+            style={{ background: 'rgba(239,68,68,0.12)', borderColor: 'rgba(239,68,68,0.35)', color: '#f87171' }}>
+            ❌ {erros}
+          </span>
+        )}
+      </div>
+
+      {/* Game over / win banners */}
+      {gameOver && (
+        <div className="mx-4 mb-2 rounded-2xl p-4 text-center border"
+          style={{ background: 'rgba(239,68,68,0.10)', borderColor: 'rgba(239,68,68,0.40)' }}>
+          <p className="font-black text-red-400">💀 {nomeAtual} foi eliminado! Tempo esgotado.</p>
+          <button onClick={() => setFase('transicao')}
+            className="mt-3 px-6 py-2 rounded-xl font-bold text-white text-sm transition hover:opacity-90"
+            style={{ background: 'linear-gradient(135deg, #6d28d9, #a855f7)' }}>
+            {fase === 'p1' ? `⚔️ Vez de ${p2} →` : '🏁 Ver resultado'}
+          </button>
+        </div>
+      )}
+      {ganhou && (
+        <div className="mx-4 mb-2 rounded-2xl p-4 text-center border"
+          style={{ background: 'rgba(16,185,129,0.1)', borderColor: 'rgba(16,185,129,0.35)' }}>
+          <p className="font-black text-cyan-400">🛸 {nomeAtual} completou o tabuleiro! +{timerRestante}s</p>
+          <button onClick={() => setFase('transicao')}
+            className="mt-3 px-6 py-2 rounded-xl font-bold text-white text-sm transition hover:opacity-90"
+            style={{ background: 'linear-gradient(135deg, #6d28d9, #a855f7)' }}>
+            {fase === 'p1' ? `⚔️ Vez de ${p2} →` : '🏁 Ver resultado'}
+          </button>
+        </div>
+      )}
+
+      {/* Grid */}
+      <main className="flex-1 px-4 pb-8 flex items-start justify-center pt-2">
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: `repeat(${cols}, 1fr)`,
+          gap: cols >= 6 ? '6px' : '10px',
+          maxWidth: cols >= 6 ? '480px' : '380px',
+          width: '100%',
+        }}>
+          {cartas.map((num, idx) => {
+            const isErrada = paresErrados.includes(idx);
+            const isVirada = viradas.includes(idx) && !isErrada;
+            const isRevelada = reveladas.has(idx);
+            const mostrar = viradas.includes(idx) || isRevelada;
+            return (
+              <button key={idx} onClick={() => handleClique(idx)}
+                className="transition-all duration-150 active:scale-90 rounded-xl flex items-center justify-center font-black select-none"
+                style={{
+                  aspectRatio: '1',
+                  fontSize: cols >= 6 ? '13px' : '18px',
+                  background: isRevelada ? 'rgba(16,185,129,0.22)' : isErrada ? 'rgba(239,68,68,0.30)' : isVirada ? 'rgba(99,102,241,0.35)' : '#1a2d45',
+                  border: isRevelada ? '1.5px solid rgba(16,185,129,0.5)' : isErrada ? '1.5px solid rgba(239,68,68,0.6)' : isVirada ? '1.5px solid rgba(99,102,241,0.6)' : '1.5px solid rgba(255,255,255,0.07)',
+                  color: isRevelada ? '#4ade80' : isErrada ? '#f87171' : isVirada ? '#a5b4fc' : 'transparent',
+                  cursor: isRevelada || ganhou || gameOver ? 'default' : 'pointer',
+                }}>
+                {mostrar ? num : <span style={{ color: 'rgba(255,255,255,0.12)', fontSize: cols >= 6 ? '11px' : '14px' }}>?</span>}
+              </button>
+            );
+          })}
+        </div>
+      </main>
+    </div>
+  );
+}
+
 // ─── EXPORT ───────────────────────────────────────────────────────────────────
 
 export function Game(props: GameProps)
 {
   if (props.modo === 'vs') return <VsGame {...props} />;
   if (props.modo === 'memoria') return <MemoriaGame {...props} />;
+  if (props.modo === 'memoria-vs') return <MemoriaVsGame {...props} />;
   if (props.modo === 'logica') return <LogicaGame {...props} />;
   if (props.modo === 'precedencia') return <PrecedenciaGame {...props} />;
   return <SoloGame {...props} />;

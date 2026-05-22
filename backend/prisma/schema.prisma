@@ -36,6 +36,7 @@ model Game {
   gameType   GameType   @default(NUMBER_GUESS)
   difficulty Difficulty
   target     Int
+  maxRange   Int?
   attempts   Int        @default(0)
   won        Boolean    @default(false)
   createdAt  DateTime   @default(now())

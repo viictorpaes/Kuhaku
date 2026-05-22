@@ -20,7 +20,7 @@
     "noFallthroughCasesInSwitch": true
   },
 
-  "include": ["src"],
+  "include": ["src", "src/ts/audio.ts"],
   "references": 
   [
     { "path": "./tsconfig.node.json" }

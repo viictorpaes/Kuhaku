@@ -16,7 +16,8 @@
   <img src="https://img.shields.io/badge/Prisma-111827?style=for-the-badge&logo=prisma&logoColor=5A67D8" height="35" alt="Prisma"/>
   <img src="https://img.shields.io/badge/Docker-111827?style=for-the-badge&logo=docker&logoColor=2496ed" height="35" alt="Docker"/>
   <img src="https://img.shields.io/badge/Architecture-111827?style=for-the-badge&logo=instructure&logoColor=white" height="35" alt="Architecture"/>
-  <img src="https://img.shields.io/badge/Figma-111827?style=for-the-badge&logo=figma&logoColor=F24E1E" height="35" alt="Figma"/> <br>
+  <img src="https://img.shields.io/badge/Figma-111827?style=for-the-badge&logo=figma&logoColor=F24E1E" height="35" alt="Figma"/>
+  <img src="https://img.shields.io/badge/%E2%9A%94%EF%B8%8F_Star_Wars-111827?style=for-the-badge&labelColor=111827&logo=starwars&logoColor=FFE81F" height="35" alt="Star Wars"/> <br>
   <img src="https://img.shields.io/badge/Git-111827?style=for-the-badge&logo=git&logoColor=F05032" height="35" alt="Git"/>
   <img src="https://img.shields.io/badge/GitHub-111827?style=for-the-badge&logo=github&logoColor=white" height="35" alt="GitHub"/>
   <img src="https://img.shields.io/badge/GitHub_Desktop-111827?style=for-the-badge&logo=github&logoColor=purple" height="35" alt="GitHub Desktop"/>
@@ -86,10 +87,14 @@ Kuhaku/
 ├── frontend <img src="https://img.shields.io/badge/HTML5-111827?style=flat&logo=html5&logoColor=E34F26" height="18"/> <img src="https://img.shields.io/badge/-React-111827?style=flat&logo=react&logoColor=61DAFB" height="18"/> <img src="https://img.shields.io/badge/-Vite-111827?style=flat&logo=vite&logoColor=purple" height="18"/> <img src="https://img.shields.io/badge/-CSS-111827?style=flat-square&logo=css&logoColor=663399"/> <img src="https://img.shields.io/badge/-TailwindCSS-111827?style=flat&logo=tailwindcss&logoColor=06B6D4" height="18"/> <img src="https://img.shields.io/badge/-TypeScript-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>/
 │   ├── src <img src="https://img.shields.io/badge/src-61DAFB?style=flat&logo=react&logoColor=black" height="18"/>/
 │   │   ├── components <img src="https://img.shields.io/badge/components-2B2D42?style=flat&logo=react&logoColor=61DAFB" height="18"/>/
+│   │   │   ├── song <img src="https://img.shields.io/badge/-Módulo%20Song-111827?style=flat-square&logo=musicbrainz&logoColor=red" height="18">/
+│   │   │   │   └── StarWarsMainTheme.mp3 <img src="https://img.shields.io/badge/MP3-111827?style=flat&logo=audacity&logoColor=red" height="18"/>
 │   │   │   ├── home.tsx <img src="https://img.shields.io/badge/-Home-111827?style=flat&logo=react&logoColor=61DAFB" height="18"/>
 │   │   │   ├── game.tsx <img src="https://img.shields.io/badge/-Game-111827?style=flat&logo=react&logoColor=61DAFB" height="18"/>
 │   │   │   ├── ranking.tsx <img src="https://img.shields.io/badge/-Ranking-111827?style=flat&logo=react&logoColor=61DAFB" height="18"/>
 │   │   │   └── setup.tsx <img src="https://img.shields.io/badge/-Setup-111827?style=flat&logo=react&logoColor=61DAFB" height="18"/>
+│   │   ├── ts <img src="https://img.shields.io/badge/-TypeScript-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>/
+│   │   │   └── audio.ts <img src="https://img.shields.io/badge/Web_Audio_API-111827?style=flat&logo=typescript&logoColor=red" height="18"/>
 │   │   ├── App.tsx <img src="https://img.shields.io/badge/-React-111827?style=flat&logo=react&logoColor=61DAFB" height="18"/>
 │   │   ├── constants.ts <img src="https://img.shields.io/badge/-Constants-111827?style=flat&logo=typescript&logoColor=red" height="18"/>
 │   │   ├── index.css  <img src="https://img.shields.io/badge/-CSS-111827?style=flat-square&logo=css&logoColor=663399" height="18"/>
@@ -126,7 +131,7 @@ Kuhaku/
 
 <table align="center" width="780">
   <tr><th align="center">🏠 Tela Inicial</th></tr>
-  <tr><td align="center"><b>Página de entrada do Kuhaku — o astronauta escolhe sua missão entre os quatro modos de jogo disponíveis.</b></td></tr>
+  <tr><td align="center"><b>Página de entrada do Kuhaku — o astronauta escolhe sua missão entre os seis modos de jogo disponíveis.</b></td></tr>
   <tr><td align="center"><img src="img/tela_inicial.jpeg" width="750" alt="Tela Inicial"/></td></tr>
 </table>
 
@@ -134,23 +139,31 @@ Kuhaku/
 
 <table align="center" width="780">
   <tr><th align="center">📡 Batalha de Sinais</th></tr>
-  <tr><td align="center"><b>Modo multiplayer local: dois astronautas disputam na mesma frequência secreta. Quem sintonizar primeiro vence a rodada. Dificuldades: Cadete, Piloto ou Comandante.</b></td></tr>
-  <tr><td align="center"><img src="img/batalha_de_sinais.jpeg" width="750" alt="Batalha de Sinais"/></td></tr>
+  <tr><td align="center"><b>Modo multiplayer local: dois astronautas disputam na mesma frequência secreta. Turnos alternados com timer de 15s por jogada — quem sintonizar primeiro vence a rodada. 3 rodadas no total. Ambos podem se cadastrar no ranking ao final. Dificuldades: 🌍 Cadete · 🚀 Piloto · 👨‍🚀 Comandante.</b></td></tr>
+  <td align="center"><img src="img/batalha_de_sinais.jpeg" width="750" alt="Batalha de Sinais"/></td></tr>
 </table>
 
 <br>
 
 <table align="center" width="780">
-  <tr><th align="center">🌕 Mapas Estelares</th></tr>
-  <tr><td align="center"><b>Modo single-player de memória: encontre os pares de coordenadas estelares em grids 4×4, 4×5 ou 6×6 conforme a dificuldade escolhida.</b></td></tr>
+  <tr><th align="center">🌕 Mapas Estelares — Solo</th></tr>
+  <tr><td align="center"><b>Modo single-player de memória: encontre os pares de coordenadas estelares com cronômetro regressivo (60s + 25s de bônus por par encontrado). Grids: 4×4, 4×5 ou 6×6 conforme a dificuldade.</b></td></tr>
   <tr><td align="center"><img src="img/mapas_estrelares.jpeg" width="750" alt="Mapas Estelares"/></td></tr>
 </table>
 
 <br>
 
 <table align="center" width="780">
+  <tr><th align="center">🌕 1v1 Mapas Estelares</th></tr>
+  <tr><td align="center"><b>Modo multiplayer de memória: dois astronautas disputam quem encontra mais pares de coordenadas no mesmo grid. Turnos alternados com timer por jogada. Grids: 4×4, 4×5 ou 6×6.</b></td></tr>
+  <tr><td align="center"><img src="img/1v1_mapas_estrelares.jpeg" width="750" alt="1v1 Mapas Estelares"/></td></tr>
+</table>
+
+<br>
+
+<table align="center" width="780">
   <tr><th align="center">🔭 Operação Resgate</th></tr>
-  <tr><td align="center"><b>Modo single-player de adivinhação: sintonize a frequência de resgate correta dentro do número de tentativas disponíveis. Dificuldades: Cadete, Piloto ou Comandante.</b></td></tr>
+  <tr><td align="center"><b>Modo single-player de adivinhação: sintonize a frequência de resgate correta dentro do número de tentativas. Range customizável. Feedback proporcional ao intervalo. Dificuldades: 🌍 Cadete (5 tent.) · 🚀 Piloto (8 tent.) · 👨‍🚀 Comandante (10 tent.).</b></td></tr>
   <tr><td align="center"><img src="img/operação_resgate.jpeg" width="750" alt="Operação Resgate"/></td></tr>
 </table>
 
@@ -158,25 +171,24 @@ Kuhaku/
 
 <table align="center" width="780">
   <tr><th align="center">🧠 Protocolo Lógico</th></tr>
-
-  <tr><td align="center"><b>A base espacial intercepta transmissões cifradas do cosmos. O astronauta decodifica cada sinal lógico avaliando fórmulas proposicionais (∧ ∨ ¬ → ↔) como VERDADEIRAS ou FALSAS. Cada transmissão revela seu tipo — 🌟 Tautologia (sempre ativa), 🕳️ Contradição (buraco negro lógico) ou 🪐 Contingência (sinal variável). Dificuldades: 🌍 Cadete (8 transmissões · P,Q · ∧∨¬), 🚀 Piloto (10 · P,Q,R · ∧∨¬→), 👨‍🚀 Comandante (12 · todos os operadores · ∧∨¬→↔).</b></td></tr>
-  <tr><td align="center"><img src="./img/lógica.jpeg" alt="lógica"><td></tr>
+  <tr><td align="center"><b>A base espacial intercepta transmissões cifradas do cosmos. O astronauta decodifica cada sinal lógico avaliando fórmulas proposicionais (∧ ∨ ¬ → ↔) como VERDADEIRAS ou FALSAS. Cada transmissão revela seu tipo — 🌟 Tautologia, 🕳️ Contradição ou 🪐 Contingência. Timer por questão. Dificuldades: 🌍 Cadete (8 · P,Q · ∧∨¬ · 30s), 🚀 Piloto (10 · P,Q,R · ∧∨¬→ · 20s), 👨‍🚀 Comandante (12 · todos · 15s).</b></td></tr>
+  <tr><td align="center"><img src="img/protocolo_lógico.jpeg" width="750" alt="Protocolo Lógico"/></td></tr>
 </table>
 
 <br>
 
 <table align="center" width="780">
   <tr><th align="center">⚙️ Hierarquia de Comandos</th></tr>
-  <tr><td align="center"><b>O computador da nave perdeu os parênteses das equações lógicas! Adicione os parênteses corretos para restaurar a ordem de precedência dos operadores (∧ antes de ∨, ∨ antes de →, → antes de ↔). Dificuldades: 🌍 Cadete (8 expressões · ∧∨), 🚀 Piloto (10 · ∧∨→), 👨‍🚀 Comandante (12 · ∧∨→↔).</b></td></tr>
-  <tr><td align="center"><img src="img/hierarquia_comandos.jpeg" width="750" alt="hierarquia de comandos"/></td></tr>
+  <tr><td align="center"><b>O computador da nave perdeu os parênteses das equações lógicas! Adicione os parênteses corretos para restaurar a ordem de precedência dos operadores (∧ antes de ∨, ∨ antes de →, → antes de ↔). Timer por questão. Dificuldades: 🌍 Cadete (8 · ∧∨ · 45s), 🚀 Piloto (10 · ∧∨→ · 35s), 👨‍🚀 Comandante (12 · ∧∨→↔ · 25s).</b></td></tr>
+  <tr><td align="center"><img src="img/hierarquia_de_comandos.jpeg" width="750" alt="Hierarquia de Comandos"/></td></tr>
 </table>
 
 <br>
 
 <table align="center" width="780">
   <tr><th align="center">🏆 Hall da Fama</th></tr>
-  <tr><td align="center"><b>Ranking Galáctico com a pontuação de todos os astronautas por modalidade — filtre por Batalha de Sinais, Operação Resgate, Mapas Estelares ou Protocolo Lógico.</b></td></tr>
-  <tr><td align="center"><img src="img/hall_da_fama_novo.jpeg" width="750" alt="Hall da Fama"/></td></tr>
+  <tr><td align="center"><b>Ranking Galáctico com a pontuação de todos os astronautas por modalidade — filtre por Batalha de Sinais, Operação Resgate, Mapas Estelares, Protocolo Lógico ou Hierarquia de Comandos.</b></td></tr>
+  <tr><td align="center"><img src="img/hall_da_fama.jpeg" width="750" alt="Hall da Fama"/></td></tr>
 </table>
 
 <h2 align="center">🕹️ Comandos</h2>
@@ -190,31 +202,28 @@ git clone https://github.com/viictorpaes/Kuhaku
 ```
 
 <h3 align="center">Rodar localmente <br>
-<b> <i>referenciado na issue</i></b> <br>
 <img src="https://img.shields.io/badge/Local_Host-111827?style=flat-square&logo=readme&logoColor=white"/>
 </h3>
 
 
 ```bash
-# 1. Sobe o banco Dockerizado `PostgresSql` 
+# 1. Sobe o banco PostgreSQL via Docker
 docker compose up db -d
 
-# 2. Entra no backend e prepara o banco
+# 2. Prepara o banco (rode dentro de backend/)
 cd backend
-npm run prisma:generate # gera o Prisma Client
-npm run prisma:migrate:deploy # cria as tabelas (inclui GameType: NUMBER_GUESS | VS_GUESS | CARD_GUESS | LOGIC_PUZZLE | PRECEDENCE_PUZZLE)
-npm run prisma:seed # popula usuários iniciais (admin, dev, user)
+npm run prisma:generate       # gera o Prisma Client
+npm run prisma:migrate:deploy # aplica migrations (cria tabelas e GameTypes)
+npm run prisma:seed           # popula usuários iniciais (admin, dev, user)
 
-# OPCIONAL: popula dados de teste com usuários e partidas
-npx tsx --env-file=.env prisma/test-user.ts # cria usuários de teste com senha (bcrypt)
-npx tsx --env-file=.env prisma/test-game.ts # cria partidas NUMBER_GUESS
-
+# OPCIONAL — dados de teste
+npx tsx --env-file=.env prisma/test-user.ts  # cria usuários com senha bcrypt
+npx tsx --env-file=.env prisma/test-game.ts  # cria partidas NUMBER_GUESS de exemplo
 cd ..
 
-# 3. Sobe backend (:3001) + frontend (:5173)
-npm run start:dev
-# Apenas o frontend (:5173)
-npm run dev:frontend 
+# 3. Inicia o projeto completo
+npm run start:dev      # backend (:3001) + frontend (:5173)
+npm run dev:frontend   # só o frontend (:5173)
 ```
 
 
@@ -287,9 +296,6 @@ docker system prune -f --volumes
 > 💡 **Atenção:** O Prisma Studio será iniciado por padrão na porta **5555** 🚪.
 
 ```bash
-# NOTA: rode estes comandos dentro da pasta `backend/`
-cd backend
-
 # Inicializa o Prisma no projeto (cria /prisma e schema.prisma)
 npx prisma init
 
@@ -382,9 +388,6 @@ npm run studio
 > ⚠️ Os comandos devem ser rodados de dentro da pasta `frontend/`
 
 ```bash
-# NOTA: rode estes comandos dentro da pasta `frontend/`
-cd frontend
-
 # Instala todas as dependências do package.json
 npm install
 
@@ -450,31 +453,35 @@ Camada de **lógica de negócio**. Processa os dados recebidos do Controller, ap
 **Arquivos neste projeto:** `app.module.ts` `game.module.ts` `auth.module.ts` `user.module.ts`
 
 
-<h2 align="center">🎮 Modos de Jogo</h2>
+<h2 align="center">🎮 Modos de Jogo <br>
+<img src="https://img.shields.io/badge/%F0%9F%8E%AE_Modos_de_Jogo-111827?style=for-the-badge&labelColor=111827&logoColor=white" height="18" alt="Modos de Jogo"/>
+</h2>
 
-| Modo | Tipo | Descrição | Dificuldade |
-|---|---|---|---|
-| **Batalha de Sinais** | `VS_GUESS` (backend) | 2 astronautas adivinham a mesma frequência secreta. Turno alternado — quem sintonizar primeiro vence a rodada. 3 rodadas. Ambos podem se cadastrar no ranking ao final. | Cadete 1–10 · Piloto 1–50 · Comandante 1–100 · **12 tentativas totais por rodada** |
-| **Operação Resgate** | `NUMBER_GUESS` (backend) | Solo. Feedback de sinal proporcional ao range. | Cadete (5 tent.) · Piloto (7 tent.) · Comandante (10 tent.) |
-| **Mapas Estelares** | `CARD_GUESS` (backend) | Solo. Grid de pares de coordenadas para virar e combinar. Cronômetro + contador de erros. Ao vencer e se registrar, redireciona automaticamente para o ranking de Jogo da Memória. | Cadete 4×4 (8 pares) · Piloto 4×5 (10 pares) · Comandante 6×6 (18 pares) |
-| **Hierarquia de Comandos** | `PRECEDENCE_PUZZLE` (backend) | Solo. O computador da nave perdeu os parênteses das equações lógicas! Adicione os parênteses corretos para restaurar a ordem de precedência dos operadores (∧ antes de ∨, ∨ antes de →, → antes de ↔). | Cadete ∧∨ · 8 expressões · Piloto ∧∨→ · 10 expressões · Comandante ∧∨→↔ · 12 expressões |
+| Modo | Frontend `Modo` | Backend `GameType` | Descrição | Dificuldade |
+|---|---|---|---|---|
+| **📡 Batalha de Sinais** | `vs` | `VS_GUESS` | 2 astronautas adivinham a mesma frequência. Turnos alternados · timer 15s/jogada · 3 rodadas · 12 tentativas/rodada. Ambos se cadastram no ranking ao final. | 🌍 Cadete 1–10 · 🚀 Piloto 1–50 · 👨‍🚀 Comandante 1–100 |
+| **🔭 Operação Resgate** | `solo` | `NUMBER_GUESS` | Solo. Adivinha a frequência com feedback proporcional ao range. Range customizável via `customRange`. | 🌍 Cadete (5 tent.) · 🚀 Piloto (8 tent.) · 👨‍🚀 Comandante (10 tent.) |
+| **🌕 Mapas Estelares** | `memoria` | `CARD_GUESS` | Solo. Grid de pares com cronômetro regressivo (60s base + 25s bônus/par). Redireciona para ranking CARD_GUESS após salvar. | 🌍 Cadete 4×4 (8p) · 🚀 Piloto 4×5 (10p) · 👨‍🚀 Comandante 6×6 (18p) |
+| **🌕 1v1 Mapas Estelares** | `memoria-vs` | `CARD_GUESS` | 2 astronautas disputam pares no mesmo grid. Turnos alternados com timer. | 🌍 Cadete 4×4 · 🚀 Piloto 4×5 · 👨‍🚀 Comandante 6×6 |
+| **🧠 Protocolo Lógico** | `logica` | `LOGIC_PUZZLE` | Solo. Avalia fórmulas proposicionais (∧ ∨ ¬ → ↔) como V/F + classifica em Tautologia/Contradição/Contingência. Timer por questão. | 🌍 Cadete (8 · P,Q · 30s) · 🚀 Piloto (10 · P,Q,R · 20s) · 👨‍🚀 Cmd (12 · 15s) |
+| **⚙️ Hierarquia de Comandos** | `precedencia` | `PRECEDENCE_PUZZLE` | Solo. Reinsere parênteses para restaurar a precedência (∧>∨>→>↔). Timer por questão. | 🌍 Cadete (8 · ∧∨ · 45s) · 🚀 Piloto (10 · ∧∨→ · 35s) · 👨‍🚀 Cmd (12 · 25s) |
 
 **GameTypes do backend (Prisma):** `NUMBER_GUESS` · `VS_GUESS` · `CARD_GUESS` · `LOGIC_PUZZLE` · `PRECEDENCE_PUZZLE`
 
-**Máximo de tentativas por dificuldade (NUMBER_GUESS):** EASY → 5 · MEDIUM → 7 · HARD → 10
+**Tentativas por dificuldade (NUMBER_GUESS):** EASY → 5 · MEDIUM → 8 · HARD → 10
 
-**Máximo de tentativas (VS_GUESS):** 12 por rodada (independente da dificuldade) — cada jogador recebe turnos alternados até alguém acertar ou as 12 tentativas se esgotarem
+**Tentativas por rodada (VS_GUESS):** 12 independente da dificuldade — turnos alternados · timer 15s/jogada
 
 **Endpoints:**
 | Método | Rota | Descrição |
 |---|---|---|
 | `POST` | `/api/games/:id/finish` | Salva/encerra a partida — revela o target |
 | `POST` | `/api/games/:id/save` | Salva resultado no ranking com apelido `{ name }` → retorna `{ saved: true, position, total }` (`position` pode ser `null` se o jogador não venceu nenhuma partida) |
-| `GET` | `/api/ranking/global?gameType=VS_GUESS` | Ranking filtrado por Adivinhação Em Dupla |
-| `GET` | `/api/ranking/global?gameType=NUMBER_GUESS` | Ranking filtrado por Adivinhação Solo |
-| `GET` | `/api/ranking/global?gameType=CARD_GUESS` | Ranking filtrado por Jogo da Memória |
-| `GET` | `/api/ranking/global?gameType=LOGIC_PUZZLE` | Ranking filtrado por Protocolo Lógico |
-| `GET` | `/api/ranking/global?gameType=PRECEDENCE_PUZZLE` | Ranking filtrado por Hierarquia de Comandos |
+| `GET` | `/api/ranking/global?gameType=VS_GUESS` | Ranking — 📡 Batalha de Sinais |
+| `GET` | `/api/ranking/global?gameType=NUMBER_GUESS` | Ranking — 🔭 Operação Resgate |
+| `GET` | `/api/ranking/global?gameType=CARD_GUESS` | Ranking — 🌕 Mapas Estelares (solo + 1v1) |
+| `GET` | `/api/ranking/global?gameType=LOGIC_PUZZLE` | Ranking — 🧠 Protocolo Lógico |
+| `GET` | `/api/ranking/global?gameType=PRECEDENCE_PUZZLE` | Ranking — ⚙️ Hierarquia de Comandos |
 
 **Feedback de número (proporcional ao intervalo):**
 
@@ -697,9 +704,10 @@ export type GameType   = 'NUMBER_GUESS' | 'VS_GUESS' | 'CARD_GUESS' | 'LOGIC_PUZ
 
 export class CreateGameDto
 {
-  userId?:    string;
-  difficulty!: Difficulty;
-  gameType?:  GameType;
+  userId?:      string;
+  difficulty!:  Difficulty;
+  gameType?:    GameType;
+  customRange?: number;   // range máximo customizado para NUMBER_GUESS
 }
 ```
 
@@ -747,9 +755,9 @@ export class UpdateUserDto
 ```ts
 // frontend/src/types.ts
 export type Tela = 'home' | 'setup' | 'game' | 'result' | 'ranking';
-export type Modo = 'solo' | 'vs' | 'memoria' | 'logica' | 'precedencia'; 
+export type Modo = 'solo' | 'vs' | 'memoria' | 'memoria-vs' | 'logica' | 'precedencia';
 export type Dificuldade = 'EASY' | 'MEDIUM' | 'HARD';
-export type Direcao = 'higher' | 'lower' | 'correct';
+export type Direcao = 'higher' | 'lower' | 'correct' | 'timeout';
 
 export interface Palpite 
 {
@@ -764,6 +772,8 @@ export interface ConfigJogo
   dificuldade: Dificuldade;
   p1: string;
   p2: string;
+  timerSegundos?: number | null;
+  rangeMax?: number;
 }
 ```
 
@@ -771,8 +781,9 @@ export interface ConfigJogo
 // frontend/src/constants.ts
 import type { Dificuldade } from './types';
 
-export const TOTAL_ROUNDS_VS = 3;
-export const MAX_TENTATIVAS_VS = 12;
+export const TOTAL_ROUNDS_VS    = 3;
+export const MAX_TENTATIVAS_VS  = 12;
+export const TIMER_VS_TURNO     = 15;   // segundos por jogada no modo VS
 
 export const MAX_TENTATIVAS_SOLO: Record<Dificuldade, number> =
 {
@@ -816,11 +827,36 @@ export const MEMORIA_GRID: Record<Dificuldade, { cols: number; rows: number; lab
   HARD:   { cols: 6, rows: 6, label: '6×6', pairs: 18 },
 };
 
+// timer base e bônus por par no modo Memória
+export const MEMORIA_TIMER_INICIAL = 60;
+export const MEMORIA_BONUS_PAR     = 25;
+
+export const LOGICA_CONFIG: Record<Dificuldade, { count: number; label: string; description: string }> =
+{
+  EASY:   { count: 8,  label: '🌍 Cadete',     description: 'P, Q · ∧ ∨ ¬ · 8 transmissões'           },
+  MEDIUM: { count: 10, label: '🚀 Piloto',      description: 'P, Q, R · ∧ ∨ ¬ → · 10 transmissões'   },
+  HARD:   { count: 12, label: '👨‍🚀 Comandante',  description: 'P, Q, R · ∧ ∨ ¬ → ↔ · 12 transmissões' },
+};
+
+export const TIMER_LOGICA: Record<Dificuldade, number> =
+{
+  EASY:   30,
+  MEDIUM: 20,
+  HARD:   15,
+};
+
 export const PARENTESES_CONFIG: Record<Dificuldade, { count: number; label: string; description: string }> =
 {
-  EASY:   { count: 8,  label: '🌍 Cadete',     description: '∧ ∨ · 8 expressões'           },
-  MEDIUM: { count: 10, label: '🚀 Piloto',      description: '∧ ∨ → · 10 expressões'        },
-  HARD:   { count: 12, label: '👨‍🚀 Comandante',  description: '∧ ∨ → ↔ · 12 expressões'     },
+  EASY:   { count: 8,  label: '🌍 Cadete',     description: '∧ ∨ · 8 expressões'       },
+  MEDIUM: { count: 10, label: '🚀 Piloto',      description: '∧ ∨ → · 10 expressões'    },
+  HARD:   { count: 12, label: '👨‍🚀 Comandante',  description: '∧ ∨ → ↔ · 12 expressões'  },
+};
+
+export const TIMER_PRECEDENCIA: Record<Dificuldade, number> =
+{
+  EASY:   45,
+  MEDIUM: 35,
+  HARD:   25,
 };
 ```
 
@@ -1115,19 +1151,20 @@ export function VsResultScreen({ p1, p2, finalScore, vsRoundResults, apiUrl, ...
 
 export function Game(props: GameProps)
 {
-  if (props.modo === 'vs')      return <VsGame {...props} />;
-  if (props.modo === 'memoria') return <MemoriaGame {...props} />;
+  if (props.modo === 'vs')          return <VsGame {...props} />;
+  if (props.modo === 'memoria')     return <MemoriaGame {...props} />;
+  if (props.modo === 'memoria-vs')  return <MemoriaVsGame {...props} />;
   return <SoloGame {...props} />;
 }
 ```
 
 ```ts
 // components/ranking.tsx — Hall da Fama com filtro por missão
-// Tabs: 🌌 Galáxia | 📡 Batalha de Sinais (VS_GUESS) | 🔭 Operação Resgate (NUMBER_GUESS) | 🌕 Mapas Estelares (CARD_GUESS) | 🧠 Protocolo Lógico (LOGIC_PUZZLE)
+// Tabs: 🌌 Galáxia | 📡 Batalha de Sinais | 🔭 Operação Resgate | 🌕 Mapas Estelares | 🧠 Protocolo Lógico | ⚙️ Hierarquia de Cmds
 // GET /api/ranking/global?limit=10&gameType=<filtro>
-// Ordenação: menor média de tentativas = melhor posição (LOGIC_PUZZLE: menor nº de erros)
+// Ordenação: menor média de tentativas = melhor posição (LOGIC_PUZZLE/PRECEDENCE_PUZZLE: menor nº de erros)
 // Medalhas: 🥇🥈🥉 para top 3 · posição numérica para o restante
-// initialFilter: abre o ranking já na aba correta (usado pelo MemoriaGame após save)
+// initialFilter: abre o ranking já na aba correta (ex: MemoriaGame abre CARD_GUESS após save)
 
 export type GameTypeFilter = 'all' | 'NUMBER_GUESS' | 'VS_GUESS' | 'CARD_GUESS' | 'LOGIC_PUZZLE' | 'PRECEDENCE_PUZZLE';
 
@@ -1181,6 +1218,109 @@ export function Ranking({ onBack, apiUrl, initialFilter }: RankingProps)
   }, [apiUrl, filtro]);
 }
 ```
+
+5. `frontend/src/components/song/StarWarsMainTheme.mp3` + `frontend/src/ts/audio.ts` <br>
+<img src="https://img.shields.io/badge/%E2%9A%94%EF%B8%8F_Star_Wars-111827?style=for-the-badge&labelColor=111827&logo=starwars&logoColor=FFE81F" height="18" alt="Star Wars"/>
+<img src="https://img.shields.io/badge/Web_Audio_API-111827?style=flat&logo=typescript&logoColor=red" height="18"/>
+<img src="https://img.shields.io/badge/MP3-111827?style=flat&logo=audacity&logoColor=red" height="18"/>
+
+### 🎵🎧 Sistema de Áudio:
+
+O <mark><b>Kuhaku</b></mark> possui dois mecanismos de áudio independentes, ambos implementados em `frontend/src/ts/audio.ts`:
+
+**1. Trilha sonora de fundo — `starWarsTheme`**
+
+Toca `StarWarsMainTheme.mp3` em loop contínuo durante toda a sessão do jogo. O objeto exportado expõe os métodos `start()`, `stop()`, `mute()` e `unmute()`, e o getter `muted` para verificar o estado atual. A reprodução é iniciada na primeira interação do usuário (obrigatório pelos navegadores modernos para respeitar a política de autoplay).
+
+
+```ts
+export const starWarsTheme = 
+{
+  get muted() { return audio.muted; },
+  start() 
+  {
+    if (audio.paused) audio.play().catch(() => {});
+  },
+
+  stop() 
+  {
+    audio.pause();
+    audio.currentTime = 0;
+  },
+
+  mute() { audio.muted = true; },
+  unmute() { audio.muted = false; },
+};
+
+```
+
+**2. Efeitos sonoros procedurais — Web Audio API**
+
+
+Usa `AudioContext` para sintetizar sons em tempo real sem arquivos externos:
+
+| Função | Descrição | Frequências |
+|---|---|---|
+| `playArcadeCorrect()` | Acerto — três notas ascendentes ✅ | 523 Hz → 659 Hz → 784 Hz (`sine`) |
+| `playArcadeError()` | Erro — dois beeps descendentes ❌ | 220 Hz → 180 Hz (`sawtooth`) |
+
+
+```ts
+et _audioCtx: AudioContext | null = null;
+
+function getAudioCtx(): AudioContext
+{
+  if (!_audioCtx) _audioCtx = new AudioContext();
+  return _audioCtx;
+}
+
+const _unlock = () => getAudioCtx().resume().catch(() => {});
+document.addEventListener('click', _unlock);
+document.addEventListener('keydown', _unlock);
+
+function _scheduleBeep(ctx: AudioContext, frequency: number, duration: number, type: OscillatorType, volume: number)
+{
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.type = type;
+  osc.frequency.setValueAtTime(frequency, ctx.currentTime);
+  gain.gain.setValueAtTime(volume, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+  osc.start(ctx.currentTime);
+  osc.stop(ctx.currentTime + duration);
+}
+
+function beep(frequency: number, duration: number, type: OscillatorType = 'square', volume = 0.18)
+{
+  try
+  {
+    const ctx = getAudioCtx();
+    if (ctx.state === 'running')
+      _scheduleBeep(ctx, frequency, duration, type, volume);
+    else
+      ctx.resume().then(() => _scheduleBeep(ctx, frequency, duration, type, volume)).catch(() => {});
+  } catch { }
+}
+
+export function playArcadeError() 
+{
+  beep(220, 0.15, 'sawtooth', 0.2);
+  setTimeout(() => beep(180, 0.20, 'sawtooth', 0.2), 120);
+}
+
+export function playArcadeCorrect() 
+{
+  beep(523, 0.10, 'sine', 0.18);
+  setTimeout(() => beep(659, 0.10, 'sine', 0.18), 100);
+  setTimeout(() => beep(784, 0.18, 'sine', 0.22), 200);
+}
+
+```
+
+O contexto é desbloqueado automaticamente em cada `click` ou `keydown` para cobrir o caso de o browser suspender o `AudioContext` após troca de aba ou criação fora de um gesto do usuário.
+
 
 <h2 align="center">👤🌱 Teste de Criação de Usuário / Seed<br>
 <img src="https://img.shields.io/badge/Test_User_Create-111827?style=flat&logo=typescript&logoColor=purple" height="18"/><img src="https://img.shields.io/badge/-Seed-111827?style=flat&logo=typescript&logoColor=2E8B57" height="18"/><img src="https://img.shields.io/badge/-Guess-111827?style=flat&logo=typescript&logoColor=orange" height="18"/>
@@ -1258,7 +1398,7 @@ main()
 <img src="https://img.shields.io/badge/Test_User_Create-111827?style=flat&logo=typescript&logoColor=purple" height="18"/>
 
 ```bash
-cd BACKEND
+cd backend
 npx tsx --env-file=.env prisma/test-user.ts
 ```
  
@@ -1343,7 +1483,7 @@ main().catch
 <img src="https://img.shields.io/badge/Test_Game_Create-111827?style=flat&logo=typescript&logoColor=blue" height="18"/><img src="https://img.shields.io/badge/-Guess-111827?style=flat&logo=typescript&logoColor=orange" height="18"/>
 
 ```bash
-cd BACKEND
+cd backend
 npx tsx --env-file=.env prisma/test-game.ts
 ```
 
