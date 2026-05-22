@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Modo, Dificuldade, ConfigJogo } from '../types';
-import { RANGE_LABEL, DIF_LABEL, MAX_TENTATIVAS_SOLO, MEMORIA_GRID, LOGICA_CONFIG } from '../constants';
+import { RANGE_LABEL, DIF_LABEL, MAX_TENTATIVAS_SOLO, MEMORIA_GRID, LOGICA_CONFIG, PARENTESES_CONFIG } from '../constants';
 
 interface SetupProps {
   modo: Modo;
@@ -343,9 +343,87 @@ function LogicaSetup({ onStart, onBack, onOpenRanking }: SetupProps) {
   );
 }
 
+/** Hierarquia de Comandos (precedência) setup */
+function PrecedenciaSetup({ onStart, onBack, onOpenRanking }: SetupProps) {
+  const [loading, setLoading] = useState<Dificuldade | null>(null);
+
+  const handleStart = async (dif: Dificuldade) => {
+    setLoading(dif);
+    try {
+      await onStart({ dificuldade: dif, p1: 'Astronauta', p2: '' });
+    } finally {
+      setLoading(null);
+    }
+  };
+
+  const cards: { dif: Dificuldade; emoji: string; bg: string; shadow: string }[] = [
+    { dif: 'EASY',   emoji: '🌍', bg: '#1e1040', shadow: 'rgba(139,92,246,0.30)'  },
+    { dif: 'MEDIUM', emoji: '🚀', bg: '#2d1b69', shadow: 'rgba(139,92,246,0.35)'  },
+    { dif: 'HARD',   emoji: '👨‍🚀', bg: '#3b0764', shadow: 'rgba(167,139,250,0.35)' },
+  ];
+
+  const operadores: { sym: string; nome: string }[] = [
+    { sym: '∧', nome: 'E' },
+    { sym: '∨', nome: 'OU' },
+    { sym: '→', nome: 'SE…ENTÃO' },
+    { sym: '↔', nome: 'SSE' },
+  ];
+
+  return (
+    <div className="min-h-screen text-white flex flex-col" style={{ background: BG, fontFamily: "'Inter', system-ui, sans-serif" }}>
+      <GameHeader onBack={onBack} onOpenRanking={onOpenRanking} />
+
+      <div className="flex-1 flex flex-col items-center justify-center px-4 py-8">
+        <div className="w-20 h-20 rounded-full flex items-center justify-center text-3xl mb-5 shadow-lg"
+          style={{ background: 'linear-gradient(135deg, #2d1b69, #7c3aed)', boxShadow: '0 0 28px rgba(139,92,246,0.40)' }}>
+          ⚙️
+        </div>
+
+        <h1 className="text-3xl font-black text-white mb-1">Hierarquia de Comandos ⚙️</h1>
+        <p className="text-slate-400 text-sm mb-4">Restaure a precedência dos operadores lógicos</p>
+
+        <div className="flex flex-wrap gap-2 justify-center mb-8 max-w-sm">
+          {operadores.map(({ sym, nome }) => (
+            <span key={sym} className="text-xs font-bold px-2.5 py-1 rounded-full"
+              style={{ background: 'rgba(139,92,246,0.15)', border: '1px solid rgba(167,139,250,0.30)', color: '#c4b5fd' }}>
+              <span className="font-black">{sym}</span> {nome}
+            </span>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-3 gap-4 w-full max-w-lg">
+          {cards.map(({ dif, emoji, bg, shadow }) => {
+            const { label, description } = PARENTESES_CONFIG[dif];
+            return (
+              <button
+                key={dif}
+                onClick={() => handleStart(dif)}
+                disabled={loading !== null}
+                className="rounded-2xl p-5 flex flex-col items-center justify-center gap-1 transition-all duration-200 hover:scale-105 hover:shadow-xl active:scale-95 disabled:opacity-70"
+                style={{ background: bg, border: '1px solid rgba(167,139,250,0.25)', boxShadow: `0 8px 24px ${shadow}` }}
+              >
+                <span className="text-2xl">{emoji}</span>
+                <span className="font-black text-white text-base mt-1">
+                  {loading === dif ? '🛸 ...' : label}
+                </span>
+                <span className="text-white/65 text-[10px] text-center leading-tight mt-0.5">{description}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        <p className="text-slate-600 text-xs mt-8 text-center max-w-sm">
+          Adicione parênteses para restaurar a ordem correta: ¬ antes de ∧ · ∧ antes de ∨ · ∨ antes de → · → antes de ↔
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export function Setup(props: SetupProps) {
   if (props.modo === 'vs') return <VsSetup {...props} />;
   if (props.modo === 'memoria') return <MemoriaSetup {...props} />;
   if (props.modo === 'logica') return <LogicaSetup {...props} />;
+  if (props.modo === 'precedencia') return <PrecedenciaSetup {...props} />;
   return <SoloSetup {...props} />;
 }

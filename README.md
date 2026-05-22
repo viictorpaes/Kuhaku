@@ -1,5 +1,5 @@
 <h1 align="center">Jogo da Adivinhação (Kuhaku 🧑🏻‍🚀) <br>
-<img src="./img/logo.jpeg" width="450" alt="logo"></h1>
+<img src="./img/logo_atualizada.jpeg" width="450" alt="logo"></h1>
 
 <h2 align="center">💻⛏️ Tecnologias e Ferramentas Utilizadas: </h2>
 
@@ -166,9 +166,17 @@ Kuhaku/
 <br>
 
 <table align="center" width="780">
+  <tr><th align="center">⚙️ Hierarquia de Comandos</th></tr>
+  <tr><td align="center"><b>O computador da nave perdeu os parênteses das equações lógicas! Adicione os parênteses corretos para restaurar a ordem de precedência dos operadores (∧ antes de ∨, ∨ antes de →, → antes de ↔). Dificuldades: 🌍 Cadete (8 expressões · ∧∨), 🚀 Piloto (10 · ∧∨→), 👨‍🚀 Comandante (12 · ∧∨→↔).</b></td></tr>
+  <tr><td align="center"><img src="img/hierarquia_comandos.jpeg" width="750" alt="hierarquia de comandos"/></td></tr>
+</table>
+
+<br>
+
+<table align="center" width="780">
   <tr><th align="center">🏆 Hall da Fama</th></tr>
   <tr><td align="center"><b>Ranking Galáctico com a pontuação de todos os astronautas por modalidade — filtre por Batalha de Sinais, Operação Resgate, Mapas Estelares ou Protocolo Lógico.</b></td></tr>
-  <tr><td align="center"><img src="img/hall_da_fama.jpeg" width="750" alt="Hall da Fama"/></td></tr>
+  <tr><td align="center"><img src="img/hall_da_fama_novo.jpeg" width="750" alt="Hall da Fama"/></td></tr>
 </table>
 
 <h2 align="center">🕹️ Comandos</h2>
@@ -194,7 +202,7 @@ docker compose up db -d
 # 2. Entra no backend e prepara o banco
 cd backend
 npm run prisma:generate # gera o Prisma Client
-npm run prisma:migrate:deploy # cria as tabelas (inclui GameType: NUMBER_GUESS | VS_GUESS | CARD_GUESS | LOGIC_PUZZLE)
+npm run prisma:migrate:deploy # cria as tabelas (inclui GameType: NUMBER_GUESS | VS_GUESS | CARD_GUESS | LOGIC_PUZZLE | PRECEDENCE_PUZZLE)
 npm run prisma:seed # popula usuários iniciais (admin, dev, user)
 
 # OPCIONAL: popula dados de teste com usuários e partidas
@@ -449,8 +457,9 @@ Camada de **lógica de negócio**. Processa os dados recebidos do Controller, ap
 | **Batalha de Sinais** | `VS_GUESS` (backend) | 2 astronautas adivinham a mesma frequência secreta. Turno alternado — quem sintonizar primeiro vence a rodada. 3 rodadas. Ambos podem se cadastrar no ranking ao final. | Cadete 1–10 · Piloto 1–50 · Comandante 1–100 · **12 tentativas totais por rodada** |
 | **Operação Resgate** | `NUMBER_GUESS` (backend) | Solo. Feedback de sinal proporcional ao range. | Cadete (5 tent.) · Piloto (7 tent.) · Comandante (10 tent.) |
 | **Mapas Estelares** | `CARD_GUESS` (backend) | Solo. Grid de pares de coordenadas para virar e combinar. Cronômetro + contador de erros. Ao vencer e se registrar, redireciona automaticamente para o ranking de Jogo da Memória. | Cadete 4×4 (8 pares) · Piloto 4×5 (10 pares) · Comandante 6×6 (18 pares) |
+| **Hierarquia de Comandos** | `PRECEDENCE_PUZZLE` (backend) | Solo. O computador da nave perdeu os parênteses das equações lógicas! Adicione os parênteses corretos para restaurar a ordem de precedência dos operadores (∧ antes de ∨, ∨ antes de →, → antes de ↔). | Cadete ∧∨ · 8 expressões · Piloto ∧∨→ · 10 expressões · Comandante ∧∨→↔ · 12 expressões |
 
-**GameTypes do backend (Prisma):** `NUMBER_GUESS` · `VS_GUESS` · `CARD_GUESS`
+**GameTypes do backend (Prisma):** `NUMBER_GUESS` · `VS_GUESS` · `CARD_GUESS` · `LOGIC_PUZZLE` · `PRECEDENCE_PUZZLE`
 
 **Máximo de tentativas por dificuldade (NUMBER_GUESS):** EASY → 5 · MEDIUM → 7 · HARD → 10
 
@@ -464,6 +473,8 @@ Camada de **lógica de negócio**. Processa os dados recebidos do Controller, ap
 | `GET` | `/api/ranking/global?gameType=VS_GUESS` | Ranking filtrado por Adivinhação Em Dupla |
 | `GET` | `/api/ranking/global?gameType=NUMBER_GUESS` | Ranking filtrado por Adivinhação Solo |
 | `GET` | `/api/ranking/global?gameType=CARD_GUESS` | Ranking filtrado por Jogo da Memória |
+| `GET` | `/api/ranking/global?gameType=LOGIC_PUZZLE` | Ranking filtrado por Protocolo Lógico |
+| `GET` | `/api/ranking/global?gameType=PRECEDENCE_PUZZLE` | Ranking filtrado por Hierarquia de Comandos |
 
 **Feedback de número (proporcional ao intervalo):**
 
@@ -682,7 +693,7 @@ export class GameService
 ```ts
 // Arquivo: backend/src/game/dto/create-game.dto.ts
 export type Difficulty = 'EASY' | 'MEDIUM' | 'HARD';
-export type GameType   = 'NUMBER_GUESS' | 'VS_GUESS' | 'CARD_GUESS';
+export type GameType   = 'NUMBER_GUESS' | 'VS_GUESS' | 'CARD_GUESS' | 'LOGIC_PUZZLE' | 'PRECEDENCE_PUZZLE';
 
 export class CreateGameDto
 {
@@ -736,7 +747,7 @@ export class UpdateUserDto
 ```ts
 // frontend/src/types.ts
 export type Tela = 'home' | 'setup' | 'game' | 'result' | 'ranking';
-export type Modo = 'solo' | 'vs' | 'memoria'; 
+export type Modo = 'solo' | 'vs' | 'memoria' | 'logica' | 'precedencia'; 
 export type Dificuldade = 'EASY' | 'MEDIUM' | 'HARD';
 export type Direcao = 'higher' | 'lower' | 'correct';
 
@@ -803,6 +814,13 @@ export const MEMORIA_GRID: Record<Dificuldade, { cols: number; rows: number; lab
   EASY:   { cols: 4, rows: 4, label: '4×4', pairs: 8  },
   MEDIUM: { cols: 4, rows: 5, label: '4×5', pairs: 10 },
   HARD:   { cols: 6, rows: 6, label: '6×6', pairs: 18 },
+};
+
+export const PARENTESES_CONFIG: Record<Dificuldade, { count: number; label: string; description: string }> =
+{
+  EASY:   { count: 8,  label: '🌍 Cadete',     description: '∧ ∨ · 8 expressões'           },
+  MEDIUM: { count: 10, label: '🚀 Piloto',      description: '∧ ∨ → · 10 expressões'        },
+  HARD:   { count: 12, label: '👨‍🚀 Comandante',  description: '∧ ∨ → ↔ · 12 expressões'     },
 };
 ```
 
@@ -882,9 +900,14 @@ export function App()
     setScore({ p1: 0, p2: 0 });
     setFinalScore(null);
     setVsRoundResults([]);
-    const isVs      = modo === 'vs';
-    const isMemoria = modo === 'memoria';
-    const id = await criarJogo(config.dificuldade, isVs ? 'VS_GUESS' : isMemoria ? 'CARD_GUESS' : undefined);
+    const isVs         = modo === 'vs';
+    const isMemoria    = modo === 'memoria';
+    const isLogica     = modo === 'logica';
+    const isPrecedencia = modo === 'precedencia';
+    const id = await criarJogo(
+      config.dificuldade,
+      isVs ? 'VS_GUESS' : isMemoria ? 'CARD_GUESS' : isLogica ? 'LOGIC_PUZZLE' : isPrecedencia ? 'PRECEDENCE_PUZZLE' : undefined,
+    );
     setGameId(id);
     setTela('game');
   }, [modo]);
@@ -913,7 +936,10 @@ export function App()
 
   const novoJogoSolo = useCallback(async () =>
   {
-    const gameType = modo === 'memoria' ? 'CARD_GUESS' : undefined;
+    const gameType =
+      modo === 'memoria'     ? 'CARD_GUESS' :
+      modo === 'logica'      ? 'LOGIC_PUZZLE' :
+      modo === 'precedencia' ? 'PRECEDENCE_PUZZLE' : undefined;
     const id = await criarJogo(dificuldade!, gameType);
     setGameId(id);
   }, [dificuldade, modo]);
@@ -1018,6 +1044,11 @@ export function Home({ onSelectMode, onOpenRanking }: HomeProps)
         </button>
       </div>
 
+      <button onClick={() => onSelectMode('precedencia')} className="w-full rounded-3xl p-6 ..."
+        style={{ background: 'linear-gradient(135deg, #1e1040, #2d1b69, #1a0f3e)' }}>
+        ⚙️ Hierarquia de Comandos — parênteses · precedência · ∧ ∨ → ↔
+      </button>
+
       <button onClick={onOpenRanking}>🏆 Ver Ranking da Missão</button>
     </div>
   );
@@ -1098,33 +1129,36 @@ export function Game(props: GameProps)
 // Medalhas: 🥇🥈🥉 para top 3 · posição numérica para o restante
 // initialFilter: abre o ranking já na aba correta (usado pelo MemoriaGame após save)
 
-export type GameTypeFilter = 'all' | 'NUMBER_GUESS' | 'VS_GUESS' | 'CARD_GUESS' | 'LOGIC_PUZZLE';
+export type GameTypeFilter = 'all' | 'NUMBER_GUESS' | 'VS_GUESS' | 'CARD_GUESS' | 'LOGIC_PUZZLE' | 'PRECEDENCE_PUZZLE';
 
 const TABS: { label: string; value: GameTypeFilter }[] =
 [
-  { label: '🌌 Galáxia',           value: 'all'          },
-  { label: '📡 Batalha de Sinais', value: 'VS_GUESS'     },
-  { label: '🔭 Operação Resgate',  value: 'NUMBER_GUESS' },
-  { label: '🌕 Mapas Estelares',   value: 'CARD_GUESS'   },
-  { label: '🧠 Protocolo Lógico',  value: 'LOGIC_PUZZLE' },
+  { label: '🌌 Galáxia',               value: 'all'                },
+  { label: '📡 Batalha de Sinais',     value: 'VS_GUESS'           },
+  { label: '🔭 Operação Resgate',      value: 'NUMBER_GUESS'       },
+  { label: '🌕 Mapas Estrelares',      value: 'CARD_GUESS'         },
+  { label: '🧠 Protocolo Lógico',      value: 'LOGIC_PUZZLE'       },
+  { label: '⚙️ Hierarquia de Cmds',    value: 'PRECEDENCE_PUZZLE'  },
 ];
 
 const SUBTITULO: Record<GameTypeFilter, string> =
 {
-  all:          '🌌 Ranking Galáctico — todos os astronautas',
-  VS_GUESS:     '📡 Batalha de Sinais — ambos se cadastram ao final',
-  NUMBER_GUESS: '🔭 Operação Resgate — missões solo',
-  CARD_GUESS:   '🌕 Mapas Estelares — jogo da memória',
-  LOGIC_PUZZLE: '🧠 Protocolo Lógico — menor número de erros',
+  all:               '🌌 Ranking Galáctico — todos os astronautas',
+  VS_GUESS:          '📡 Batalha de Sinais — ambos se cadastram ao final',
+  NUMBER_GUESS:      '🔭 Operação Resgate — missões solo',
+  CARD_GUESS:        '🌕 Mapas Estelares — jogo da memória',
+  LOGIC_PUZZLE:      '🧠 Protocolo Lógico — menor número de erros',
+  PRECEDENCE_PUZZLE: '⚙️ Hierarquia de Comandos — precedência de operadores',
 };
 
 const BADGE_LABEL: Record<GameTypeFilter, string> =
 {
-  all:          '🌌 Geral',
-  VS_GUESS:     '📡 Batalha',
-  NUMBER_GUESS: '🔭 Resgate',
-  CARD_GUESS:   '🌕 Mapas',
-  LOGIC_PUZZLE: '🧠 Protocolo',
+  all:               '🌌 Geral',
+  VS_GUESS:          '📡 Batalha',
+  NUMBER_GUESS:      '🔭 Resgate',
+  CARD_GUESS:        '🌕 Mapas',
+  LOGIC_PUZZLE:      '🧠 Protocolo',
+  PRECEDENCE_PUZZLE: '⚙️ Hierarquia',
 };
 
 interface RankingProps
