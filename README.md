@@ -749,7 +749,7 @@ export class UpdateUserDto
 </h2>
 
 1. `frontend/src/types.ts` + `frontend/src/constants.ts` <br>
-<img src="https://img.shields.io/badge/Types-111827?style=flat&logo=typescript&logoColor=3178C6" height="18" alt="types"/>
+<img src="https://img.shields.io/badge/Types-111827?style=flat&logo=typescript&logoColor=3178C6" height="18" alt="types"/><img src="https://img.shields.io/badge/-Constants-111827?style=flat&logo=typescript&logoColor=red" height="18"/>
 
 ```ts
 // frontend/src/types.ts
