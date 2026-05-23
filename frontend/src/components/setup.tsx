@@ -3,7 +3,7 @@ import type { Modo, Dificuldade, ConfigJogo } from '../types';
 import {
   RANGE_LABEL, DIF_LABEL, MAX_TENTATIVAS_SOLO, MEMORIA_GRID, LOGICA_CONFIG,
   PARENTESES_CONFIG, TIMER_LOGICA, TIMER_PRECEDENCIA, MEMORIA_TIMER_INICIAL, MEMORIA_BONUS_PAR,
-  TIMER_VS_TURNO,
+  TIMER_VS_TURNO, TIMER_SOLO,
 } from '../constants';
 
 interface SetupProps 
@@ -201,13 +201,13 @@ function SoloSetup({ onStart, onBack, onOpenRanking }: SetupProps)
   const [customRange, setCustomRange] = useState(1000);
   const [customTimer, setCustomTimer] = useState<number | null>(30);
 
-  const handleStart = async (dif: Dificuldade) => 
+  const handleStart = async (dif: Dificuldade) =>
   {
     setLoading(dif);
     try {
-      await onStart({ dificuldade: dif, p1: 'Astronauta', p2: '' });
-    } 
-    finally 
+      await onStart({ dificuldade: dif, p1: 'Astronauta', p2: '', timerSegundos: TIMER_SOLO[dif] });
+    }
+    finally
     {
       setLoading(null);
     }
@@ -252,7 +252,17 @@ function SoloSetup({ onStart, onBack, onOpenRanking }: SetupProps)
         </div>
 
         <h1 className="text-3xl font-black text-white mb-1">Operação Resgate</h1>
-        <p className="text-slate-400 text-sm mb-8">Sintonize a frequência de resgate certa</p>
+        <p className="text-slate-400 text-sm mb-3">Sintonize a frequência de resgate certa</p>
+
+        {/* Timer info */}
+        <div className="flex gap-3 mb-8 flex-wrap justify-center">
+          {(['EASY', 'MEDIUM', 'HARD'] as Dificuldade[]).map((dif) => (
+            <span key={dif} className="text-[11px] font-bold px-3 py-1.5 rounded-full"
+              style={{ background: 'rgba(6,182,212,0.10)', border: '1px solid rgba(6,182,212,0.25)', color: '#67e8f9' }}>
+              ⏱ {DIF_LABEL[dif].split(' ').slice(1).join(' ')}: {TIMER_SOLO[dif]}s/tentativa
+            </span>
+          ))}
+        </div>
 
         <div className="grid grid-cols-3 gap-4 w-full max-w-lg mb-4">
           {cards.map(({ dif, emoji, bg, shadow }) => (
@@ -269,6 +279,7 @@ function SoloSetup({ onStart, onBack, onOpenRanking }: SetupProps)
               </span>
               <span className="text-white/75 text-[11px]">{RANGE_LABEL[dif]}</span>
               <span className="text-white/75 text-[11px]">{MAX_TENTATIVAS_SOLO[dif]} tent.</span>
+              <span className="text-cyan-300/70 text-[10px]">⏱ {TIMER_SOLO[dif]}s</span>
             </button>
           ))}
         </div>

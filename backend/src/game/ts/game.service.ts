@@ -312,13 +312,35 @@ export class GameService
         const wonAttempts = games.filter((g: any) => g.won).map((g: any) => Number(g.attempts ?? 0));
         if (wonAttempts.length === 0)
           return null;
-        const avg = wonAttempts.reduce((a: number, b: number) => a + b, 0) / wonAttempts.length;
 
-        return { userId: u.id, name: u.name ?? u.email, averageAttempts: avg, wins: wonAttempts.length };
+        const sorted = [...wonAttempts].sort((a, b) => a - b);
+        const avg    = sorted.reduce((a, b) => a + b, 0) / sorted.length;
+
+        const mid    = Math.floor(sorted.length / 2);
+        const median = sorted.length % 2 === 0
+          ? (sorted[mid - 1] + sorted[mid]) / 2
+          : sorted[mid];
+
+        const freq: Record<number, number> = {};
+        for (const v of sorted) freq[v] = (freq[v] ?? 0) + 1;
+        const maxFreq = Math.max(...Object.values(freq));
+        const modes   = Object.entries(freq)
+          .filter(([, f]) => f === maxFreq)
+          .map(([v]) => Number(v));
+        const mode = modes.reduce((a, b) => a + b, 0) / modes.length;
+
+        return {
+          userId:          u.id,
+          name:            u.name ?? u.email,
+          averageAttempts: avg,
+          medianAttempts:  median,
+          modeAttempts:    mode,
+          wins:            wonAttempts.length,
+        };
       }
     )
       .filter(Boolean)
-      .sort((a: any, b: any) => a.averageAttempts - b.averageAttempts)
+      .sort((a: any, b: any) => a.medianAttempts - b.medianAttempts)
       .slice(0, limit);
   }
 

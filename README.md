@@ -162,7 +162,7 @@ Kuhaku/
 
 <table align="center" width="780">
   <tr><th align="center">🔭 Operação Resgate</th></tr>
-  <tr><td align="center"><b>Modo single-player de adivinhação: sintonize a frequência de resgate correta dentro do número de tentativas. Range customizável. Feedback proporcional ao intervalo. Dificuldades: 🌍 Cadete (5 tent.) · 🚀 Piloto (8 tent.) · 👨‍🚀 Comandante (10 tent.).</b></td></tr>
+  <tr><td align="center"><b>Modo single-player de adivinhação: sintonize a frequência de resgate correta dentro do número de tentativas. Timer por tentativa — tempo esgotado consome uma tentativa. Range customizável. Feedback proporcional ao intervalo. Dificuldades: 🌍 Cadete (5 tent. · 30s) · 🚀 Piloto (8 tent. · 20s) · 👨‍🚀 Comandante (10 tent. · 15s).</b></td></tr>
   <tr><td align="center"><img src="img/operação_resgate.jpeg" width="750" alt="Operação Resgate"/></td></tr>
 </table>
 
@@ -459,7 +459,7 @@ Camada de **lógica de negócio**. Processa os dados recebidos do Controller, ap
 | Modo | Frontend `Modo` | Backend `GameType` | Descrição | Dificuldade |
 |---|---|---|---|---|
 | **📡 Batalha de Sinais** | `vs` | `VS_GUESS` | 2 astronautas adivinham a mesma frequência. Turnos alternados · timer 15s/jogada · 3 rodadas · 12 tentativas/rodada. Ambos se cadastram no ranking ao final. | 🌍 Cadete 1–10 · 🚀 Piloto 1–50 · 👨‍🚀 Comandante 1–100 |
-| **🔭 Operação Resgate** | `solo` | `NUMBER_GUESS` | Solo. Adivinha a frequência com feedback proporcional ao range. Range customizável via `customRange`. | 🌍 Cadete (5 tent.) · 🚀 Piloto (8 tent.) · 👨‍🚀 Comandante (10 tent.) |
+| **🔭 Operação Resgate** | `solo` | `NUMBER_GUESS` | Solo. Adivinha a frequência com feedback proporcional ao range. Timer por tentativa — tempo esgotado consome uma tentativa. Range customizável via `customRange`. | 🌍 Cadete (5 tent. · 30s) · 🚀 Piloto (8 tent. · 20s) · 👨‍🚀 Comandante (10 tent. · 15s) |
 | **🌕 Mapas Estelares** | `memoria` | `CARD_GUESS` | Solo. Grid de pares com cronômetro regressivo (60s base + 25s bônus/par). Redireciona para ranking CARD_GUESS após salvar. | 🌍 Cadete 4×4 (8p) · 🚀 Piloto 4×5 (10p) · 👨‍🚀 Comandante 6×6 (18p) |
 | **🌕 1v1 Mapas Estelares** | `memoria-vs` | `CARD_GUESS` | 2 astronautas disputam pares no mesmo grid. Turnos alternados com timer. | 🌍 Cadete 4×4 · 🚀 Piloto 4×5 · 👨‍🚀 Comandante 6×6 |
 | **🧠 Protocolo Lógico** | `logica` | `LOGIC_PUZZLE` | Solo. Avalia fórmulas proposicionais (∧ ∨ ¬ → ↔) como V/F + classifica em Tautologia/Contradição/Contingência. Timer por questão. | 🌍 Cadete (8 · P,Q · 30s) · 🚀 Piloto (10 · P,Q,R · 20s) · 👨‍🚀 Cmd (12 · 15s) |
@@ -687,6 +687,46 @@ export class GameService
     if (!game.endedAt)     updateData.endedAt = new Date();
     if (won !== undefined) updateData.won = won;
   }
+
+  async getGlobalRanking(limit = 10, gameType?: string)
+  {
+    const users = await this.prismaService.prisma.user.findMany
+    ({ include: { games: true } });
+
+    return users.map((u: any) =>
+      {
+        let games = (u.games ?? []) as any[];
+        if (gameType) games = games.filter((g: any) => g.gameType === gameType);
+        const wonAttempts = games.filter((g: any) => g.won).map((g: any) => Number(g.attempts ?? 0));
+        if (wonAttempts.length === 0) return null;
+
+        const sorted = [...wonAttempts].sort((a, b) => a - b);
+        const avg    = sorted.reduce((a, b) => a + b, 0) / sorted.length;
+
+        const mid    = Math.floor(sorted.length / 2);
+        const median = sorted.length % 2 === 0
+          ? (sorted[mid - 1] + sorted[mid]) / 2
+          : sorted[mid];
+
+        const freq: Record<number, number> = {};
+        for (const v of sorted) freq[v] = (freq[v] ?? 0) + 1;
+        const maxFreq = Math.max(...Object.values(freq));
+        const modes   = Object.entries(freq)
+          .filter(([, f]) => f === maxFreq)
+          .map(([v]) => Number(v));
+        const mode = modes.reduce((a, b) => a + b, 0) / modes.length;
+
+        return {
+          userId: u.id, name: u.name ?? u.email,
+          averageAttempts: avg, medianAttempts: median, modeAttempts: mode,
+          wins: wonAttempts.length,
+        };
+      }
+    )
+      .filter(Boolean)
+      .sort((a: any, b: any) => a.medianAttempts - b.medianAttempts)  // ordenação por mediana
+      .slice(0, limit);
+  }
 }
 ```
 
@@ -835,6 +875,13 @@ export const LOGICA_CONFIG: Record<Dificuldade, { count: number; label: string; 
   EASY:   { count: 8,  label: '🌍 Cadete',     description: 'P, Q · ∧ ∨ ¬ · 8 transmissões'           },
   MEDIUM: { count: 10, label: '🚀 Piloto',      description: 'P, Q, R · ∧ ∨ ¬ → · 10 transmissões'   },
   HARD:   { count: 12, label: '👨‍🚀 Comandante',  description: 'P, Q, R · ∧ ∨ ¬ → ↔ · 12 transmissões' },
+};
+
+export const TIMER_SOLO: Record<Dificuldade, number> =
+{
+  EASY:   30,   // 30s por tentativa no modo Operação Resgate — Cadete
+  MEDIUM: 20,   // 20s por tentativa no modo Operação Resgate — Piloto
+  HARD:   15,   // 15s por tentativa no modo Operação Resgate — Comandante
 };
 
 export const TIMER_LOGICA: Record<Dificuldade, number> =
@@ -1092,13 +1139,17 @@ export function Home({ onSelectMode, onOpenRanking }: HomeProps)
 
 ```ts
 // components/setup.tsx — configuração antes de iniciar
-// VsSetup:      campos de texto para Astronauta 1 / 2 + seletor de patente (Cadete / Piloto / Comandante)
-// SoloSetup:    cards de patente com range de frequência
-// MemoriaSetup: cards de tamanho de tabuleiro (4×4 / 4×5 / 6×6) com nº de pares
+// VsSetup:       campos de texto para Astronauta 1 / 2 + seletor de patente (Cadete / Piloto / Comandante)
+// SoloSetup:     cards de patente com range de frequência + timer por tentativa (TIMER_SOLO[dif])
+//                Missão Livre: range e timer personalizáveis via RANGE_PRESETS / TIMER_PRESETS
+// MemoriaSetup:  cards de tamanho de tabuleiro (4×4 / 4×5 / 6×6) com nº de pares
 export function Setup({ modo, onStart, onBack, onOpenRanking }: SetupProps)
 {
-  if (modo === 'vs')      return <VsSetup {...} />;
-  if (modo === 'memoria') return <MemoriaSetup {...} />;
+  if (modo === 'vs')         return <VsSetup {...} />;
+  if (modo === 'memoria')    return <MemoriaSetup {...} />;
+  if (modo === 'memoria-vs') return <MemoriaVsSetup {...} />;
+  if (modo === 'logica')     return <LogicaSetup {...} />;
+  if (modo === 'precedencia') return <PrecedenciaSetup {...} />;
   return <SoloSetup {...} />;
 }
 ```
@@ -1166,9 +1217,20 @@ export function Game(props: GameProps)
 // components/ranking.tsx — Hall da Fama com filtro por missão
 // Tabs: 🌌 Galáxia | 📡 Batalha de Sinais | 🔭 Operação Resgate | 🌕 Mapas Estelares | 🧠 Protocolo Lógico | ⚙️ Hierarquia de Cmds
 // GET /api/ranking/global?limit=10&gameType=<filtro>
-// Ordenação: menor média de tentativas = melhor posição (LOGIC_PUZZLE/PRECEDENCE_PUZZLE: menor nº de erros)
+// Ordenação: menor mediana de tentativas = melhor posição · exibe mediana / média / moda por entrada
 // Medalhas: 🥇🥈🥉 para top 3 · posição numérica para o restante
 // initialFilter: abre o ranking já na aba correta (ex: MemoriaGame abre CARD_GUESS após save)
+// Pluralização corrigida: "{n} missão" (n=1) / "{n} missões" (n≠1)
+
+interface RankingEntry
+{
+  userId:          string;
+  name:            string;
+  averageAttempts: number;
+  medianAttempts:  number;
+  modeAttempts:    number;
+  wins:            number;
+}
 
 export type GameTypeFilter = 'all' | 'NUMBER_GUESS' | 'VS_GUESS' | 'CARD_GUESS' | 'LOGIC_PUZZLE' | 'PRECEDENCE_PUZZLE';
 

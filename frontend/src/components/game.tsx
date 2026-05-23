@@ -476,25 +476,41 @@ function VsGame({ gameId, dificuldade, p1, p2, round, score, apiUrl, onBack, onO
           <span className="w-2 h-2 rounded-full bg-indigo-400" />
           {p2} &nbsp;<span className="text-white">{displayScore.p2}</span>
         </span>
+        {!isRoundOver && (
+          <span className={`ml-auto text-xs font-black px-3 py-1.5 rounded-full border ${turnoTimer <= 5 ? 'animate-pulse' : ''}`}
+            style={turnoTimer <= 5
+              ? { background: 'rgba(239,68,68,0.15)', borderColor: 'rgba(239,68,68,0.40)', color: '#f87171' }
+              : turnoTimer <= 8
+              ? { background: 'rgba(249,115,22,0.12)', borderColor: 'rgba(249,115,22,0.35)', color: '#fb923c' }
+              : { background: 'rgba(34,197,94,0.08)', borderColor: 'rgba(34,197,94,0.20)', color: '#86efac' }}>
+            ⏱ {turnoTimer}s
+          </span>
+        )}
       </div>
+
+      {/* Timer bar */}
+      {!isRoundOver && (
+        <div className="px-5 pb-2">
+          <TimerBar seconds={turnoTimer} maxSeconds={TIMER_VS_TURNO} />
+        </div>
+      )}
 
       <main className="flex-1 flex flex-col gap-4 px-4 pb-8 max-w-lg mx-auto w-full">
 
-        {/* Turn card + timer */}
-        {!isRoundOver && 
+        {/* Turn card */}
+        {!isRoundOver &&
         (
-          <div className="rounded-2xl p-5 border transition-all"
+          <div className="rounded-2xl p-4 border transition-all"
             style={{
               background: jogadorAtual === 1 ? 'rgba(6,182,212,0.10)' : 'rgba(99,102,241,0.12)',
               borderColor: jogadorAtual === 1 ? 'rgba(6,182,212,0.40)' : 'rgba(99,102,241,0.40)',
             }}
           >
-            <p className="font-black text-lg flex items-center justify-center gap-2 mb-3">
+            <p className="font-black text-lg flex items-center justify-center gap-2">
               <span className="w-3 h-3 rounded-full inline-block" style={{ background: corAtual }} />
               <span style={{ color: corAtual }}>📡 Turno de {nomeAtual}!</span>
             </p>
-            <TimerBar seconds={turnoTimer} maxSeconds={TIMER_VS_TURNO} />
-            <p className="text-slate-400 text-xs mt-2 text-center">
+            <p className="text-slate-400 text-xs mt-1.5 text-center">
               {RANGE_LABEL[dificuldade]} · {tentativasUsadas}/{maxTentativas} tentativas usadas
             </p>
           </div>
@@ -1210,6 +1226,11 @@ function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, o
         </span>
       </div>
 
+      {/* Timer bar */}
+      <div className="px-5 pb-2">
+        <TimerBar seconds={timerRestante} maxSeconds={MEMORIA_TIMER_INICIAL} />
+      </div>
+
       {/* Game over banner */}
       {gameOver && 
       (
@@ -1776,6 +1797,11 @@ function LogicaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, on
         </span>
       </div>
 
+      {/* Timer bar */}
+      <div className="px-5 pb-2">
+        <TimerBar seconds={questaoTimer} maxSeconds={TIMER_LOGICA[dificuldade]} />
+      </div>
+
       <main className="flex-1 flex flex-col items-center px-4 pb-8 pt-2 max-w-lg mx-auto w-full gap-4">
 
         {/* Tipo de sinal cósmico */}
@@ -2303,6 +2329,11 @@ function PrecedenciaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRankin
         </span>
       </div>
 
+      {/* Timer bar */}
+      <div className="px-5 pb-2">
+        <TimerBar seconds={expressaoTimer} maxSeconds={TIMER_PRECEDENCIA[dificuldade]} />
+      </div>
+
       <main className="flex-1 flex flex-col items-center px-4 pb-8 pt-2 max-w-2xl mx-auto w-full gap-4">
 
         {/* Referência de precedência */}
@@ -2763,6 +2794,11 @@ function MemoriaVsGame({ gameId, dificuldade, p1, p2, apiUrl, onBack, onOpenRank
             ❌ {erros}
           </span>
         )}
+      </div>
+
+      {/* Timer bar */}
+      <div className="px-5 pb-2">
+        <TimerBar seconds={timerRestante} maxSeconds={MEMORIA_TIMER_INICIAL} />
       </div>
 
       {/* Game over / win banners */}

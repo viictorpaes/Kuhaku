@@ -5,6 +5,8 @@ interface RankingEntry
   userId: string;
   name: string;
   averageAttempts: number;
+  medianAttempts: number;
+  modeAttempts: number;
   wins: number;
 }
 
@@ -164,17 +166,43 @@ export function Ranking({ onBack, apiUrl, initialFilter }: RankingProps)
                         {BADGE_LABEL[filtro]}
                       </span>
                       <span className="text-[10px] text-slate-500">
-                        {entry.wins} missão{entry.wins !== 1 ? 'ões' : ''}
+                        {entry.wins} miss{entry.wins !== 1 ? 'ões' : 'ão'}
                       </span>
                     </div>
                   </div>
-                  <div className="text-right shrink-0">
-                    <p className="font-black text-lg" style={{ color: filtro === 'LOGIC_PUZZLE' ? '#4ade80' : '#06b6d4' }}>
-                      {(Math.round(entry.averageAttempts * 10) / 10).toFixed(1)}
-                    </p>
-                    <p className="text-[10px] text-slate-500 uppercase tracking-wide">
-                      {filtro === 'LOGIC_PUZZLE' ? 'erros' : 'média'}
-                    </p>
+                  <div className="text-right shrink-0 flex flex-col gap-0.5">
+                    {filtro === 'LOGIC_PUZZLE'
+                      ? (
+                        <div className="flex flex-col items-end gap-0.5">
+                          <p className="font-black text-lg" style={{ color: '#4ade80' }}>
+                            {(Math.round(entry.averageAttempts * 10) / 10).toFixed(1)}
+                          </p>
+                          <p className="text-[10px] text-slate-500 uppercase tracking-wide">erros (média)</p>
+                        </div>
+                      )
+                      : (
+                        <div className="flex gap-3 items-end justify-end">
+                          <div className="text-center">
+                            <p className="font-black text-base" style={{ color: '#06b6d4' }}>
+                              {(Math.round(entry.medianAttempts * 10) / 10).toFixed(1)}
+                            </p>
+                            <p className="text-[9px] text-slate-500 uppercase tracking-wide">mediana</p>
+                          </div>
+                          <div className="text-center">
+                            <p className="font-semibold text-sm" style={{ color: '#7dd3fc' }}>
+                              {(Math.round(entry.averageAttempts * 10) / 10).toFixed(1)}
+                            </p>
+                            <p className="text-[9px] text-slate-500 uppercase tracking-wide">média</p>
+                          </div>
+                          <div className="text-center">
+                            <p className="font-semibold text-sm" style={{ color: '#a5b4fc' }}>
+                              {(Math.round(entry.modeAttempts * 10) / 10).toFixed(1)}
+                            </p>
+                            <p className="text-[9px] text-slate-500 uppercase tracking-wide">moda</p>
+                          </div>
+                        </div>
+                      )
+                    }
                   </div>
                 </div>
               ))}
@@ -184,8 +212,8 @@ export function Ranking({ onBack, apiUrl, initialFilter }: RankingProps)
 
         <p className="text-slate-600 text-xs mt-6">
           {filtro === 'LOGIC_PUZZLE'
-            ? 'Menor número de erros = astronauta de elite lógico'
-            : 'Menor média de tentativas = astronauta de elite'}
+            ? 'Menor média de erros = astronauta de elite lógico'
+            : 'Menor mediana de tentativas = astronauta de elite'}
         </p>
       </main>
     </div>

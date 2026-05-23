@@ -61,6 +61,13 @@ export const PARENTESES_CONFIG: Record<Dificuldade, { count: number; label: stri
 
 export const TIMER_VS_TURNO = 15;
 
+export const TIMER_SOLO: Record<Dificuldade, number> =
+{
+  EASY:   30,
+  MEDIUM: 20,
+  HARD:   15,
+};
+
 export const TIMER_LOGICA: Record<Dificuldade, number> =
 {
   EASY:   30,
