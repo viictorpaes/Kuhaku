@@ -11,4 +11,5 @@ import { PrismaService } from '../../prisma/prisma.service';
   }
 )
 
-export class GameModule {}
+export class GameModule 
+{}

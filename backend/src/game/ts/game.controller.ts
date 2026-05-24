@@ -90,6 +90,13 @@ export class GameController
     return this.gameService.getUserSummary(id);
   }
 
+  @Get('players/search')
+  async buscarJogadores(@Query('q') q: string)
+  {
+    if (!q || q.length < 2) return [];
+    return this.gameService.searchPlayersByName(q);
+  }
+
   @Get('ranking/global')
   async rankingGlobal(@Query('limit') limit?: string, @Query('gameType') gameType?: string)
   {

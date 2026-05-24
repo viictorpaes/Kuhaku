@@ -103,7 +103,7 @@ export class GameService
     const limit  = (game as any).maxRange ?? getLimitByDifficulty(difficulty);
 
     if (!Number.isInteger(value) || value < 1 || value > limit)
-      throw new BadRequestException(`Palpite deve ser um inteiro entre: 1 e ${limit} para dificuldade ${difficulty}`);
+      throw new BadRequestException(`Palpite deve ser um inteiro entre: 1 e ${limit} para a dificuldade ${difficulty}`);
 
     const diff = Math.abs(game.target - value);
     const feedback = getNumberFeedback(diff, limit);
@@ -140,7 +140,6 @@ export class GameService
     };
   }
 
-  // ── salvar/encerrar partida ───────────────────────
 
   async finishGame(gameId: string, won?: boolean, mistakes?: number): Promise<any>
   {
@@ -158,7 +157,8 @@ export class GameService
     const updateData: Record<string, any> = {};
     if (!game.endedAt) updateData.endedAt = new Date();
     if (won !== undefined) updateData.won = won;
-    if (gameType === 'LOGIC_PUZZLE' && mistakes !== undefined) updateData.attempts = mistakes;
+    if (['LOGIC_PUZZLE', 'PRECEDENCE_PUZZLE', 'CARD_GUESS'].includes(gameType) && mistakes !== undefined)
+      updateData.attempts = mistakes;
 
     if (Object.keys(updateData).length > 0)
     {
@@ -309,12 +309,20 @@ export class GameService
       {
         let games = (u.games ?? []) as any[];
         if (gameType) games = games.filter((g: any) => g.gameType === gameType);
-        const wonAttempts = games.filter((g: any) => g.won).map((g: any) => Number(g.attempts ?? 0));
+
+        const finishedGames = games.filter((g: any) => g.endedAt !== null || g.won);
+        const wonGames      = finishedGames.filter((g: any) => g.won);
+        const wonAttempts   = wonGames.map((g: any) => Number(g.attempts ?? 0));
+
         if (wonAttempts.length === 0)
           return null;
 
+        const totalGames = finishedGames.length;
+        const winRate    = wonAttempts.length / Math.max(totalGames, 1);
+
         const sorted = [...wonAttempts].sort((a, b) => a - b);
         const avg    = sorted.reduce((a, b) => a + b, 0) / sorted.length;
+        const best   = sorted[0];
 
         const mid    = Math.floor(sorted.length / 2);
         const median = sorted.length % 2 === 0
@@ -329,18 +337,32 @@ export class GameService
           .map(([v]) => Number(v));
         const mode = modes.reduce((a, b) => a + b, 0) / modes.length;
 
+        const weightedAttempts = median * 0.5 + avg * 0.3 + mode * 0.2;
+
         return {
-          userId:          u.id,
-          name:            u.name ?? u.email,
-          averageAttempts: avg,
-          medianAttempts:  median,
-          modeAttempts:    mode,
-          wins:            wonAttempts.length,
+          userId:           u.id,
+          name:             u.name ?? u.email,
+          averageAttempts:  avg,
+          medianAttempts:   median,
+          modeAttempts:     mode,
+          bestAttempts:     best,
+          weightedAttempts,
+          wins:             wonAttempts.length,
+          totalGames,
+          winRate,
         };
       }
     )
       .filter(Boolean)
-      .sort((a: any, b: any) => a.medianAttempts - b.medianAttempts)
+      .sort((a: any, b: any) =>
+      {
+        if (b.winRate !== a.winRate)  
+          return b.winRate - a.winRate;
+        if (a.weightedAttempts !== b.weightedAttempts) 
+          return a.weightedAttempts - b.weightedAttempts;
+        
+        return a.averageAttempts - b.averageAttempts;
+      })
       .slice(0, limit);
   }
 
@@ -395,6 +417,17 @@ export class GameService
     }
 
     return { totalGames: games.length, totalWins: wins.length, fastestWinAttempts, fastestWinTimeMs, bestStreak };
+  }
+
+  async searchPlayersByName(q: string): Promise<{ id: string; name: string }[]>
+  {
+    const users = await this.prismaService.prisma.user.findMany
+    ({
+      where: { name: { contains: q, mode: 'insensitive' } },
+      take: 6,
+      select: { id: true, name: true },
+    });
+    return users.filter((u: any) => u.name) as { id: string; name: string }[];
   }
 
   async getUserSummary(userId: string)

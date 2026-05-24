@@ -28,6 +28,6 @@ export class AuthController
   @Put('update/:id')
   async atualizar(@Param('id', ParseIntPipe) id: number, @Body() dto: LoginUpdateDto) 
   {
-    return this.authService.atualizar(id, dto); // método faltando aqui antes
+    return this.authService.atualizar(id, dto);
   }
 }

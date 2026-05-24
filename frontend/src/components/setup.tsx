@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { Modo, Dificuldade, ConfigJogo } from '../types';
 import {
   RANGE_LABEL, DIF_LABEL, MAX_TENTATIVAS_SOLO, MEMORIA_GRID, LOGICA_CONFIG,
-  PARENTESES_CONFIG, TIMER_LOGICA, TIMER_PRECEDENCIA, MEMORIA_TIMER_INICIAL, MEMORIA_BONUS_PAR,
+  PARENTESES_CONFIG, TIMER_LOGICA, TIMER_PRECEDENCIA, MEMORIA_BONUS_PAR,
   TIMER_VS_TURNO, TIMER_SOLO,
 } from '../constants';
 
@@ -428,7 +428,7 @@ function MemoriaSetup({ onStart, onBack, onOpenRanking }: SetupProps)
         {/* Timer info */}
         <div className="flex items-center gap-3 mb-8 px-4 py-2.5 rounded-xl"
           style={{ background: 'rgba(99,102,241,0.10)', border: '1px solid rgba(99,102,241,0.25)' }}>
-          <span className="text-indigo-400 font-black text-sm">⏱ {MEMORIA_TIMER_INICIAL}s</span>
+          <span className="text-indigo-400 font-black text-sm">⏱ 60/50/40s</span>
           <span className="text-slate-500 text-xs">+{MEMORIA_BONUS_PAR}s por par · 0s = 💀 Game Over</span>
         </div>
 
@@ -504,7 +504,7 @@ function MemoriaVsSetup({ onStart, onBack, onOpenRanking }: SetupProps)
         {/* Timer info */}
         <div className="flex items-center gap-3 mb-6 px-4 py-2.5 rounded-xl"
           style={{ background: 'rgba(168,85,247,0.10)', border: '1px solid rgba(168,85,247,0.25)' }}>
-          <span className="text-purple-400 font-black text-sm">⏱ {MEMORIA_TIMER_INICIAL}s</span>
+          <span className="text-purple-400 font-black text-sm">⏱ 60/50/40s</span>
           <span className="text-slate-500 text-xs">+{MEMORIA_BONUS_PAR}s por par · 0s = 💀 Eliminado</span>
         </div>
 
@@ -611,7 +611,7 @@ function LogicaSetup({ onStart, onBack, onOpenRanking }: SetupProps) {
           {(['EASY', 'MEDIUM', 'HARD'] as Dificuldade[]).map((dif) => (
             <span key={dif} className="text-[11px] font-bold px-3 py-1.5 rounded-full"
               style={{ background: 'rgba(34,197,94,0.10)', border: '1px solid rgba(34,197,94,0.25)', color: '#4ade80' }}>
-              ⏱ {DIF_LABEL[dif].split(' ').slice(1).join(' ')}: {TIMER_LOGICA[dif]}s/questão
+              ⏱ {DIF_LABEL[dif].split(' ').slice(1).join(' ')}: {TIMER_LOGICA[dif]}s total · acerto +20s · erro -5s
             </span>
           ))}
         </div>
@@ -704,7 +704,7 @@ function PrecedenciaSetup({ onStart, onBack, onOpenRanking }: SetupProps)
           {(['EASY', 'MEDIUM', 'HARD'] as Dificuldade[]).map((dif) => (
             <span key={dif} className="text-[11px] font-bold px-3 py-1.5 rounded-full"
               style={{ background: 'rgba(139,92,246,0.10)', border: '1px solid rgba(167,139,250,0.25)', color: '#c4b5fd' }}>
-              ⏱ {DIF_LABEL[dif].split(' ').slice(1).join(' ')}: {TIMER_PRECEDENCIA[dif]}s/expressão
+              ⏱ {DIF_LABEL[dif].split(' ').slice(1).join(' ')}: {TIMER_PRECEDENCIA[dif]}s total · acerto +20s · erro -5s
             </span>
           ))}
         </div>

@@ -11,10 +11,11 @@
   <img src="https://img.shields.io/badge/React-111827?style=for-the-badge&logo=react&logoColor=61DAFB" height="35" alt="React"/>
   <img src="https://img.shields.io/badge/Vite-111827?style=for-the-badge&logo=vite&logoColor=purple" height="35" alt="Vite"/>
   <img src="https://img.shields.io/badge/HTML5-111827?style=for-the-badge&logo=html5&logoColor=E34F26" height="35" alt="HTML5"/>
-   <img src="https://img.shields.io/badge/-CSS-111827?style=flat-square&logo=css&logoColor=663399" height="35"/>
+  <img src="https://img.shields.io/badge/-CSS-111827?style=flat-square&logo=css&logoColor=663399" height="35"/>
   <img src="https://img.shields.io/badge/TailwindCSS-111827?style=for-the-badge&logo=tailwindcss&logoColor=06B6D4" height="35" alt="TailwindCSS"/>
   <img src="https://img.shields.io/badge/Prisma-111827?style=for-the-badge&logo=prisma&logoColor=5A67D8" height="35" alt="Prisma"/>
   <img src="https://img.shields.io/badge/Docker-111827?style=for-the-badge&logo=docker&logoColor=2496ed" height="35" alt="Docker"/>
+  <img src="https://img.shields.io/badge/-PostgreSQL-111827?style=flat-square&logo=postgresql&logoColor=white" height="35" alt="PostgreSQL"/>
   <img src="https://img.shields.io/badge/Architecture-111827?style=for-the-badge&logo=instructure&logoColor=white" height="35" alt="Architecture"/>
   <img src="https://img.shields.io/badge/Figma-111827?style=for-the-badge&logo=figma&logoColor=F24E1E" height="35" alt="Figma"/>
   <img src="https://img.shields.io/badge/%E2%9A%94%EF%B8%8F_Star_Wars-111827?style=for-the-badge&labelColor=111827&logo=starwars&logoColor=FFE81F" height="35" alt="Star Wars"/> <br>
@@ -109,6 +110,12 @@ Kuhaku/
 │   └── vite.config.ts <img src="https://img.shields.io/badge/-Vite_TS-111827?style=flat&logo=vite&logoColor=purple" height="18"/>
 │
 ├── docs <img src="https://img.shields.io/badge/Docs-111827?style=flat&logo=markdown&logoColor=blue" height="18"/>/
+│   ├── ARCHITECTURE.md <img src="https://img.shields.io/badge/Architecture-111827?style=flat&logo=markdown&logoColor=white" height="18"/>
+│   ├── BATALHA_DE_SINAIS.md <img src="https://img.shields.io/badge/Batalha_de_Sinais-111827?style=flat&logo=markdown&logoColor=06B6D4" height="18"/>
+│   ├── HIERARQUIA_DE_COMANDOS.md <img src="https://img.shields.io/badge/Hierarquia_de_Comandos-111827?style=flat&logo=markdown&logoColor=A855F7" height="18"/>
+│   ├── MAPAS_ESTELARES.md <img src="https://img.shields.io/badge/Mapas_Estelares-111827?style=flat&logo=markdown&logoColor=FFD700" height="18"/>
+│   ├── OPERACAO_RESGATE.md <img src="https://img.shields.io/badge/Operação_Resgate-111827?style=flat&logo=markdown&logoColor=F97316" height="18"/>
+│   ├── PROTOCOLO_LOGICO.md <img src="https://img.shields.io/badge/Protocolo_Lógico-111827?style=flat&logo=markdown&logoColor=22C55E" height="18"/>
 │   └── Histórias_de_Usuário.md <img src="https://img.shields.io/badge/User_Stories-111827?style=flat&logo=markdown&logoColor=blue" height="18"/>
 │
 ├── img/ <img src="https://img.shields.io/badge/Assets-green?style=flat&logo=image&logoColor=white" height="18"/>
@@ -138,7 +145,7 @@ Kuhaku/
 
 <table align="center" width="780">
   <tr><th align="center">📡 Batalha de Sinais</th></tr>
-  <tr><td align="center"><b>Modo multiplayer local: dois astronautas disputam na mesma frequência secreta. Turnos alternados com timer de 15s por jogada — quem sintonizar primeiro vence a rodada. 3 rodadas no total. Ambos podem se cadastrar no ranking ao final. Dificuldades: 🌍 Cadete · 🚀 Piloto · 👨‍🚀 Comandante.</b></td></tr>
+  <tr><td align="center"><b>Modo multiplayer local: dois astronautas disputam na mesma frequência secreta. Turnos alternados com timer de 30s/turno — erro custa -10s, acerto concede +15s. 3 rodadas · 12 tentativas/rodada. Ambos podem se cadastrar no ranking ao final. Dificuldades: 🌍 Cadete · 🚀 Piloto · 👨‍🚀 Comandante.</b></td></tr>
   <td align="center"><img src="img/batalha_de_sinais.jpeg" width="750" alt="Batalha de Sinais"/></td></tr>
 </table>
 
@@ -146,7 +153,7 @@ Kuhaku/
 
 <table align="center" width="780">
   <tr><th align="center">🌕 Mapas Estelares — Solo</th></tr>
-  <tr><td align="center"><b>Modo single-player de memória: encontre os pares de coordenadas estelares com cronômetro regressivo (60s + 25s de bônus por par encontrado). Grids: 4×4, 4×5 ou 6×6 conforme a dificuldade.</b></td></tr>
+  <tr><td align="center"><b>Modo single-player de memória: encontre os pares de coordenadas estelares com cronômetro regressivo contínuo (30s base · +15s por par encontrado · -10s por erro). Grids: 4×4, 4×5 ou 6×6 conforme a dificuldade.</b></td></tr>
   <tr><td align="center"><img src="img/mapas_estrelares.jpeg" width="750" alt="Mapas Estelares"/></td></tr>
 </table>
 
@@ -162,7 +169,7 @@ Kuhaku/
 
 <table align="center" width="780">
   <tr><th align="center">🔭 Operação Resgate</th></tr>
-  <tr><td align="center"><b>Modo single-player de adivinhação: sintonize a frequência de resgate correta dentro do número de tentativas. Timer por tentativa — tempo esgotado consome uma tentativa. Range customizável. Feedback proporcional ao intervalo. Dificuldades: 🌍 Cadete (5 tent. · 30s) · 🚀 Piloto (8 tent. · 20s) · 👨‍🚀 Comandante (10 tent. · 15s).</b></td></tr>
+  <tr><td align="center"><b>Modo single-player de adivinhação: sintonize a frequência de resgate correta dentro do número de tentativas. Timer contínuo 30s — acerto +15s, erro -10s. Range customizável. Feedback proporcional ao intervalo. <b>Missão Livre</b>: ao acertar avança de fase; timer=0 → RESET para a fase 1. Dificuldades: 🌍 Cadete (5 tent.) · 🚀 Piloto (8 tent.) · 👨‍🚀 Comandante (10 tent.).</b></td></tr>
   <tr><td align="center"><img src="img/operação_resgate.jpeg" width="750" alt="Operação Resgate"/></td></tr>
 </table>
 
@@ -170,7 +177,7 @@ Kuhaku/
 
 <table align="center" width="780">
   <tr><th align="center">🧠 Protocolo Lógico</th></tr>
-  <tr><td align="center"><b>A base espacial intercepta transmissões cifradas do cosmos. O astronauta decodifica cada sinal lógico avaliando fórmulas proposicionais (∧ ∨ ¬ → ↔) como VERDADEIRAS ou FALSAS. Cada transmissão revela seu tipo — 🌟 Tautologia, 🕳️ Contradição ou 🪐 Contingência. Timer por questão. Dificuldades: 🌍 Cadete (8 · P,Q · ∧∨¬ · 30s), 🚀 Piloto (10 · P,Q,R · ∧∨¬→ · 20s), 👨‍🚀 Comandante (12 · todos · 15s).</b></td></tr>
+  <tr><td align="center"><b>A base espacial intercepta transmissões cifradas do cosmos. O astronauta decodifica cada sinal lógico avaliando fórmulas proposicionais (∧ ∨ ¬ → ↔) como VERDADEIRAS ou FALSAS. Cada transmissão revela seu tipo — 🌟 Tautologia, 🕳️ Contradição ou 🪐 Contingência. Timer contínuo 30s — acerto +15s, erro -10s. <b>Sistema de fases:</b> complete todas as questões → avança para a próxima fase; timer=0 → RESET para a fase 1. Dificuldades: 🌍 Cadete (8 · P,Q · ∧∨¬), 🚀 Piloto (10 · P,Q,R · ∧∨¬→), 👨‍🚀 Comandante (12 · todos).</b></td></tr>
   <tr><td align="center"><img src="img/protocolo_lógico.jpeg" width="750" alt="Protocolo Lógico"/></td></tr>
 </table>
 
@@ -178,7 +185,7 @@ Kuhaku/
 
 <table align="center" width="780">
   <tr><th align="center">⚙️ Hierarquia de Comandos</th></tr>
-  <tr><td align="center"><b>O computador da nave perdeu os parênteses das equações lógicas! Adicione os parênteses corretos para restaurar a ordem de precedência dos operadores (∧ antes de ∨, ∨ antes de →, → antes de ↔). Timer por questão. Dificuldades: 🌍 Cadete (8 · ∧∨ · 45s), 🚀 Piloto (10 · ∧∨→ · 35s), 👨‍🚀 Comandante (12 · ∧∨→↔ · 25s).</b></td></tr>
+  <tr><td align="center"><b>O computador da nave perdeu os parênteses das equações lógicas! Adicione os parênteses corretos para restaurar a ordem de precedência dos operadores (∧ antes de ∨, ∨ antes de →, → antes de ↔). Timer contínuo 30s — acerto +15s, erro -10s. <b>Sistema de fases:</b> complete todas as expressões → avança de fase; timer=0 → RESET para a fase 1. Dificuldades: 🌍 Cadete (8 · ∧∨), 🚀 Piloto (10 · ∧∨→), 👨‍🚀 Comandante (12 · ∧∨→↔).</b></td></tr>
   <tr><td align="center"><img src="img/hierarquia_de_comandos.jpeg" width="750" alt="Hierarquia de Comandos"/></td></tr>
 </table>
 
@@ -218,6 +225,7 @@ npm run prisma:seed           # popula usuários iniciais (admin, dev, user)
 # OPCIONAL — dados de teste
 npx tsx --env-file=.env prisma/test-user.ts  # cria usuários com senha bcrypt
 npx tsx --env-file=.env prisma/test-game.ts  # cria partidas NUMBER_GUESS de exemplo
+
 cd ..
 
 # 3. Inicia o projeto completo
@@ -456,20 +464,40 @@ Camada de **lógica de negócio**. Processa os dados recebidos do Controller, ap
 <img src="https://img.shields.io/badge/%F0%9F%8E%AE_Modos_de_Jogo-111827?style=for-the-badge&labelColor=111827&logoColor=white" height="18" alt="Modos de Jogo"/>
 </h2>
 
-| Modo | Frontend `Modo` | Backend `GameType` | Descrição | Dificuldade |
+| Modo | Frontend `Modo` | Backend `GameType` | Descrição | Timer |
 |---|---|---|---|---|
-| **📡 Batalha de Sinais** | `vs` | `VS_GUESS` | 2 astronautas adivinham a mesma frequência. Turnos alternados · timer 15s/jogada · 3 rodadas · 12 tentativas/rodada. Ambos se cadastram no ranking ao final. | 🌍 Cadete 1–10 · 🚀 Piloto 1–50 · 👨‍🚀 Comandante 1–100 |
-| **🔭 Operação Resgate** | `solo` | `NUMBER_GUESS` | Solo. Adivinha a frequência com feedback proporcional ao range. Timer por tentativa — tempo esgotado consome uma tentativa. Range customizável via `customRange`. | 🌍 Cadete (5 tent. · 30s) · 🚀 Piloto (8 tent. · 20s) · 👨‍🚀 Comandante (10 tent. · 15s) |
-| **🌕 Mapas Estelares** | `memoria` | `CARD_GUESS` | Solo. Grid de pares com cronômetro regressivo (60s base + 25s bônus/par). Redireciona para ranking CARD_GUESS após salvar. | 🌍 Cadete 4×4 (8p) · 🚀 Piloto 4×5 (10p) · 👨‍🚀 Comandante 6×6 (18p) |
-| **🌕 1v1 Mapas Estelares** | `memoria-vs` | `CARD_GUESS` | 2 astronautas disputam pares no mesmo grid. Turnos alternados com timer. | 🌍 Cadete 4×4 · 🚀 Piloto 4×5 · 👨‍🚀 Comandante 6×6 |
-| **🧠 Protocolo Lógico** | `logica` | `LOGIC_PUZZLE` | Solo. Avalia fórmulas proposicionais (∧ ∨ ¬ → ↔) como V/F + classifica em Tautologia/Contradição/Contingência. Timer por questão. | 🌍 Cadete (8 · P,Q · 30s) · 🚀 Piloto (10 · P,Q,R · 20s) · 👨‍🚀 Cmd (12 · 15s) |
-| **⚙️ Hierarquia de Comandos** | `precedencia` | `PRECEDENCE_PUZZLE` | Solo. Reinsere parênteses para restaurar a precedência (∧>∨>→>↔). Timer por questão. | 🌍 Cadete (8 · ∧∨ · 45s) · 🚀 Piloto (10 · ∧∨→ · 35s) · 👨‍🚀 Cmd (12 · 25s) |
+| **📡 Batalha de Sinais** | `vs` | `VS_GUESS` | 2 astronautas adivinham a mesma frequência. Turnos alternados · 3 rodadas · 12 tentativas/rodada. Ambos se cadastram no ranking ao final. | 30s/turno · -5s (erro) |
+| **🔭 Operação Resgate** | `solo` | `NUMBER_GUESS` | Solo. Adivinha a frequência com feedback proporcional ao range. Range customizável via `customRange`. Missão Livre: fases infinitas — acerto avança fase, timer=0 → RESET. | Contínuo 30s · 20s (acerto) · -5s (erro) |
+| **🌕 Mapas Estelares** | `memoria` | `CARD_GUESS` | Solo. Grid de pares com cronômetro regressivo contínuo. Redireciona para ranking CARD_GUESS após salvar. | Contínuo 30s · +20s/par · -5s (erro) |
+| **🌕 1v1 Mapas Estelares** | `memoria-vs` | `CARD_GUESS` | 2 astronautas disputam pares no mesmo grid. Turnos alternados com timer. | 30s/turno |
+| **🧠 Protocolo Lógico** | `logica` | `LOGIC_PUZZLE` | Solo. Avalia fórmulas proposicionais (∧ ∨ ¬ → ↔) como V/F. Fases infinitas — complete tudo → avança fase, timer=0 → RESET. | Contínuo 30s · +20s (acerto) · -5s (erro) |
+| **⚙️ Hierarquia de Comandos** | `precedencia` | `PRECEDENCE_PUZZLE` | Solo. Reinsere parênteses para restaurar a precedência (∧>∨>→>↔). Fases infinitas — complete tudo → avança fase, timer=0 → RESET. | Contínuo 30s · +20s (acerto) · -5s (erro) |
 
 **GameTypes do backend (Prisma):** `NUMBER_GUESS` · `VS_GUESS` · `CARD_GUESS` · `LOGIC_PUZZLE` · `PRECEDENCE_PUZZLE`
 
 **Tentativas por dificuldade (NUMBER_GUESS):** EASY → 5 · MEDIUM → 8 · HARD → 10
 
-**Tentativas por rodada (VS_GUESS):** 12 independente da dificuldade — turnos alternados · timer 15s/jogada
+**Tentativas por rodada (VS_GUESS):** 12 independente da dificuldade — turnos alternados timer 30s/turno  -5s por erro
+
+**Sistema de timer (`frontend/src/constants.ts`):**
+
+| Constante | Valor | Descrição |
+|---|---|---|
+| `TIMER_VS_TURNO` | `15` | Segundos por turno no modo VS |
+| `TIMER_SOLO` | `30 / 20 / 15` | Segundos por dificuldade no modo Solo (Cadete/Piloto/Comandante) |
+| `TIMER_LOGICA` | `30 / 20 / 15` | Segundos por dificuldade no Protocolo Lógico |
+| `TIMER_PRECEDENCIA` | `45 / 35 / 25` | Segundos por dificuldade na Hierarquia de Comandos |
+| `MEMORIA_TIMER_INICIAL` | `30` | Segundos iniciais nos Mapas Estelares |
+| `TIMER_BONUS_ACERTO` | `+20` | Segundos ganhos ao acertar |
+| `MEMORIA_BONUS_PAR` | `+20` | Segundos ganhos por par encontrado |
+| `TIMER_PENALIDADE` | `-5` | Segundos perdidos ao errar |
+
+**Sistema de fases (Protocolo Lógico · Hierarquia de Comandos · Missão Livre):**
+
+| Evento | Resultado |
+|---|---|
+| Completa todas as questões/rodada | ✅ Avança para próxima fase — timer continua correndo |
+| Timer chega a 0 | 💥 RESET — exibe animação e volta para a Fase 1 |
 
 **Endpoints:**
 | Método | Rota | Descrição |
@@ -546,9 +574,9 @@ export class GameController
   }
 
   @Post('games/:id/finish')
-  async encerrarJogo(@Param('id') id: string, @Body() body?: { won?: boolean })
+  async encerrarJogo(@Param('id') id: string, @Body() body?: { won?: boolean; mistakes?: number })
   {
-    return this.gameService.finishGame(id, body?.won);
+    return this.gameService.finishGame(id, body?.won, body?.mistakes);
   }
 
   @Post('games/:id/save')
@@ -623,7 +651,8 @@ import { PrismaService } from '../../prisma/prisma.service';
   }
 )
 
-export class GameModule {}
+export class GameModule 
+{}
 ```
 
 ```ts
@@ -655,11 +684,12 @@ function getMaxAttempts(difficulty: Difficulty): number
 
 function getNumberFeedback(diff: number, limit: number): string
 {
-  if (diff === 0)                       return 'acertou ✅';
-  if (diff <= Math.ceil(limit * 0.10))  return 'pegando fogo 🔥🔥🔥';
-  if (diff <= Math.ceil(limit * 0.20))  return 'quente 🌡️';
-  if (diff <= Math.ceil(limit * 0.40))  return 'morno ☔️';
-  return 'frio ❄️';
+  if (diff === 0) return 'acertou ✅';
+  if (diff <= Math.ceil(limit * 0.10)) return 'pegando fogo 🔥🔥🔥';
+  if (diff <= Math.ceil(limit * 0.20)) return 'quente 🌡️';
+  if (diff <= Math.ceil(limit * 0.40)) return 'morno ☔️';
+  else
+    return 'frio ❄️';
 }
 
 @Injectable()
@@ -667,25 +697,147 @@ export class GameService
 {
   constructor(private readonly prismaService: PrismaService) {}
 
+  async createUser(email: string, name?: string)
+  {
+    const existing = await this.prismaService.prisma.user.findUnique({ where: { email } });
+    if (existing)
+      return existing;
+    return this.prismaService.prisma.user.create({ data: { email, name } });
+  }
+
+  async updateUser(userId: string, dto: { name?: string; email?: string })
+  {
+    return this.prismaService.prisma.user.update({ where: { id: userId }, data: dto });
+  }
+
+  async removeUser(userId: string)
+  {
+    const user = await this.prismaService.prisma.user.findUnique({ where: { id: userId } });
+    if (!user)
+      throw new NotFoundException('Usuário não encontrado');
+    return this.prismaService.prisma.user.delete({ where: { id: userId } });
+  }
+
   async createGame(dto: CreateGameDto)
   {
     const gameType: GameType = dto.gameType ?? 'NUMBER_GUESS';
-    const limit  = getLimitByDifficulty(dto.difficulty);
-    const target = Math.floor(Math.random() * limit) + 1;
-    return this.prismaService.prisma.game.create({ data: { userId: dto.userId ?? null, gameType, difficulty: dto.difficulty, target, attempts: 0, won: false } });
+    const limit = dto.customRange ?? getLimitByDifficulty(dto.difficulty);
+    const target = gameType === 'LOGIC_PUZZLE' ? 0 : Math.floor(Math.random() * limit) + 1;
+
+    if (dto.userId)
+    {
+      const user = await this.prismaService.prisma.user.findUnique({ where: { id: dto.userId } });
+      if (!user)
+        throw new NotFoundException('Usuário não encontrado');
+    }
+
+    return this.prismaService.prisma.game.create
+    (
+      {
+        data:
+        {
+          userId:     dto.userId ?? null,
+          gameType,
+          difficulty: dto.difficulty,
+          target,
+          maxRange:   dto.customRange ?? null,
+          attempts:   0,
+          won:        false,
+        },
+      }
+    );
   }
 
   async makeGuess(gameId: string, value: number): Promise<any>
   {
-    // maxAttempts: 12 para VS_GUESS, getMaxAttempts(difficulty) para NUMBER_GUESS
-    // retorna { feedback, direction, attemptsLeft } ou { gameOver: true, target }
+    const game = await this.prismaService.prisma.game.findUnique({ where: { id: gameId } });
+    if (!game)
+        throw new NotFoundException('Jogo não encontrado ❌');
+
+    if (game.won || game.endedAt)
+        return { message: 'Jogo já foi concluído ✅' };
+
+    const difficulty = game.difficulty as Difficulty;
+    const limit  = (game as any).maxRange ?? getLimitByDifficulty(difficulty);
+
+    if (!Number.isInteger(value) || value < 1 || value > limit)
+      throw new BadRequestException(`Palpite deve ser um inteiro entre: 1 e ${limit} para a dificuldade ${difficulty}`);
+
+    const diff = Math.abs(game.target - value);
+    const feedback = getNumberFeedback(diff, limit);
+    const isWon = diff === 0;
+    const gameType = (game as any).gameType as GameType ?? 'NUMBER_GUESS';
+    const maxAttempts = gameType === 'VS_GUESS' ? 12 : getMaxAttempts(difficulty);
+    const newAttempts = game.attempts + 1;
+    const isGameOver  = !isWon && newAttempts >= maxAttempts;
+
+    await this.prismaService.prisma.guess.create({ data: { gameId, value, feedback } });
+    await this.prismaService.prisma.game.update
+    (
+      {
+        where: { id: gameId },
+        data:
+        {
+          attempts: { increment: 1 },
+          won:      isWon,
+          endedAt:  isWon || isGameOver ? new Date() : undefined,
+        },
+      }
+    );
+
+    const direction: 'higher' | 'lower' | 'correct' =
+      diff === 0 ? 'correct' : game.target > value ? 'higher' : 'lower';
+
+    return {
+      feedback,
+      diff,
+      direction,
+      attemptsLeft: isWon || isGameOver ? 0 : maxAttempts - newAttempts,
+      ...(isWon     && { won: true }),
+      ...(isGameOver && { gameOver: true, target: game.target }),
+    };
   }
 
-  async finishGame(gameId: string, won?: boolean): Promise<any>
+  async finishGame(gameId: string, won?: boolean, mistakes?: number): Promise<any>
   {
+    const game = await this.prismaService.prisma.game.findUnique
+    (
+      {
+        where: { id: gameId },
+        include: { guesses: true },
+      }
+    );
+    if (!game)
+        throw new NotFoundException('Jogo não encontrado ❌');
+
+    const gameType = (game as any).gameType as GameType ?? 'NUMBER_GUESS';
     const updateData: Record<string, any> = {};
-    if (!game.endedAt)     updateData.endedAt = new Date();
+    if (!game.endedAt) updateData.endedAt = new Date();
     if (won !== undefined) updateData.won = won;
+    if (gameType === 'LOGIC_PUZZLE' && mistakes !== undefined) updateData.attempts = mistakes;
+
+    if (Object.keys(updateData).length > 0)
+    {
+      await this.prismaService.prisma.game.update
+      (
+        {
+          where: { id: gameId },
+          data:  updateData,
+        }
+      );
+    }
+
+    const finalWon = won !== undefined ? won : game.won;
+
+    return {
+      gameId:       game.id,
+      gameType,
+      difficulty:   game.difficulty,
+      won:          finalWon,
+      attempts:     game.attempts,
+      target:       game.target,
+      totalGuesses: (game.guesses ?? []).length,
+    };
   }
 
   async getGlobalRanking(limit = 10, gameType?: string)
@@ -697,11 +849,20 @@ export class GameService
       {
         let games = (u.games ?? []) as any[];
         if (gameType) games = games.filter((g: any) => g.gameType === gameType);
-        const wonAttempts = games.filter((g: any) => g.won).map((g: any) => Number(g.attempts ?? 0));
-        if (wonAttempts.length === 0) return null;
+
+        const finishedGames = games.filter((g: any) => g.endedAt !== null || g.won);
+        const wonGames      = finishedGames.filter((g: any) => g.won);
+        const wonAttempts   = wonGames.map((g: any) => Number(g.attempts ?? 0));
+
+        if (wonAttempts.length === 0)
+          return null;
+
+        const totalGames = finishedGames.length;
+        const winRate    = wonAttempts.length / Math.max(totalGames, 1);
 
         const sorted = [...wonAttempts].sort((a, b) => a - b);
         const avg    = sorted.reduce((a, b) => a + b, 0) / sorted.length;
+        const best   = sorted[0];
 
         const mid    = Math.floor(sorted.length / 2);
         const median = sorted.length % 2 === 0
@@ -716,16 +877,65 @@ export class GameService
           .map(([v]) => Number(v));
         const mode = modes.reduce((a, b) => a + b, 0) / modes.length;
 
+        const weightedAttempts = median * 0.5 + avg * 0.3 + mode * 0.2;
+
         return {
-          userId: u.id, name: u.name ?? u.email,
-          averageAttempts: avg, medianAttempts: median, modeAttempts: mode,
-          wins: wonAttempts.length,
+          userId:           u.id,
+          name:             u.name ?? u.email,
+          averageAttempts:  avg,
+          medianAttempts:   median,
+          modeAttempts:     mode,
+          bestAttempts:     best,
+          weightedAttempts,
+          wins:             wonAttempts.length,
+          totalGames,
+          winRate,
         };
       }
     )
       .filter(Boolean)
-      .sort((a: any, b: any) => a.medianAttempts - b.medianAttempts)  // ordenação por mediana
+      .sort((a: any, b: any) =>
+      {
+        if (b.winRate !== a.winRate)  
+          return b.winRate - a.winRate;
+        if (a.weightedAttempts !== b.weightedAttempts) 
+          return a.weightedAttempts - b.weightedAttempts;
+        
+        return a.averageAttempts - b.averageAttempts;
+      })
       .slice(0, limit);
+  }
+
+  async getUserRanking(userId: string)
+  {
+    const ranking = await this.getGlobalRanking(1000);
+    const index   = ranking.findIndex((r: any) => r.userId === userId);
+    if (index === -1) return { position: null, total: ranking.length };
+    return { position: index + 1, total: ranking.length, entry: ranking[index] };
+  }
+
+  async saveGameToRanking(gameId: string, name: string)
+  {
+    const game = await this.prismaService.prisma.game.findUnique
+    ({ where: { id: gameId } });
+    if (!game)
+        throw new NotFoundException('Jogo não encontrado ❌');
+
+    const email = `${name.toLowerCase().replace(/\s+/g, '.')}@kuhaku.player`;
+    let user = await this.prismaService.prisma.user.findUnique({ where: { email } });
+    if (!user)
+      user = await this.prismaService.prisma.user.create({ data: { email, name } });
+
+    await this.prismaService.prisma.game.update
+    (
+      {
+        where: { id: gameId },
+        data:  { userId: user.id },
+      }
+    );
+
+    const ranking = await this.getUserRanking(user.id);
+    return { saved: true, ...ranking };
   }
 }
 ```
@@ -746,16 +956,15 @@ export class CreateGameDto
   userId?:      string;
   difficulty!:  Difficulty;
   gameType?:    GameType;
-  customRange?: number;   // range máximo customizado para NUMBER_GUESS
-}
+  customRange?: number; 
 ```
 
 ```ts
 // Arquivo: backend/src/game/dto/guess.dto.ts
-export class GuessDto
+export class GuessDto 
 {
   gameId!: string;
-  value!:  number; 
+  value!:  number;
 }
 ```
 
@@ -770,10 +979,21 @@ export class CreateUserDto
 
 ```ts
 // Arquivo: backend/src/game/dto/user_update.dto.ts
-export class UpdateUserDto
+export class UpdateUserDto 
 {
   name?:  string;
   email?: string;
+}
+```
+
+```ts
+// Arquivo: backend/src/game/dto/card-guess.dto.ts
+export type CardSuit = 'SPADES' | 'HEARTS' | 'DIAMONDS' | 'CLUBS';
+
+export class CardGuessDto
+{
+  suit!:  CardSuit;
+  value!: number;
 }
 ```
 
@@ -820,15 +1040,14 @@ export interface ConfigJogo
 // frontend/src/constants.ts
 import type { Dificuldade } from './types';
 
-export const TOTAL_ROUNDS_VS    = 3;
-export const MAX_TENTATIVAS_VS  = 12;
-export const TIMER_VS_TURNO     = 15;   // segundos por jogada no modo VS
+export const TOTAL_ROUNDS_VS   = 3;
+export const MAX_TENTATIVAS_VS = 12;
 
 export const MAX_TENTATIVAS_SOLO: Record<Dificuldade, number> =
 {
-  EASY: 5,
+  EASY:   5,
   MEDIUM: 8,
-  HARD: 10,
+  HARD:   10,
 };
 
 export const RANGE_LABEL: Record<Dificuldade, string> =
@@ -838,18 +1057,18 @@ export const RANGE_LABEL: Record<Dificuldade, string> =
   HARD:   'Canal 1-100',
 };
 
-export const RANGE_MAX: Record<Dificuldade, number> =
-{
-  EASY:   10,
-  MEDIUM: 50,
-  HARD:   100,
-};
-
 export const DIF_LABEL: Record<Dificuldade, string> =
 {
   EASY:   '🌍 Cadete',
   MEDIUM: '🚀 Piloto',
   HARD:   '👨‍🚀 Comandante',
+};
+
+export const RANGE_MAX: Record<Dificuldade, number> =
+{
+  EASY:   10,
+  MEDIUM: 50,
+  HARD:   100,
 };
 
 export const DIF_COLOR: Record<Dificuldade, { bg: string; hover: string; btn: string }> =
@@ -866,22 +1085,27 @@ export const MEMORIA_GRID: Record<Dificuldade, { cols: number; rows: number; lab
   HARD:   { cols: 6, rows: 6, label: '6×6', pairs: 18 },
 };
 
-// timer base e bônus por par no modo Memória
-export const MEMORIA_TIMER_INICIAL = 60;
-export const MEMORIA_BONUS_PAR     = 25;
-
 export const LOGICA_CONFIG: Record<Dificuldade, { count: number; label: string; description: string }> =
 {
   EASY:   { count: 8,  label: '🌍 Cadete',     description: 'P, Q · ∧ ∨ ¬ · 8 transmissões'           },
-  MEDIUM: { count: 10, label: '🚀 Piloto',      description: 'P, Q, R · ∧ ∨ ¬ → · 10 transmissões'   },
-  HARD:   { count: 12, label: '👨‍🚀 Comandante',  description: 'P, Q, R · ∧ ∨ ¬ → ↔ · 12 transmissões' },
+  MEDIUM: { count: 10, label: '🚀 Piloto',      description: 'P, Q, R · ∧ ∨ ¬ → · 10 transmissões'    },
+  HARD:   { count: 12, label: '👨‍🚀 Comandante',  description: 'P, Q, R · ∧ ∨ ¬ → ↔ · 12 transmissões'  },
 };
+
+export const PARENTESES_CONFIG: Record<Dificuldade, { count: number; label: string; description: string }> =
+{
+  EASY:   { count: 8,  label: '🌍 Cadete',     description: '∧ ∨ · 8 expressões'          },
+  MEDIUM: { count: 10, label: '🚀 Piloto',      description: '∧ ∨ → · 10 expressões'       },
+  HARD:   { count: 12, label: '👨‍🚀 Comandante',  description: '∧ ∨ → ↔ · 12 expressões'     },
+};
+
+export const TIMER_VS_TURNO = 15;
 
 export const TIMER_SOLO: Record<Dificuldade, number> =
 {
-  EASY:   30,   // 30s por tentativa no modo Operação Resgate — Cadete
-  MEDIUM: 20,   // 20s por tentativa no modo Operação Resgate — Piloto
-  HARD:   15,   // 15s por tentativa no modo Operação Resgate — Comandante
+  EASY:   30,
+  MEDIUM: 20,
+  HARD:   15,
 };
 
 export const TIMER_LOGICA: Record<Dificuldade, number> =
@@ -891,19 +1115,18 @@ export const TIMER_LOGICA: Record<Dificuldade, number> =
   HARD:   15,
 };
 
-export const PARENTESES_CONFIG: Record<Dificuldade, { count: number; label: string; description: string }> =
-{
-  EASY:   { count: 8,  label: '🌍 Cadete',     description: '∧ ∨ · 8 expressões'       },
-  MEDIUM: { count: 10, label: '🚀 Piloto',      description: '∧ ∨ → · 10 expressões'    },
-  HARD:   { count: 12, label: '👨‍🚀 Comandante',  description: '∧ ∨ → ↔ · 12 expressões'  },
-};
-
 export const TIMER_PRECEDENCIA: Record<Dificuldade, number> =
 {
   EASY:   45,
   MEDIUM: 35,
   HARD:   25,
 };
+
+export const MEMORIA_TIMER_INICIAL = 30;
+export const MEMORIA_BONUS_PAR = 20;
+
+export const TIMER_PENALIDADE = 5;
+export const TIMER_BONUS_ACERTO = 20;
 ```
 
 2. `frontend/src/main.tsx` <br>
@@ -924,7 +1147,8 @@ const API_BASE_URL =
   (import.meta.env.MODE === 'development' ? 'http://localhost:3001' : '');
   (window as any).API_BASE_URL = API_BASE_URL;
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render
+(
   <React.StrictMode>
     <App />
   </React.StrictMode>,

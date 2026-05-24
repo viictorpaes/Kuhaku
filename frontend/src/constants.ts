@@ -63,24 +63,33 @@ export const TIMER_VS_TURNO = 15;
 
 export const TIMER_SOLO: Record<Dificuldade, number> =
 {
-  EASY:   30,
-  MEDIUM: 20,
-  HARD:   15,
+  EASY:   60,
+  MEDIUM: 50,
+  HARD:   35,
 };
 
 export const TIMER_LOGICA: Record<Dificuldade, number> =
 {
-  EASY:   30,
-  MEDIUM: 20,
-  HARD:   15,
+  EASY:   60,
+  MEDIUM: 50,
+  HARD:   35,
 };
 
 export const TIMER_PRECEDENCIA: Record<Dificuldade, number> =
 {
-  EASY:   45,
-  MEDIUM: 35,
-  HARD:   25,
+  EASY:   60,
+  MEDIUM: 50,
+  HARD:   35,
 };
 
-export const MEMORIA_TIMER_INICIAL = 30;
-export const MEMORIA_BONUS_PAR = 25;
+export const MEMORIA_TIMER: Record<Dificuldade, number> =
+{
+  EASY:   60,
+  MEDIUM: 50,
+  HARD:   35,
+};
+
+export const MEMORIA_BONUS_PAR = 20;
+
+export const TIMER_PENALIDADE = 5;
+export const TIMER_BONUS_ACERTO = 20;

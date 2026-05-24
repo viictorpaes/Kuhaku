@@ -7,7 +7,7 @@ import
   MAX_TENTATIVAS_SOLO, MAX_TENTATIVAS_VS, TOTAL_ROUNDS_VS, RANGE_MAX,
   MEMORIA_GRID, LOGICA_CONFIG, PARENTESES_CONFIG,
   TIMER_VS_TURNO, TIMER_LOGICA, TIMER_PRECEDENCIA,
-  MEMORIA_TIMER_INICIAL, MEMORIA_BONUS_PAR,
+  MEMORIA_TIMER, MEMORIA_BONUS_PAR, TIMER_PENALIDADE, TIMER_BONUS_ACERTO,
 } from '../constants';
 
 
@@ -166,9 +166,9 @@ interface GameProps
 }
 
 
-function TimerBar({ seconds, maxSeconds }: { seconds: number; maxSeconds: number }) 
+function TimerBar({ seconds, maxSeconds }: { seconds: number; maxSeconds: number })
 {
-  const pct = Math.max(0, (seconds / maxSeconds)) * 100;
+  const pct = Math.min(100, Math.max(0, (seconds / maxSeconds))) * 100;
   const cor = seconds <= 5 ? '#ef4444' : seconds <= 10 ? '#f97316' : seconds <= Math.ceil(maxSeconds * 0.4) ? '#eab308' : '#22c55e';
   return (
     <div className="w-full">
@@ -200,6 +200,312 @@ function StreakBadge({ streak }: { streak: number })
       style={{ background: 'rgba(251,146,60,0.18)', border: '1px solid rgba(251,146,60,0.45)' }}>
       <span className="text-sm">{emojis}</span>
       <span className="text-orange-300 font-black text-xs">{label}</span>
+    </div>
+  );
+}
+
+interface ResultadoFase {
+  fase: number;
+  acertos: number;
+  erros: number;
+}
+
+function NameSearchInput({ value, onChange, apiUrl, placeholder }: {
+  value: string;
+  onChange: (v: string) => void;
+  apiUrl: string;
+  placeholder?: string;
+})
+{
+  const [suggestions, setSuggestions] = useState<{ id: string; name: string }[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  useEffect(() =>
+  {
+    if (debounceRef.current !== undefined) clearTimeout(debounceRef.current);
+    if (value.length < 2) { setSuggestions([]); setShowSuggestions(false); return; }
+    debounceRef.current = setTimeout(async () =>
+    {
+      try
+      {
+        const res = await fetch(`${apiUrl}/api/players/search?q=${encodeURIComponent(value)}`);
+        const data = await res.json();
+        setSuggestions(data);
+        setShowSuggestions(data.length > 0);
+      }
+      catch { setSuggestions([]); }
+    }, 300);
+    return () => { if (debounceRef.current !== undefined) clearTimeout(debounceRef.current); };
+  }, [value, apiUrl]);
+
+  return (
+    <div className="relative flex-1">
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => { onChange(e.target.value); setShowSuggestions(true); }}
+        onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+        placeholder={placeholder ?? 'Seu apelido de astronauta'}
+        maxLength={30}
+        className="w-full bg-white/5 border border-white/15 focus:border-cyan-500 rounded-xl px-3 py-2 text-sm text-white focus:outline-none transition"
+      />
+      {showSuggestions && suggestions.length > 0 && (
+        <div className="absolute z-50 top-full mt-1 w-full bg-[#0c1729] border border-white/15 rounded-xl overflow-hidden shadow-xl">
+          {suggestions.map((s) => (
+            <button
+              key={s.id}
+              type="button"
+              onMouseDown={() => { onChange(s.name); setShowSuggestions(false); }}
+              className="w-full text-left px-3 py-2 text-sm text-slate-200 hover:bg-white/10 transition flex items-center gap-2"
+            >
+              <span className="text-xs">👤</span> {s.name}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ProximaFaseModal({ fase, resultado, onContinuar, onEncerrar, carregando, apiUrl, onSalvar }: {
+  fase: number;
+  resultado: ResultadoFase;
+  onContinuar: () => void;
+  onEncerrar: () => void;
+  carregando?: boolean;
+  apiUrl?: string;
+  onSalvar?: (nome: string) => Promise<{ saved: boolean; position?: number | null; total?: number }>;
+})
+{
+  const [saveNome, setSaveNome] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [savedPos, setSavedPos] = useState<{ position: number | null; total: number } | null>(null);
+  const [saveErro, setSaveErro] = useState('');
+
+  const handleSalvar = async (e: React.FormEvent) =>
+  {
+    e.preventDefault();
+    const nome = saveNome.trim();
+    if (!nome) { setSaveErro('Digite seu apelido'); return; }
+    if (!onSalvar) return;
+    setSaving(true); setSaveErro('');
+    try
+    {
+      const data = await onSalvar(nome);
+      if (data?.saved) setSavedPos({ position: data.position ?? null, total: data.total ?? 0 });
+      else setSaveErro('Não foi possível salvar.');
+    }
+    catch { setSaveErro('Erro de conexão'); }
+    finally { setSaving(false); }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-4"
+      style={{ background: 'rgba(2,8,24,0.90)', backdropFilter: 'blur(4px)' }}>
+      <div className="w-full max-w-sm bg-[#0c1729] border border-white/12 rounded-3xl p-8 text-center shadow-2xl">
+        <div className="text-5xl mb-3">🚀</div>
+        <h2 className="text-2xl font-black text-white mb-1">Fase {fase} Completa!</h2>
+        <p className="text-slate-400 text-sm mb-5">Missão concluída, Astronauta!</p>
+        <div className="flex gap-3 mb-5">
+          <div className="flex-1 rounded-2xl p-3"
+            style={{ background: 'rgba(74,222,128,0.10)', border: '1px solid rgba(74,222,128,0.30)' }}>
+            <p className="text-2xl font-black text-green-400">{resultado.acertos}</p>
+            <p className="text-xs text-slate-400 mt-1">✅ Acertos</p>
+          </div>
+          <div className="flex-1 rounded-2xl p-3"
+            style={resultado.erros > 0
+              ? { background: 'rgba(248,113,113,0.10)', border: '1px solid rgba(248,113,113,0.30)' }
+              : { background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.10)' }}>
+            <p className="text-2xl font-black" style={{ color: resultado.erros > 0 ? '#f87171' : '#94a3b8' }}>{resultado.erros}</p>
+            <p className="text-xs text-slate-400 mt-1">❌ Erros</p>
+          </div>
+        </div>
+
+        {onSalvar && apiUrl && (
+          savedPos ? (
+            <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-center mb-4">
+              {savedPos.position != null
+                ? <p className="text-amber-300 font-bold text-sm">🏆 Prêmio salvo! #{savedPos.position} de {savedPos.total}</p>
+                : <p className="text-emerald-300 font-bold text-sm">✅ Prêmio salvo!</p>
+              }
+            </div>
+          ) : (
+            <form onSubmit={handleSalvar} className="mb-4 text-left">
+              <p className="text-slate-400 text-xs mb-1.5">💾 Resgatar prêmio agora:</p>
+              <div className="flex gap-2">
+                <NameSearchInput value={saveNome} onChange={setSaveNome} apiUrl={apiUrl} placeholder="Seu apelido" />
+                <button type="submit" disabled={saving || !saveNome.trim()}
+                  className="px-3 py-2 rounded-xl font-bold text-xs text-white disabled:opacity-40 transition hover:opacity-90 shrink-0"
+                  style={{ background: 'linear-gradient(135deg, #06b6d4, #6366f1)' }}>
+                  {saving ? '...' : '💾'}
+                </button>
+              </div>
+              {saveErro && <p className="text-red-400 text-xs mt-1">{saveErro}</p>}
+            </form>
+          )
+        )}
+
+        <button
+          onClick={onContinuar}
+          disabled={carregando}
+          className="w-full py-3 rounded-xl font-bold text-white mb-2 transition hover:opacity-90 disabled:opacity-50"
+          style={{ background: 'linear-gradient(135deg, #06b6d4, #6366f1)' }}
+        >
+          {carregando ? 'Preparando missão...' : `⚡ Fase ${fase + 1} →`}
+        </button>
+        <button
+          onClick={onEncerrar}
+          className="w-full py-3 rounded-xl font-semibold text-sm text-slate-300 transition hover:bg-white/10"
+          style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.10)' }}
+        >
+          🏁 Ver Pontuação Final
+        </button>
+      </div>
+    </div>
+  );
+}
+
+const RESUMO_BG = 'radial-gradient(ellipse at 50% 0%, rgba(6,182,212,0.10) 0%, transparent 55%), linear-gradient(180deg, #020818 0%, #0a0f1e 100%)';
+
+function ResumoFases({ historico, onNovoJogo, onBack, onOpenRanking, gameIdFinal, apiUrl }: {
+  historico: ResultadoFase[];
+  onNovoJogo: () => Promise<void>;
+  onBack: () => void;
+  onOpenRanking: (filter?: string) => void;
+  gameIdFinal?: string;
+  apiUrl?: string;
+})
+{
+  const [loadingNovo, setLoadingNovo] = useState(false);
+  const [saveNome, setSaveNome] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [savedPosition, setSavedPosition] = useState<{ position: number | null; total: number } | null>(null);
+  const [saveErro, setSaveErro] = useState('');
+
+  const totalAcertos = historico.reduce((s, f) => s + f.acertos, 0);
+  const totalErros   = historico.reduce((s, f) => s + f.erros,   0);
+  const fases        = historico.length;
+  const precisao     = totalAcertos + totalErros > 0
+    ? Math.round((totalAcertos / (totalAcertos + totalErros)) * 100)
+    : 0;
+
+  const handleNovo = async () =>
+  {
+    setLoadingNovo(true);
+    try { await onNovoJogo(); } finally { setLoadingNovo(false); }
+  };
+
+  const handleSalvar = async (e: React.FormEvent) =>
+  {
+    e.preventDefault();
+    const nome = saveNome.trim();
+    if (!nome) { setSaveErro('Digite um apelido'); return; }
+    if (!gameIdFinal || !apiUrl) { setSaveErro('Sem partida disponível'); return; }
+    setSaving(true); setSaveErro('');
+    try
+    {
+      const res = await fetch(`${apiUrl}/api/games/${gameIdFinal}/save`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: nome }),
+      });
+      const data = await res.json();
+      if (data.saved)
+        setSavedPosition({ position: data.position ?? null, total: data.total });
+      else
+        setSaveErro('Não foi possível salvar. Tente novamente.');
+    }
+    catch { setSaveErro('Erro de conexão'); }
+    finally { setSaving(false); }
+  };
+
+  return (
+    <div className="min-h-screen text-white flex flex-col items-center justify-center px-4"
+      style={{ background: RESUMO_BG, fontFamily: "'Inter', system-ui, sans-serif" }}>
+      <div className="w-full max-w-md bg-[#0c1729] border border-white/10 rounded-3xl p-8 shadow-2xl">
+        <div className="text-center mb-6">
+          <div className="text-5xl mb-3">🏁</div>
+          <h2 className="text-2xl font-black text-white mb-1">Missão Encerrada</h2>
+          <p className="text-slate-400 text-sm">
+            {fases} fase{fases !== 1 ? 's' : ''} · {precisao}% de precisão
+          </p>
+        </div>
+
+        <div className="flex gap-3 mb-5">
+          <div className="flex-1 rounded-2xl p-3 text-center"
+            style={{ background: 'rgba(74,222,128,0.10)', border: '1px solid rgba(74,222,128,0.25)' }}>
+            <p className="text-2xl font-black text-green-400">{totalAcertos}</p>
+            <p className="text-xs text-slate-400 mt-1">✅ Acertos</p>
+          </div>
+          <div className="flex-1 rounded-2xl p-3 text-center"
+            style={{ background: 'rgba(248,113,113,0.10)', border: '1px solid rgba(248,113,113,0.25)' }}>
+            <p className="text-2xl font-black text-red-400">{totalErros}</p>
+            <p className="text-xs text-slate-400 mt-1">❌ Erros</p>
+          </div>
+          <div className="flex-1 rounded-2xl p-3 text-center"
+            style={{ background: 'rgba(6,182,212,0.10)', border: '1px solid rgba(6,182,212,0.25)' }}>
+            <p className="text-2xl font-black text-cyan-400">{fases}</p>
+            <p className="text-xs text-slate-400 mt-1">🚀 Fases</p>
+          </div>
+        </div>
+
+        <div className="rounded-2xl overflow-hidden border border-white/10 mb-5">
+          <div className="grid grid-cols-3 text-[10px] font-bold uppercase tracking-widest text-slate-500 px-4 py-2"
+            style={{ background: 'rgba(255,255,255,0.04)' }}>
+            <span>Fase</span>
+            <span className="text-center">✅ Acertos</span>
+            <span className="text-center">❌ Erros</span>
+          </div>
+          {historico.map((f) => (
+            <div key={f.fase} className="grid grid-cols-3 px-4 py-2.5 border-t border-white/5">
+              <span className="text-slate-300 font-bold text-sm">Fase {f.fase}</span>
+              <span className="text-center text-green-400 font-bold text-sm">{f.acertos}</span>
+              <span className="text-center font-bold text-sm"
+                style={{ color: f.erros > 0 ? '#f87171' : '#94a3b8' }}>{f.erros}</span>
+            </div>
+          ))}
+        </div>
+
+        {gameIdFinal && apiUrl && (
+          savedPosition ? (
+            <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-center mb-4">
+              {savedPosition.position != null
+                ? <><p className="text-amber-300 font-bold text-sm">🏆 #{savedPosition.position} de {savedPosition.total}!</p>
+                   <button onClick={() => onOpenRanking()} className="mt-1 text-xs text-amber-400 underline underline-offset-2 hover:text-amber-300 transition">Ver ranking →</button></>
+                : <p className="text-emerald-300 font-bold text-sm">✅ Resultado salvo!</p>
+              }
+            </div>
+          ) : (
+            <form onSubmit={handleSalvar} className="mb-4">
+              <p className="text-slate-400 text-xs mb-2">Salvar no ranking:</p>
+              <div className="flex gap-2">
+                <NameSearchInput value={saveNome} onChange={setSaveNome} apiUrl={apiUrl!} placeholder="Seu apelido de astronauta" />
+                <button type="submit" disabled={saving || !saveNome.trim()}
+                  className="px-4 py-2 rounded-xl font-bold text-xs text-white disabled:opacity-40 transition hover:opacity-90 shrink-0"
+                  style={{ background: 'linear-gradient(135deg, #06b6d4, #6366f1)' }}>
+                  {saving ? '...' : '💾'}
+                </button>
+              </div>
+              {saveErro && <p className="text-red-400 text-xs mt-1">{saveErro}</p>}
+            </form>
+          )
+        )}
+
+        <div className="flex gap-3">
+          <button onClick={onBack}
+            className="flex-1 py-3 rounded-xl font-bold text-sm text-white transition hover:opacity-80"
+            style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)' }}>
+            🏠 Menu
+          </button>
+          <button onClick={handleNovo} disabled={loadingNovo}
+            className="flex-1 py-3 rounded-xl font-bold text-sm text-white transition hover:opacity-90 disabled:opacity-50"
+            style={{ background: 'linear-gradient(135deg, #06b6d4, #6366f1)' }}>
+            {loadingNovo ? '...' : '🔄 Nova Missão'}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -697,14 +1003,16 @@ function SoloGame({ gameId, dificuldade, apiUrl, onBack, onOpenRanking, onNovoJo
   const [loadingNovo, setLoadingNovo] = useState(false);
   const [erro, setErro] = useState('');
   const [ganhou, setGanhou] = useState(false);
-  const [perdeu, setPerdeu] = useState(false);
-  const [saveNome, setSaveNome] = useState('');
-  const [saving, setSaving] = useState(false);
-  const [savedPosition, setSavedPosition] = useState<{ position: number | null; total: number } | null>(null);
-  const [saveErro, setSaveErro] = useState('');
   const [tentativaTimer, setTentativaTimer] = useState<number>(timerSegundos ?? 0);
   const tentativaTimerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const [faseAtual, setFaseAtual] = useState(1);
+  const [historicoDeFases, setHistoricoDeFases] = useState<ResultadoFase[]>([]);
+  const [mostrandoProximaFase, setMostrandoProximaFase] = useState(false);
+  const [mostrandoResumo, setMostrandoResumo] = useState(false);
+  const [currentGameId, setCurrentGameId] = useState(gameId);
+  const [carregandoFase, setCarregandoFase] = useState(false);
 
   const effectiveRangeMax = rangeMax ?? RANGE_MAX[dificuldade];
   const maxTentativas = rangeMax
@@ -717,52 +1025,42 @@ function SoloGame({ gameId, dificuldade, apiUrl, onBack, onOpenRanking, onNovoJo
   const { bg: difBg, btn: difBtn } = DIF_COLOR[dificuldade];
   const rangeLabel = rangeMax ? `Canal 1-${rangeMax.toLocaleString('pt-BR')}` : RANGE_LABEL[dificuldade];
 
-  const iniciarContagem = useCallback(() => 
+  // Timer persistente: pausa durante requisição de rede e retoma ao terminar
+  useEffect(() =>
   {
-    if (!timerSegundos) return;
-    clearInterval(tentativaTimerRef.current);
-    tentativaTimerRef.current = setInterval(() => 
+    if (!timerSegundos || ganhou || mostrandoProximaFase || mostrandoResumo || loading)
     {
-      setTentativaTimer((t) => 
+      clearInterval(tentativaTimerRef.current);
+      return;
+    }
+    clearInterval(tentativaTimerRef.current);
+    const id = setInterval(() =>
+    {
+      setTentativaTimer((t) =>
       {
-        if (t <= 1) { clearInterval(tentativaTimerRef.current); return 0; }
+        if (t <= 1) { clearInterval(id); return 0; }
         return t - 1;
       });
     }, 1000);
-  }, [timerSegundos]);
+    tentativaTimerRef.current = id;
+    return () => clearInterval(id);
+  }, [ganhou, mostrandoProximaFase, mostrandoResumo, timerSegundos, loading]);
+
+  // Timer chegou a 0 → encerra fase com derrota
+  useEffect(() =>
+  {
+    if (!timerSegundos || tentativaTimer !== 0 || ganhou || mostrandoProximaFase || mostrandoResumo) return;
+    clearInterval(tentativaTimerRef.current);
+    const errosEstaFase = historico.filter(p => p.direcao !== 'correct').length;
+    setHistoricoDeFases(prev => [...prev, { fase: faseAtual, acertos: 0, erros: errosEstaFase + 1 }]);
+    setMostrandoResumo(true);
+  }, [tentativaTimer, ganhou, mostrandoProximaFase, mostrandoResumo, timerSegundos, faseAtual, historico]);
 
   useEffect(() =>
   {
-    if (!ganhou && !perdeu) 
+    if (!ganhou && !mostrandoProximaFase && !mostrandoResumo)
       inputRef.current?.focus();
-  }, [ganhou, perdeu]);
-
-  useEffect(() => 
-  {
-    if (!timerSegundos || ganhou || perdeu) return;
-    setTentativaTimer(timerSegundos);
-    iniciarContagem();
-    return () => clearInterval(tentativaTimerRef.current);
-  }, [ganhou, perdeu, timerSegundos, iniciarContagem]);
-
-  useEffect(() => 
-  {
-    if (!timerSegundos || tentativaTimer !== 0 || ganhou || perdeu) return;
-    const novo: Palpite = { valor: -1, feedback: 'tempo esgotado ⏱️', direcao: 'timeout', jogador: 1 };
-    let ended = false;
-    setHistorico((prev) =>
-    {
-      const novoH = [novo, ...prev];
-      if (novoH.length >= maxTentativas) { setPerdeu(true); ended = true; }
-      return novoH;
-    });
-   
-    if (!ended) 
-    {
-      setTentativaTimer(timerSegundos);
-      iniciarContagem();
-    }
-  }, [tentativaTimer, ganhou, perdeu, timerSegundos, maxTentativas, iniciarContagem]);
+  }, [ganhou, mostrandoProximaFase, mostrandoResumo]);
 
   const enviarPalpite = async (e: React.FormEvent) => 
   {
@@ -774,107 +1072,136 @@ function SoloGame({ gameId, dificuldade, apiUrl, onBack, onOpenRanking, onNovoJo
     }
     setErro('');
     setLoading(true);
-    clearInterval(tentativaTimerRef.current);
 
     try
     {
-      const res = await fetch(`${apiUrl}/api/games/${gameId}/guess`, {
+      const res = await fetch(`${apiUrl}/api/games/${currentGameId}/guess`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ value: valor }),
       });
 
       const dados = await res.json();
-      if (dados.message)
-        { setErro(dados.message); setLoading(false); iniciarContagem(); return; }
+      if (dados.message) { setErro(dados.message); setLoading(false); return; }
 
-      const novo: Palpite =
-      {
-        valor,
-        feedback: dados.feedback,
-        direcao: dados.direction as Direcao,
-        jogador: 1,
-      };
+      const novo: Palpite = { valor, feedback: dados.feedback, direcao: dados.direction as Direcao, jogador: 1 };
       const novoHistorico = [novo, ...historico];
       setHistorico(novoHistorico);
       setPalpite('');
 
-      if (dados.direction === 'correct') { playArcadeCorrect(); setGanhou(true); return; }
-      if (novoHistorico.length >= maxTentativas) { playArcadeError(); setPerdeu(true); return; }
+      if (dados.direction === 'correct')
+      {
+        playArcadeCorrect();
+        if (timerSegundos) setTentativaTimer(t => t + TIMER_BONUS_ACERTO);
+        const errosEstaFase = novoHistorico.filter(p => p.direcao !== 'correct').length;
+        setHistoricoDeFases(prev => [...prev, { fase: faseAtual, acertos: 1, erros: errosEstaFase }]);
+        setGanhou(true);
+        setMostrandoProximaFase(true);
+        return;
+      }
+
+      if (timerSegundos) setTentativaTimer(t => Math.max(1, t - TIMER_PENALIDADE));
       playArcadeError();
-      iniciarContagem();
+
+      if (novoHistorico.length >= maxTentativas)
+      {
+        const errosEstaFase = novoHistorico.filter(p => p.direcao !== 'correct').length;
+        setHistoricoDeFases(prev => [...prev, { fase: faseAtual, acertos: 0, erros: errosEstaFase }]);
+        setMostrandoResumo(true);
+        return;
+      }
     }
-    catch
-    {
-      setErro('Erro de conexão');
-      iniciarContagem();
-    }
-    finally
-    {
-      setLoading(false);
-    }
+    catch { setErro('Erro de conexão'); }
+    finally { setLoading(false); }
   };
 
-  const handleNovoJogo = async () => 
+  const handleContinuarFase = async () =>
   {
-    setLoadingNovo(true);
-    setHistorico([]);
-    setGanhou(false);
-    setPerdeu(false);
-    setPalpite('');
-    setErro('');
-    setSaveNome('');
-    setSavedPosition(null);
-    setSaveErro('');
-    try 
+    setCarregandoFase(true);
+    try
     {
-      await onNovoJogo();
-    } 
-    finally 
-    {
-      setLoadingNovo(false);
-    }
-  };
-
-  const handleSalvar = async (e: React.FormEvent) => 
-  {
-    e.preventDefault();
-    const nome = saveNome.trim();
-    if (!nome) { setSaveErro('Digite um apelido'); return; }
-    setSaving(true);
-    setSaveErro('');
-    try 
-    {
-      const res = await fetch(`${apiUrl}/api/games/${gameId}/save`, 
+      const res = await fetch(`${apiUrl}/api/games`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: nome }),
+        body: JSON.stringify({ difficulty: dificuldade, ...(rangeMax && { customRange: rangeMax }) }),
       });
-      const data = await res.json();
-      if (data.saved)
-        setSavedPosition({ position: data.position ?? null, total: data.total });
-      else
-        setSaveErro('Não foi possível salvar. Tente novamente.');
+      const g = await res.json();
+      setCurrentGameId(g.id);
+      setHistorico([]);
+      setGanhou(false);
+      setPalpite('');
+      setErro('');
+      if (timerSegundos) setTentativaTimer(timerSegundos);
+      setFaseAtual(f => f + 1);
+      setMostrandoProximaFase(false);
     }
-    catch
-    {
-      setSaveErro('Erro de conexão');
-    }
-    finally
-    {
-      setSaving(false);
-    }
+    catch { setErro('Erro ao iniciar próxima fase'); }
+    finally { setCarregandoFase(false); }
   };
+
+  const handleEncerrarMissao = () =>
+  {
+    setMostrandoProximaFase(false);
+    setMostrandoResumo(true);
+  };
+
+  const handleSalvarFase = async (nome: string) =>
+  {
+    const res = await fetch(`${apiUrl}/api/games/${currentGameId}/save`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: nome }),
+    });
+    return res.json();
+  };
+
+  const handleNovoJogo = async () =>
+  {
+    setLoadingNovo(true);
+    try { await onNovoJogo(); }
+    finally { setLoadingNovo(false); }
+  };
+
+  if (mostrandoResumo)
+  {
+    return (
+      <ResumoFases
+        historico={historicoDeFases}
+        onNovoJogo={onNovoJogo}
+        onBack={onBack}
+        onOpenRanking={onOpenRanking}
+        gameIdFinal={currentGameId}
+        apiUrl={apiUrl}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen text-white flex flex-col" style={{ background: BG, fontFamily: "'Inter', system-ui, sans-serif" }}>
+      {mostrandoProximaFase && historicoDeFases.length > 0 && (
+        <ProximaFaseModal
+          fase={faseAtual}
+          resultado={historicoDeFases[historicoDeFases.length - 1]}
+          onContinuar={handleContinuarFase}
+          onEncerrar={handleEncerrarMissao}
+          carregando={carregandoFase}
+          apiUrl={apiUrl}
+          onSalvar={handleSalvarFase}
+        />
+      )}
+
       <GameHeader onBack={onBack} onOpenRanking={onOpenRanking} />
 
       {/* Top bar */}
       <div className="flex items-center justify-between px-5 py-3">
         <span className={`${difBg} text-white text-xs font-bold px-3 py-1.5 rounded-full`}>
           {DIF_LABEL[dificuldade]} · {rangeLabel}
+        </span>
+        <span className="text-xs font-bold px-3 py-1.5 rounded-full"
+          style={{ background: 'rgba(6,182,212,0.10)', border: '1px solid rgba(6,182,212,0.20)', color: '#67e8f9' }}>
+          🚀 Fase {faseAtual}
         </span>
         <button
           onClick={handleNovoJogo}
@@ -889,127 +1216,72 @@ function SoloGame({ gameId, dificuldade, apiUrl, onBack, onOpenRanking, onNovoJo
 
         {/* Main card */}
         <div className="w-full border border-white/10 rounded-2xl p-6" style={{ background: '#080f1e' }}>
-          {ganhou ? (
-            <div className="text-center py-2">
-              <div className="text-4xl mb-3">📡</div>
-              <p className="font-black text-xl text-cyan-400">Resgate confirmado!</p>
-              <p className="text-slate-400 text-sm mt-1">Em {tentativasUsadas} tentativa{tentativasUsadas !== 1 ? 's' : ''}</p>
-              <button
-                onClick={handleNovoJogo}
-                className={`mt-5 px-6 py-3 rounded-xl font-bold text-white text-sm transition hover:opacity-90 ${difBtn}`}
-              >
-                🔄 Nova missão
-              </button>
-              <SaveRankingPanel
-                gameId={gameId}
-                saveNome={saveNome}
-                setSaveNome={setSaveNome}
-                saving={saving}
-                savedPosition={savedPosition}
-                saveErro={saveErro}
-                onSalvar={handleSalvar}
-                onOpenRanking={onOpenRanking}
-              />
+          <div className="text-center mb-5">
+            <span className="text-3xl">📡</span>
+            <h2 className="font-black text-lg text-white mt-2">Qual é a frequência de resgate?</h2>
+            <p className="text-slate-400 text-sm">{rangeLabel}</p>
+          </div>
+
+          {timerSegundos && (
+            <div className="mb-4">
+              <TimerBar seconds={tentativaTimer} maxSeconds={timerSegundos} />
             </div>
-          ) : perdeu ? (
-            <div className="text-center py-2">
-              <div className="text-4xl mb-3">🔇</div>
-              <p className="font-black text-xl text-red-400">Sinal perdido!</p>
-              <p className="text-slate-400 text-sm mt-1">Frequências esgotadas</p>
-              <button
-                onClick={handleNovoJogo}
-                className={`mt-5 px-6 py-3 rounded-xl font-bold text-white text-sm transition hover:opacity-90 ${difBtn}`}
-              >
-                🔄 Tentar novamente
-              </button>
-              <SaveRankingPanel
-                gameId={gameId}
-                saveNome={saveNome}
-                setSaveNome={setSaveNome}
-                saving={saving}
-                savedPosition={savedPosition}
-                saveErro={saveErro}
-                onSalvar={handleSalvar}
-                onOpenRanking={onOpenRanking}
-              />
-            </div>
-          ) : (
-            <>
-              <div className="text-center mb-5">
-                <span className="text-3xl">📡</span>
-                <h2 className="font-black text-lg text-white mt-2">Qual é a frequência de resgate?</h2>
-                <p className="text-slate-400 text-sm">{rangeLabel}</p>
-              </div>
-
-              {/* Per-attempt countdown */}
-              {timerSegundos && (
-                <div className="mb-4">
-                  <TimerBar seconds={tentativaTimer} maxSeconds={timerSegundos} />
-                </div>
-              )}
-
-              {/* Progress bar */}
-              <div className="mb-5">
-                <div className="flex justify-between text-[10px] text-slate-500 mb-1.5">
-                  <span>{tentativasUsadas} tentativas</span>
-                  <span>{restantes} restantes</span>
-                </div>
-                <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
-                  <div
-                    className="h-full rounded-full transition-all"
-                    style={{
-                      width: `${progresso * 100}%`,
-                      background: restantes <= 2 ? '#ef4444' : restantes <= 4 ? '#f97316' : '#06b6d4',
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* Feedback */}
-              {lastPalpite && 
-              (
-                <div
-                  className="rounded-xl p-3 text-center border mb-4"
-                  style={{ background: feedbackBg(lastPalpite.feedback), borderColor: feedbackBorder(lastPalpite.feedback) }}
-                >
-                  <p className="font-black text-base" style={{ color: feedbackTextColor(lastPalpite.feedback) }}>
-                    {feedbackLabel(lastPalpite.feedback)}
-                  </p>
-                  <p className="text-slate-400 text-xs mt-0.5">{direcaoLabel(lastPalpite.direcao)}</p>
-                </div>
-              )}
-
-              {/* Input + button */}
-              <form onSubmit={enviarPalpite} className="flex gap-3">
-                <input
-                  ref={inputRef}
-                  type="number"
-                  min={1}
-                  max={effectiveRangeMax}
-                  value={palpite}
-                  onChange={(e) => setPalpite(e.target.value)}
-                  placeholder={rangeLabel}
-                  disabled={loading}
-                  className="flex-1 bg-white/5 border border-white/15 focus:border-indigo-500 rounded-xl px-4 py-3.5 text-center text-xl font-black text-white focus:outline-none transition"
-                  autoFocus
-                />
-                <button
-                  type="submit"
-                  disabled={loading || !palpite}
-                  className={`px-5 py-3.5 rounded-xl font-black text-white text-sm disabled:opacity-40 transition hover:opacity-90 active:scale-95 ${difBtn}`}
-                >
-                  {loading ? '...' : 'Tentar!'}
-                </button>
-              </form>
-
-              {erro && <p className="text-red-400 text-xs text-center mt-2">{erro}</p>}
-            </>
           )}
+
+          <div className="mb-5">
+            <div className="flex justify-between text-[10px] text-slate-500 mb-1.5">
+              <span>{tentativasUsadas} tentativas</span>
+              <span>{restantes} restantes</span>
+            </div>
+            <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+              <div
+                className="h-full rounded-full transition-all"
+                style={{
+                  width: `${progresso * 100}%`,
+                  background: restantes <= 2 ? '#ef4444' : restantes <= 4 ? '#f97316' : '#06b6d4',
+                }}
+              />
+            </div>
+          </div>
+
+          {lastPalpite && (
+            <div
+              className="rounded-xl p-3 text-center border mb-4"
+              style={{ background: feedbackBg(lastPalpite.feedback), borderColor: feedbackBorder(lastPalpite.feedback) }}
+            >
+              <p className="font-black text-base" style={{ color: feedbackTextColor(lastPalpite.feedback) }}>
+                {feedbackLabel(lastPalpite.feedback)}
+              </p>
+              <p className="text-slate-400 text-xs mt-0.5">{direcaoLabel(lastPalpite.direcao)}</p>
+            </div>
+          )}
+
+          <form onSubmit={enviarPalpite} className="flex gap-3">
+            <input
+              ref={inputRef}
+              type="number"
+              min={1}
+              max={effectiveRangeMax}
+              value={palpite}
+              onChange={(e) => setPalpite(e.target.value)}
+              placeholder={rangeLabel}
+              disabled={loading || ganhou}
+              className="flex-1 bg-white/5 border border-white/15 focus:border-indigo-500 rounded-xl px-4 py-3.5 text-center text-xl font-black text-white focus:outline-none transition"
+              autoFocus
+            />
+            <button
+              type="submit"
+              disabled={loading || !palpite || ganhou}
+              className={`px-5 py-3.5 rounded-xl font-black text-white text-sm disabled:opacity-40 transition hover:opacity-90 active:scale-95 ${difBtn}`}
+            >
+              {loading ? '...' : 'Tentar!'}
+            </button>
+          </form>
+
+          {erro && <p className="text-red-400 text-xs text-center mt-2">{erro}</p>}
         </div>
 
-        {/* Historical */}
-        {historico.length > 0 && 
-        (
+        {historico.length > 0 && (
           <div className="w-full">
             <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-2">Histórico</p>
             <div className="flex flex-wrap gap-2">
@@ -1034,7 +1306,7 @@ function SoloGame({ gameId, dificuldade, apiUrl, onBack, onOpenRanking, onNovoJo
   );
 }
 
-function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, onNovoJogo }: GameProps)
+function MemoriaGame({ gameId, dificuldade, p1: _p1, apiUrl, onBack, onOpenRanking, onNovoJogo }: GameProps)
 {
   const { cols, rows, label, pairs: totalPairs } = MEMORIA_GRID[dificuldade];
   const totalCards = cols * rows;
@@ -1058,46 +1330,51 @@ function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, o
   const [bloqueado, setBloqueado] = useState(false);
   const [ganhou, setGanhou] = useState(false);
   const [gameOver, setGameOver] = useState(false);
-  const [timerRestante, setTimerRestante] = useState(MEMORIA_TIMER_INICIAL);
+  const [timerRestante, setTimerRestante] = useState(MEMORIA_TIMER[dificuldade]);
   const [iniciou, setIniciou] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
-  const [saveNome, setSaveNome] = useState('');
-  const [saving, setSaving] = useState(false);
-  const [savedPosition, setSavedPosition] = useState<{ position: number | null; total: number } | null>(null);
-  const [saveErro, setSaveErro] = useState('');
   const finishCalledRef = useRef(false);
+
+  const [faseAtual, setFaseAtual] = useState(1);
+  const [historicoDeFases, setHistoricoDeFases] = useState<ResultadoFase[]>([]);
+  const [mostrandoProximaFase, setMostrandoProximaFase] = useState(false);
+  const [mostrandoResumo, setMostrandoResumo] = useState(false);
+  const [carregandoFase, setCarregandoFase] = useState(false);
 
   useEffect(() =>
   {
     if (!iniciou || ganhou || gameOver) return;
     timerRef.current = setInterval(() =>
     {
-      setTimerRestante((t) =>
+      setTimerRestante((t: number) =>
       {
-        if (t <= 1)
-        {
-          clearInterval(timerRef.current);
-          setGameOver(true);
-          return 0;
-        }
+        if (t <= 1) { clearInterval(timerRef.current); setGameOver(true); return 0; }
         return t - 1;
       });
     }, 1000);
     return () => clearInterval(timerRef.current);
   }, [iniciou, ganhou, gameOver]);
 
+  useEffect(() =>
+  {
+    if (!gameOver || mostrandoResumo) return;
+    setHistoricoDeFases((prev) => [...prev, { fase: faseAtual, acertos: Math.floor(reveladas.size / 2), erros }]);
+    setMostrandoResumo(true);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameOver]);
+
   const paresEncontrados = reveladas.size / 2;
 
   const handleClique = (idx: number) =>
   {
     if (bloqueado || viradas.includes(idx) || reveladas.has(idx) || ganhou || gameOver) return;
-    if (!iniciou) 
+    if (!iniciou)
       setIniciou(true);
 
     const novasViradas = [...viradas, idx];
     setViradas(novasViradas);
 
-    if (novasViradas.length === 2) 
+    if (novasViradas.length === 2)
     {
       setBloqueado(true);
       const [a, b] = novasViradas;
@@ -1110,7 +1387,7 @@ function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, o
         setReveladas(novasReveladas);
         setViradas([]);
         setBloqueado(false);
-        setTimerRestante((t) => t + MEMORIA_BONUS_PAR);
+        setTimerRestante((t: number) => t + MEMORIA_BONUS_PAR);
         if (novasReveladas.size === totalCards)
         {
           setGanhou(true);
@@ -1122,9 +1399,11 @@ function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, o
             {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ won: true }),
+              body: JSON.stringify({ won: true, mistakes: erros }),
             }).catch(() => {});
           }
+          setHistoricoDeFases((prev) => [...prev, { fase: faseAtual, acertos: totalPairs, erros }]);
+          setMostrandoProximaFase(true);
         }
       }
       else
@@ -1132,6 +1411,7 @@ function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, o
         playArcadeError();
         setErros((e) => e + 1);
         setParesErrados([a, b]);
+        setTimerRestante((t: number) => Math.max(1, t - TIMER_PENALIDADE));
         setTimeout(() =>
         {
           setViradas([]);
@@ -1142,8 +1422,9 @@ function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, o
     }
   };
 
-  const handleNovo = async () =>
+  const handleContinuarFase = () =>
   {
+    setCarregandoFase(true);
     clearInterval(timerRef.current);
     setCartas(gerarCartas());
     setReveladas(new Set());
@@ -1152,53 +1433,59 @@ function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, o
     setBloqueado(false);
     setGanhou(false);
     setGameOver(false);
-    setTimerRestante(MEMORIA_TIMER_INICIAL);
+    setTimerRestante(MEMORIA_TIMER[dificuldade]);
     setIniciou(false);
-    setSaveNome('');
-    setSaving(false);
-    setSavedPosition(null);
-    setSaveErro('');
+    setFaseAtual((f) => f + 1);
+    setMostrandoProximaFase(false);
     finishCalledRef.current = false;
-    await onNovoJogo();
+    setCarregandoFase(false);
   };
 
-  const handleSalvar = async (e: React.FormEvent) =>
+  const handleEncerrarMissao = () =>
   {
-    e.preventDefault();
-    const nome = saveNome.trim();
-    if (!nome) 
-      { setSaveErro('Digite um apelid: '); return; }
-    setSaving(true);
-    setSaveErro('');
-    try
-    {
-      const res = await fetch(`${apiUrl}/api/games/${gameId}/save`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: nome }),
-      });
-      const data = await res.json();
-      if (data.saved)
-      {
-        setSavedPosition({ position: data.position ?? null, total: data.total });
-        onOpenRanking('CARD_GUESS');
-      }
-      else
-        setSaveErro('Não foi possível salvar. Tente novamente.');
-    }
-    catch
-    {
-      setSaveErro('Erro de conexão');
-    }
-    finally
-    {
-      setSaving(false);
-    }
+    setMostrandoProximaFase(false);
+    setMostrandoResumo(true);
   };
+
+  const handleSalvarFase = async (nome: string) =>
+  {
+    const res = await fetch(`${apiUrl}/api/games/${gameId}/save`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: nome }),
+    });
+    return res.json();
+  };
+
+  if (mostrandoResumo)
+  {
+    return (
+      <ResumoFases
+        historico={historicoDeFases}
+        onNovoJogo={onNovoJogo}
+        onBack={onBack}
+        onOpenRanking={onOpenRanking}
+        gameIdFinal={gameId}
+        apiUrl={apiUrl}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen text-white flex flex-col" style={{ background: BG, fontFamily: "'Inter', system-ui, sans-serif" }}>
+      {mostrandoProximaFase && historicoDeFases.length > 0 && (
+        <ProximaFaseModal
+          fase={faseAtual}
+          resultado={historicoDeFases[historicoDeFases.length - 1]}
+          onContinuar={handleContinuarFase}
+          onEncerrar={handleEncerrarMissao}
+          carregando={carregandoFase}
+          apiUrl={apiUrl}
+          onSalvar={handleSalvarFase}
+        />
+      )}
+
       <GameHeader onBack={onBack} onOpenRanking={onOpenRanking} />
 
       {/* Stats bar */}
@@ -1210,6 +1497,10 @@ function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, o
             ? { background: 'rgba(249,115,22,0.15)', borderColor: 'rgba(249,115,22,0.45)', color: '#fb923c' }
             : { background: 'rgba(34,197,94,0.12)', borderColor: 'rgba(34,197,94,0.35)', color: '#4ade80' }}>
           ⏱ {timerRestante}s
+        </span>
+        <span className="text-xs font-bold px-3 py-1.5 rounded-full border"
+          style={{ background: 'rgba(6,182,212,0.10)', border: '1px solid rgba(6,182,212,0.20)', color: '#67e8f9' }}>
+          🚀 Fase {faseAtual}
         </span>
         <span className="text-xs font-bold px-3 py-1.5 rounded-full border"
           style={{ background: 'rgba(6,182,212,0.15)', borderColor: 'rgba(6,182,212,0.4)', color: '#67e8f9' }}>
@@ -1228,11 +1519,11 @@ function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, o
 
       {/* Timer bar */}
       <div className="px-5 pb-2">
-        <TimerBar seconds={timerRestante} maxSeconds={MEMORIA_TIMER_INICIAL} />
+        <TimerBar seconds={timerRestante} maxSeconds={MEMORIA_TIMER[dificuldade]} />
       </div>
 
-      {/* Game over banner */}
-      {gameOver && 
+      {/* Game over banner (briefly visible before ResumoFases renders) */}
+      {gameOver && !mostrandoResumo &&
       (
         <div className="mx-4 mb-2 rounded-2xl p-5 text-center border"
           style={{ background: 'rgba(239,68,68,0.10)', borderColor: 'rgba(239,68,68,0.40)' }}>
@@ -1241,40 +1532,6 @@ function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, o
           <p className="text-slate-400 text-sm mt-1">
             {paresEncontrados}/{totalPairs} pares &nbsp;·&nbsp; {erros} erro{erros !== 1 ? 's' : ''}
           </p>
-          <button onClick={handleNovo} className="mt-4 px-6 py-2.5 rounded-xl font-bold text-white text-sm transition hover:opacity-90"
-            style={{ background: 'linear-gradient(135deg, #991b1b, #ef4444)' }}>
-            🔄 Tentar novamente
-          </button>
-        </div>
-      )}
-
-      {/* Win banner */}
-      {ganhou &&
-      (
-        <div className="mx-4 mb-2 rounded-2xl p-5 text-center border"
-          style={{ background: 'rgba(16,185,129,0.1)', borderColor: 'rgba(16,185,129,0.35)' }}>
-          <p className="text-3xl mb-2">🛸</p>
-          <p className="font-black text-lg text-cyan-400">Missão cumprida, {p1}!</p>
-          <p className="text-slate-400 text-sm mt-1">
-            {timerRestante}s restantes &nbsp;·&nbsp; {erros} erro{erros !== 1 ? 's' : ''} &nbsp;·&nbsp; {totalPairs} coordenadas
-          </p>
-          <button
-            onClick={handleNovo}
-            className="mt-4 px-6 py-2.5 rounded-xl font-bold text-white text-sm transition hover:opacity-90"
-            style={{ background: 'linear-gradient(135deg, #0284c7, #06b6d4)' }}
-          >
-            🔄 Nova missão
-          </button>
-          <SaveRankingPanel
-            gameId={gameId}
-            saveNome={saveNome}
-            setSaveNome={setSaveNome}
-            saving={saving}
-            savedPosition={savedPosition}
-            saveErro={saveErro}
-            onSalvar={handleSalvar}
-            onOpenRanking={onOpenRanking}
-          />
         </div>
       )}
 
@@ -1289,7 +1546,7 @@ function MemoriaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, o
             width: '100%',
           }}
         >
-          {cartas.map((num, idx) => 
+          {cartas.map((num, idx) =>
           {
             const isErrada = paresErrados.includes(idx);
             const isVirada = viradas.includes(idx) && !isErrada;
@@ -1516,120 +1773,82 @@ export function VsResultScreen({ p1, p2, finalScore, vsRoundResults, apiUrl, onJ
   );
 }
 
-function LogicaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, onNovoJogo }: GameProps)
+function LogicaGame({ gameId, dificuldade, p1: _p1, apiUrl, onBack, onOpenRanking, onNovoJogo }: GameProps)
 {
-  const [questoes] = useState<Questao[]>(() => gerarQuestoes(dificuldade));
+  const [questoes, setQuestoes] = useState<Questao[]>(() => gerarQuestoes(dificuldade));
   const [atual, setAtual] = useState(0);
   const [respondido, setRespondido] = useState<boolean | null>(null);
   const [erros, setErros] = useState(0);
   const [acertos, setAcertos] = useState(0);
-  const [encerrado, setEncerrado] = useState(false);
-  const [finalizando, setFinalizando] = useState(false);
-  const [saveNome, setSaveNome] = useState('');
-  const [saving, setSaving] = useState(false);
-  const [savedPosition, setSavedPosition] = useState<{ position: number | null; total: number } | null>(null);
-  const [saveErro, setSaveErro] = useState('');
   const [streak, setStreak] = useState(0);
-  const [timedOut, setTimedOut] = useState(false);
-  const [questaoTimer, setQuestaoTimer] = useState(TIMER_LOGICA[dificuldade]);
-  const questaoTimerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
+
+  const [faseAtual, setFaseAtual] = useState(1);
+  const [historicoDeFases, setHistoricoDeFases] = useState<ResultadoFase[]>([]);
+  const [mostrandoProximaFase, setMostrandoProximaFase] = useState(false);
+  const [mostrandoResumo, setMostrandoResumo] = useState(false);
+  const [carregandoFase, setCarregandoFase] = useState(false);
+
+  const [totalTimer, setTotalTimer] = useState(TIMER_LOGICA[dificuldade]);
+  const totalTimerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
   const finishRef = useRef(false);
-  const timedOutRef = useRef(false);
 
   const questao = questoes[atual];
   const total = questoes.length;
   const meta = META_CLASSE[questao?.classificacao ?? 'CONTINGÊNCIA'];
-
   const acertou = respondido !== null && respondido === questao.resposta;
+
+  // Total timer — runs continuously, pauses only at phase modal/resumo
+  useEffect(() =>
+  {
+    if (mostrandoProximaFase || mostrandoResumo) { clearInterval(totalTimerRef.current); return; }
+    clearInterval(totalTimerRef.current);
+    const id = setInterval(() =>
+    {
+      setTotalTimer((t: number) =>
+      {
+        if (t <= 1) { clearInterval(id); return 0; }
+        return t - 1;
+      });
+    }, 1000);
+    totalTimerRef.current = id;
+    return () => clearInterval(id);
+  }, [mostrandoProximaFase, mostrandoResumo]);
+
+  // Timer = 0 → end phase (loss)
+  useEffect(() =>
+  {
+    if (totalTimer !== 0 || mostrandoProximaFase || mostrandoResumo) return;
+    clearInterval(totalTimerRef.current);
+    setHistoricoDeFases((prev) => [...prev, { fase: faseAtual, acertos, erros }]);
+    setMostrandoResumo(true);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [totalTimer]);
 
   const responder = useCallback((escolha: boolean) =>
   {
-    if (respondido !== null || timedOutRef.current) return;
-    clearInterval(questaoTimerRef.current);
+    if (respondido !== null || totalTimer === 0) return;
     setRespondido(escolha);
     if (escolha !== questao.resposta)
     {
       setErros((e) => e + 1);
       setStreak(0);
+      setTotalTimer((t: number) => Math.max(1, t - TIMER_PENALIDADE));
     }
     else
     {
       setAcertos((a) => a + 1);
       setStreak((s) => s + 1);
+      setTotalTimer((t: number) => t + TIMER_BONUS_ACERTO);
     }
-  }, [respondido, questao]);
+  }, [respondido, questao, totalTimer]);
 
-  useEffect(() =>
-  {
-    if (respondido !== null || encerrado || timedOut) return;
-    timedOutRef.current = false;
-    setQuestaoTimer(TIMER_LOGICA[dificuldade]);
-    clearInterval(questaoTimerRef.current);
-    questaoTimerRef.current = setInterval(() =>
-    {
-      setQuestaoTimer((t) =>
-      {
-        if (t <= 1)
-        {
-          clearInterval(questaoTimerRef.current);
-          return 0;
-        }
-        return t - 1;
-      });
-    }, 1000);
-    return () => clearInterval(questaoTimerRef.current);
-  }, [atual, respondido, encerrado, timedOut, dificuldade]);
-
-  useEffect(() =>
-  {
-    if (questaoTimer !== 0 || respondido !== null || encerrado) return;
-    timedOutRef.current = true;
-    setTimedOut(true);
-    setErros((e) => e + 1);
-    setStreak(0);
-    clearInterval(questaoTimerRef.current);
-    const t = setTimeout(() =>
-    {
-      setTimedOut(false);
-      timedOutRef.current = false;
-      if (atual + 1 >= total)
-      {
-        setEncerrado(true);
-        if (!finishRef.current)
-        {
-          finishRef.current = true;
-          fetch(`${apiUrl}/api/games/${gameId}/finish`,
-          {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ won: true, mistakes: erros + 1 }),
-          }).catch(() => {});
-        }
-      }
-      else
-      {
-        setAtual((i) => i + 1);
-        setRespondido(null);
-      }
-    }, 1400);
-    return () => clearTimeout(t);
-  }, [questaoTimer, respondido, encerrado, atual, total, apiUrl, gameId, erros]);
-
-  const proximo = async () =>
+  const proximo = () =>
   {
     if (atual + 1 >= total)
     {
-      setEncerrado(true);
-      if (!finishRef.current)
-      {
-        finishRef.current = true;
-        const totalErros = erros + (respondido !== questao.resposta ? 1 : 0);
-        fetch(`${apiUrl}/api/games/${gameId}/finish`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ won: true, mistakes: totalErros }),
-        }).catch(() => {});
-      }
+      clearInterval(totalTimerRef.current);
+      setHistoricoDeFases((prev) => [...prev, { fase: faseAtual, acertos, erros }]);
+      setMostrandoProximaFase(true);
     }
     else
     {
@@ -1638,136 +1857,92 @@ function LogicaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, on
     }
   };
 
-  const handleNovo = async () =>
+  const handleContinuarFase = () =>
   {
-    setFinalizando(true);
-    try { await onNovoJogo(); } finally { setFinalizando(false); }
+    setCarregandoFase(true);
+    setQuestoes(gerarQuestoes(dificuldade));
+    setAtual(0);
+    setRespondido(null);
+    setErros(0);
+    setAcertos(0);
+    setStreak(0);
+    setTotalTimer(TIMER_LOGICA[dificuldade]);
+    setFaseAtual((f) => f + 1);
+    setMostrandoProximaFase(false);
+    finishRef.current = false;
+    setCarregandoFase(false);
   };
 
-  const handleSalvar = async (e: React.FormEvent) =>
+  const handleEncerrarMissao = () =>
   {
-    e.preventDefault();
-    const nome = saveNome.trim();
-    if (!nome) { setSaveErro('Digite um apelido de astronauta'); return; }
-    setSaving(true);
-    setSaveErro('');
-    try
+    setMostrandoProximaFase(false);
+    if (!finishRef.current)
     {
-      const res = await fetch(`${apiUrl}/api/games/${gameId}/save`,
+      finishRef.current = true;
+      const totalErrosAgg = historicoDeFases.reduce((s, f) => s + f.erros, 0);
+      fetch(`${apiUrl}/api/games/${gameId}/finish`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: nome }),
+        body: JSON.stringify({ won: true, mistakes: totalErrosAgg }),
+      }).catch(() => {});
+    }
+    setMostrandoResumo(true);
+  };
+
+  const handleSalvarFase = async (nome: string) =>
+  {
+    if (!finishRef.current)
+    {
+      finishRef.current = true;
+      const totalErrosAgg = historicoDeFases.reduce((s, f) => s + f.erros, 0);
+      await fetch(`${apiUrl}/api/games/${gameId}/finish`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ won: true, mistakes: totalErrosAgg }),
       });
-      const data = await res.json();
-      if (data.saved)
-      {
-        setSavedPosition({ position: data.position ?? null, total: data.total });
-        onOpenRanking('LOGIC_PUZZLE');
-      }
-      else
-      {
-        setSaveErro('Não foi possível salvar. Tente novamente.');
-      }
     }
-    catch
+    const res = await fetch(`${apiUrl}/api/games/${gameId}/save`,
     {
-      setSaveErro('Erro de conexão com a estação');
-    }
-    finally
-    {
-      setSaving(false);
-    }
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: nome }),
+    });
+    return res.json();
   };
 
   const vLabel = (b: boolean) => b ? 'VERDADEIRA' : 'FALSA';
   const vColor = (b: boolean) => b ? '#4ade80' : '#f87171';
 
-  if (encerrado) 
+  if (mostrandoResumo)
   {
-    const falhas = erros;
-    const decodificadas = acertos;
-    const perfeita = falhas === 0;
     return (
-      <div className="min-h-screen text-white flex flex-col" style={{ background: BG, fontFamily: "'Inter', system-ui, sans-serif" }}>
-        <GameHeader onBack={onBack} onOpenRanking={onOpenRanking} />
-        <main className="flex-1 flex flex-col items-center justify-center px-4 py-8">
-          <div className="w-full max-w-md bg-[#0c1729] border border-white/10 rounded-3xl p-8 text-center shadow-2xl">
-            <div className="text-5xl mb-4">{perfeita ? '🏆' : decodificadas >= total / 2 ? '🛸' : '📡'}</div>
-            <h2 className="text-2xl font-black text-white mb-1">
-              {perfeita ? 'Missão Perfeita, Astronauta!' : 'Protocolo Concluído!'}
-            </h2>
-            <p className="text-slate-400 text-sm mb-6">
-              {p1} · {LOGICA_CONFIG[dificuldade].label} · Protocolo Lógico
-            </p>
-
-            <div className="flex gap-3 mb-6">
-              <div className="flex-1 rounded-2xl p-4" style={{ background: 'rgba(74,222,128,0.10)', border: '1px solid rgba(74,222,128,0.30)' }}>
-                <p className="text-3xl font-black text-green-400">{decodificadas}</p>
-                <p className="text-xs text-slate-400 mt-1">📡 Decodificadas</p>
-              </div>
-              <div className="flex-1 rounded-2xl p-4"
-                style={falhas > 0
-                  ? { background: 'rgba(248,113,113,0.10)', border: '1px solid rgba(248,113,113,0.30)' }
-                  : { background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.10)' }}>
-                <p className="text-3xl font-black" style={{ color: falhas > 0 ? '#f87171' : '#94a3b8' }}>{falhas}</p>
-                <p className="text-xs text-slate-400 mt-1">🔇 Falhas</p>
-              </div>
-              <div className="flex-1 rounded-2xl p-4" style={{ background: 'rgba(34,197,94,0.10)', border: '1px solid rgba(34,197,94,0.25)' }}>
-                <p className="text-3xl font-black text-green-300">{total}</p>
-                <p className="text-xs text-slate-400 mt-1">🌌 Transmissões</p>
-              </div>
-            </div>
-
-            <button
-              onClick={handleNovo}
-              disabled={finalizando}
-              className="w-full py-3 rounded-xl font-bold text-sm text-white transition hover:opacity-90 mb-3 disabled:opacity-50"
-              style={{ background: 'linear-gradient(135deg, #134e1e, #22c55e)', boxShadow: '0 4px 16px rgba(34,197,94,0.25)' }}
-            >
-              {finalizando ? '🛸 Iniciando...' : '🔄 Nova missão lógica'}
-            </button>
-
-            {savedPosition ? (
-              <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-center">
-                {savedPosition.position != null
-                  ? <><p className="text-amber-300 font-bold text-sm">🏆 #{savedPosition.position} de {savedPosition.total} astronautas!</p>
-                     <button onClick={() => onOpenRanking('LOGIC_PUZZLE')} className="mt-1 text-xs text-amber-400 underline underline-offset-2 hover:text-amber-300 transition">Ver ranking completo →</button></>
-                  : <p className="text-emerald-300 font-bold text-sm">✅ Resultado salvo na base espacial!</p>
-                }
-              </div>
-            ) : (
-              <form onSubmit={handleSalvar}>
-                <p className="text-slate-400 text-xs mb-2">Registrar no Hall da Fama:</p>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={saveNome}
-                    onChange={(e) => setSaveNome(e.target.value)}
-                    placeholder="Apelido do astronauta"
-                    maxLength={30}
-                    className="flex-1 bg-white/5 border border-white/15 focus:border-green-500 rounded-xl px-3 py-2 text-sm text-white focus:outline-none transition"
-                  />
-                  <button
-                    type="submit"
-                    disabled={saving || !saveNome.trim()}
-                    className="px-4 py-2 rounded-xl font-bold text-xs text-white disabled:opacity-40 transition hover:opacity-90"
-                    style={{ background: 'linear-gradient(135deg, #134e1e, #22c55e)' }}
-                  >
-                    {saving ? '...' : '💾 Salvar'}
-                  </button>
-                </div>
-                {saveErro && <p className="text-red-400 text-xs mt-1">{saveErro}</p>}
-              </form>
-            )}
-          </div>
-        </main>
-      </div>
+      <ResumoFases
+        historico={historicoDeFases}
+        onNovoJogo={onNovoJogo}
+        onBack={onBack}
+        onOpenRanking={onOpenRanking}
+        gameIdFinal={gameId}
+        apiUrl={apiUrl}
+      />
     );
   }
 
   return (
     <div className="min-h-screen text-white flex flex-col" style={{ background: BG, fontFamily: "'Inter', system-ui, sans-serif" }}>
+      {mostrandoProximaFase && historicoDeFases.length > 0 && (
+        <ProximaFaseModal
+          fase={faseAtual}
+          resultado={historicoDeFases[historicoDeFases.length - 1]}
+          onContinuar={handleContinuarFase}
+          onEncerrar={handleEncerrarMissao}
+          carregando={carregandoFase}
+          apiUrl={apiUrl}
+          onSalvar={handleSalvarFase}
+        />
+      )}
+
       <GameHeader onBack={onBack} onOpenRanking={onOpenRanking} />
 
       {/* Barra de progresso */}
@@ -1775,6 +1950,10 @@ function LogicaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, on
         <span className="text-xs font-bold px-3 py-1.5 rounded-full border"
           style={{ background: 'rgba(34,197,94,0.12)', borderColor: 'rgba(34,197,94,0.30)', color: '#4ade80' }}>
           📡 {atual + 1}/{total}
+        </span>
+        <span className="text-xs font-bold px-3 py-1.5 rounded-full border"
+          style={{ background: 'rgba(6,182,212,0.10)', borderColor: 'rgba(6,182,212,0.20)', color: '#67e8f9' }}>
+          🚀 Fase {faseAtual}
         </span>
         <span className="text-xs font-bold px-3 py-1.5 rounded-full border"
           style={{ background: 'rgba(74,222,128,0.10)', borderColor: 'rgba(74,222,128,0.25)', color: '#4ade80' }}>
@@ -1787,19 +1966,19 @@ function LogicaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, on
           🔇 {erros}
         </span>
         <StreakBadge streak={streak} />
-        <span className={`ml-auto text-xs font-black px-3 py-1.5 rounded-full border ${questaoTimer <= 5 ? 'animate-pulse' : ''}`}
-          style={questaoTimer <= 5
+        <span className={`ml-auto text-xs font-black px-3 py-1.5 rounded-full border ${totalTimer <= 10 ? 'animate-pulse' : ''}`}
+          style={totalTimer <= 10
             ? { background: 'rgba(239,68,68,0.15)', borderColor: 'rgba(239,68,68,0.40)', color: '#f87171' }
-            : questaoTimer <= 10
+            : totalTimer <= 20
             ? { background: 'rgba(249,115,22,0.12)', borderColor: 'rgba(249,115,22,0.35)', color: '#fb923c' }
             : { background: 'rgba(34,197,94,0.08)', borderColor: 'rgba(34,197,94,0.20)', color: '#86efac' }}>
-          ⏱ {questaoTimer}s
+          ⏱ {totalTimer}s
         </span>
       </div>
 
       {/* Timer bar */}
       <div className="px-5 pb-2">
-        <TimerBar seconds={questaoTimer} maxSeconds={TIMER_LOGICA[dificuldade]} />
+        <TimerBar seconds={totalTimer} maxSeconds={TIMER_LOGICA[dificuldade]} />
       </div>
 
       <main className="flex-1 flex flex-col items-center px-4 pb-8 pt-2 max-w-lg mx-auto w-full gap-4">
@@ -1851,17 +2030,8 @@ function LogicaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, on
           <p className="text-xs text-slate-500 mt-2">Operadores lógicos: {questao.modelo.conectivos}</p>
         </div>
 
-        {/* Timeout flash */}
-        {timedOut && (
-          <div className="w-full rounded-2xl p-4 text-center border animate-pulse"
-            style={{ background: 'rgba(239,68,68,0.15)', borderColor: 'rgba(239,68,68,0.45)' }}>
-            <p className="text-red-400 font-black text-lg">⏱ Tempo esgotado!</p>
-            <p className="text-slate-400 text-xs mt-1">Próxima transmissão...</p>
-          </div>
-        )}
-
         {/* Decisão do astronauta */}
-        {respondido === null && !timedOut && (
+        {respondido === null && (
           <div className="w-full">
             <p className="text-center text-sm text-slate-400 mb-3">
               Astronauta, esta transmissão é:
@@ -1886,16 +2056,15 @@ function LogicaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, on
             </div>
           </div>
         )}
-        {respondido !== null && 
+        {respondido !== null &&
         (
           <div className="w-full">
-            {/* Feedback espacial */}
             <div className="rounded-2xl p-4 mb-3 text-center border"
               style={acertou
                 ? { background: 'rgba(74,222,128,0.10)', borderColor: 'rgba(74,222,128,0.40)' }
                 : { background: 'rgba(248,113,113,0.10)', borderColor: 'rgba(248,113,113,0.40)' }}>
               <p className="text-xl font-black mb-1" style={{ color: acertou ? '#4ade80' : '#f87171' }}>
-                {acertou ? '📡 Sinal decodificado!' : '🔇 Falha na decodificação!'}
+                {acertou ? '📡 Sinal decodificado! +20s' : '🔇 Falha na decodificação! -5s'}
               </p>
               <p className="text-sm text-slate-300">
                 A transmissão é{' '}
@@ -1917,13 +2086,12 @@ function LogicaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, on
                 )}
               </p>
             </div>
-
             <button
               onClick={proximo}
               className="w-full py-4 rounded-2xl font-black text-white text-base transition hover:opacity-90 active:scale-[0.98]"
               style={{ background: 'linear-gradient(135deg, #134e1e, #22c55e)', boxShadow: '0 4px 16px rgba(34,197,94,0.20)' }}
             >
-              {atual + 1 >= total ? '🏁 Ver resultado da missão' : '🛸 Próxima transmissão →'}
+              {atual + 1 >= total ? '🏁 Concluir fase' : '🛸 Próxima transmissão →'}
             </button>
           </div>
         )}
@@ -1994,9 +2162,9 @@ function gerarExerciciosPrecedencia(dif: Dificuldade): ExercicioParenteses[]
   return pool.slice(0, PARENTESES_CONFIG[dif].count);
 }
 
-function PrecedenciaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRanking, onNovoJogo }: GameProps)
+function PrecedenciaGame({ gameId, dificuldade, p1: _p1, apiUrl, onBack, onOpenRanking, onNovoJogo }: GameProps)
 {
-  const [exercicios] = useState<ExercicioParenteses[]>(() => gerarExerciciosPrecedencia(dificuldade));
+  const [exercicios, setExercicios] = useState<ExercicioParenteses[]>(() => gerarExerciciosPrecedencia(dificuldade));
   const [atual, setAtual] = useState(0);
   const [tokens, setTokens] = useState<string[]>(() => [...exercicios[0].flat]);
   const [history, setHistory] = useState<string[][]>([]);
@@ -2005,16 +2173,16 @@ function PrecedenciaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRankin
   const [resultado, setResultado] = useState<'correto' | 'errado' | null>(null);
   const [erros, setErros] = useState(0);
   const [acertos, setAcertos] = useState(0);
-  const [encerrado, setEncerrado] = useState(false);
-  const [finalizando, setFinalizando] = useState(false);
-  const [saveNome, setSaveNome] = useState('');
-  const [saving, setSaving] = useState(false);
-  const [savedPosition, setSavedPosition] = useState<{ position: number | null; total: number } | null>(null);
-  const [saveErro, setSaveErro] = useState('');
   const [streak, setStreak] = useState(0);
-  const [timedOut, setTimedOut] = useState(false);
-  const [expressaoTimer, setExpressaoTimer] = useState(TIMER_PRECEDENCIA[dificuldade]);
-  const expressaoTimerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
+
+  const [faseAtual, setFaseAtual] = useState(1);
+  const [historicoDeFases, setHistoricoDeFases] = useState<ResultadoFase[]>([]);
+  const [mostrandoProximaFase, setMostrandoProximaFase] = useState(false);
+  const [mostrandoResumo, setMostrandoResumo] = useState(false);
+  const [carregandoFase, setCarregandoFase] = useState(false);
+
+  const [totalTimer, setTotalTimer] = useState(TIMER_PRECEDENCIA[dificuldade]);
+  const totalTimerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
   const finishRef = useRef(false);
 
   const exercicio = exercicios[atual];
@@ -2022,56 +2190,28 @@ function PrecedenciaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRankin
 
   useEffect(() =>
   {
-    if (resultado !== null || encerrado || timedOut) return;
-    setExpressaoTimer(TIMER_PRECEDENCIA[dificuldade]);
-    clearInterval(expressaoTimerRef.current);
-    expressaoTimerRef.current = setInterval(() =>
+    if (mostrandoProximaFase || mostrandoResumo) { clearInterval(totalTimerRef.current); return; }
+    clearInterval(totalTimerRef.current);
+    const id = setInterval(() =>
     {
-      setExpressaoTimer((t) =>
+      setTotalTimer((t: number) =>
       {
-        if (t <= 1) { clearInterval(expressaoTimerRef.current); return 0; }
+        if (t <= 1) { clearInterval(id); return 0; }
         return t - 1;
       });
     }, 1000);
-    return () => clearInterval(expressaoTimerRef.current);
-  }, [atual, resultado, encerrado, timedOut, dificuldade]);
+    totalTimerRef.current = id;
+    return () => clearInterval(id);
+  }, [mostrandoProximaFase, mostrandoResumo]);
 
   useEffect(() =>
   {
-    if (expressaoTimer !== 0 || resultado !== null || encerrado) return;
-    setTimedOut(true);
-    setErros((e) => e + 1);
-    setStreak(0);
-    clearInterval(expressaoTimerRef.current);
-    const t = setTimeout(() =>
-    {
-      setTimedOut(false);
-      if (atual + 1 >= total)
-      {
-        setEncerrado(true);
-        if (!finishRef.current)
-        {
-          finishRef.current = true;
-          fetch(`${apiUrl}/api/games/${gameId}/finish`,
-          {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ won: true, mistakes: erros + 1 }),
-          }).catch(() => {});
-        }
-      }
-      else
-      {
-        const next = atual + 1;
-        setAtual(next);
-        setTokens([...exercicios[next].flat]);
-        setHistory([]);
-        setSelStart(null);
-        setSelEnd(null);
-        setResultado(null);
-      }
-    }, 1400);
-    return () => clearTimeout(t);
-  }, [expressaoTimer, resultado, encerrado, atual, total, apiUrl, gameId, erros, exercicios]);
+    if (totalTimer !== 0 || mostrandoProximaFase || mostrandoResumo) return;
+    clearInterval(totalTimerRef.current);
+    setHistoricoDeFases((prev) => [...prev, { fase: faseAtual, acertos, erros }]);
+    setMostrandoResumo(true);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [totalTimer]);
 
   const handleTokenClick = (index: number) =>
   {
@@ -2139,30 +2279,31 @@ function PrecedenciaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRankin
   const verificar = () =>
   {
     if (resultado !== null) return;
-    clearInterval(expressaoTimerRef.current);
     const resposta = normalizar(tokens.join(''));
     const esperada = normalizar(exercicio.correta);
     const correto = resposta === esperada;
     setResultado(correto ? 'correto' : 'errado');
-    if (correto) { setAcertos(a => a + 1); setStreak(s => s + 1); }
-    else { setErros(e => e + 1); setStreak(0); }
+    if (correto)
+    {
+      setAcertos((a) => a + 1);
+      setStreak((s) => s + 1);
+      setTotalTimer((t: number) => t + TIMER_BONUS_ACERTO);
+    }
+    else
+    {
+      setErros((e) => e + 1);
+      setStreak(0);
+      setTotalTimer((t: number) => Math.max(1, t - TIMER_PENALIDADE));
+    }
   };
 
-  const proximo = async () =>
+  const proximo = () =>
   {
     if (atual + 1 >= total)
     {
-      setEncerrado(true);
-      if (!finishRef.current)
-      {
-        finishRef.current = true;
-        fetch(`${apiUrl}/api/games/${gameId}/finish`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ won: true, mistakes: erros }),
-        }).catch(() => {});
-      }
+      clearInterval(totalTimerRef.current);
+      setHistoricoDeFases((prev) => [...prev, { fase: faseAtual, acertos, erros }]);
+      setMostrandoProximaFase(true);
     }
     else
     {
@@ -2176,123 +2317,77 @@ function PrecedenciaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRankin
     }
   };
 
-  const handleNovo = async () =>
+  const handleContinuarFase = () =>
   {
-    setFinalizando(true);
-    try { await onNovoJogo(); } finally { setFinalizando(false); }
+    setCarregandoFase(true);
+    const novos = gerarExerciciosPrecedencia(dificuldade);
+    setExercicios(novos);
+    setAtual(0);
+    setTokens([...novos[0].flat]);
+    setHistory([]);
+    setSelStart(null);
+    setSelEnd(null);
+    setResultado(null);
+    setErros(0);
+    setAcertos(0);
+    setStreak(0);
+    setTotalTimer(TIMER_PRECEDENCIA[dificuldade]);
+    setFaseAtual((f) => f + 1);
+    setMostrandoProximaFase(false);
+    finishRef.current = false;
+    setCarregandoFase(false);
   };
 
-  const handleSalvar = async (e: React.FormEvent) =>
+  const handleEncerrarMissao = () =>
   {
-    e.preventDefault();
-    const nome = saveNome.trim();
-    if (!nome) { setSaveErro('Digite um apelido de astronauta'); return; }
-    setSaving(true);
-    setSaveErro('');
-    try
+    setMostrandoProximaFase(false);
+    if (!finishRef.current)
     {
-      const res = await fetch(`${apiUrl}/api/games/${gameId}/save`,
+      finishRef.current = true;
+      const totalErrosAgg = historicoDeFases.reduce((s, f) => s + f.erros, 0);
+      fetch(`${apiUrl}/api/games/${gameId}/finish`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: nome }),
-      });
-      const data = await res.json();
-      if (data.saved)
-      {
-        setSavedPosition({ position: data.position ?? null, total: data.total });
-        onOpenRanking('PRECEDENCE_PUZZLE');
-      }
-      else
-      {
-        setSaveErro('Não foi possível salvar. Tente novamente.');
-      }
+        body: JSON.stringify({ won: true, mistakes: totalErrosAgg }),
+      }).catch(() => {});
     }
-    catch
-    {
-      setSaveErro('Erro de conexão com a estação');
-    }
-    finally
-    {
-      setSaving(false);
-    }
+    setMostrandoResumo(true);
   };
 
-  if (encerrado) 
+  const handleSalvarFase = async (nome: string) =>
   {
-    const perfeita = erros === 0;
+    if (!finishRef.current)
+    {
+      finishRef.current = true;
+      const totalErrosAgg = historicoDeFases.reduce((s, f) => s + f.erros, 0);
+      await fetch(`${apiUrl}/api/games/${gameId}/finish`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ won: true, mistakes: totalErrosAgg }),
+      });
+    }
+    const res = await fetch(`${apiUrl}/api/games/${gameId}/save`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: nome }),
+    });
+    return res.json();
+  };
+
+  if (mostrandoResumo)
+  {
     return (
-      <div className="min-h-screen text-white flex flex-col" style={{ background: BG, fontFamily: "'Inter', system-ui, sans-serif" }}>
-        <GameHeader onBack={onBack} onOpenRanking={onOpenRanking} />
-        <main className="flex-1 flex flex-col items-center justify-center px-4 py-8">
-          <div className="w-full max-w-md bg-[#0c1729] border border-white/10 rounded-3xl p-8 text-center shadow-2xl">
-            <div className="text-5xl mb-4">{perfeita ? '🏆' : acertos >= total / 2 ? '⚙️' : '🪐'}</div>
-            <h2 className="text-2xl font-black text-white mb-1">
-              {perfeita ? 'Hierarquia Restaurada!' : 'Sistemas Recalibrados!'}
-            </h2>
-            <p className="text-slate-400 text-sm mb-6">
-              {p1} · {PARENTESES_CONFIG[dificuldade].label} · Hierarquia de Comandos
-            </p>
-            <div className="flex gap-3 mb-6">
-              <div className="flex-1 rounded-2xl p-4" style={{ background: 'rgba(167,139,250,0.10)', border: '1px solid rgba(167,139,250,0.30)' }}>
-                <p className="text-3xl font-black" style={{ color: '#a78bfa' }}>{acertos}</p>
-                <p className="text-xs text-slate-400 mt-1">⚙️ Corretas</p>
-              </div>
-              <div className="flex-1 rounded-2xl p-4"
-                style={erros > 0
-                  ? { background: 'rgba(248,113,113,0.10)', border: '1px solid rgba(248,113,113,0.30)' }
-                  : { background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.10)' }}>
-                <p className="text-3xl font-black" style={{ color: erros > 0 ? '#f87171' : '#94a3b8' }}>{erros}</p>
-                <p className="text-xs text-slate-400 mt-1">🔇 Erros</p>
-              </div>
-              <div className="flex-1 rounded-2xl p-4" style={{ background: 'rgba(139,92,246,0.10)', border: '1px solid rgba(139,92,246,0.25)' }}>
-                <p className="text-3xl font-black" style={{ color: '#8b5cf6' }}>{total}</p>
-                <p className="text-xs text-slate-400 mt-1">🪐 Expressões</p>
-              </div>
-            </div>
-            <button
-              onClick={handleNovo}
-              disabled={finalizando}
-              className="w-full py-3 rounded-xl font-bold text-sm text-white transition hover:opacity-90 mb-3 disabled:opacity-50"
-              style={{ background: 'linear-gradient(135deg, #3b1fa8, #7c3aed)', boxShadow: '0 4px 16px rgba(139,92,246,0.25)' }}
-            >
-              {finalizando ? '🪐 Iniciando...' : '🔄 Nova missão de precedência'}
-            </button>
-            {savedPosition ? (
-              <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-center">
-                {savedPosition.position != null
-                  ? <><p className="text-amber-300 font-bold text-sm">🏆 #{savedPosition.position} de {savedPosition.total} astronautas!</p>
-                     <button onClick={() => onOpenRanking('PRECEDENCE_PUZZLE')} className="mt-1 text-xs text-amber-400 underline underline-offset-2 hover:text-amber-300 transition">Ver ranking completo →</button></>
-                  : <p className="text-violet-300 font-bold text-sm">✅ Resultado salvo na base espacial!</p>
-                }
-              </div>
-            ) : (
-              <form onSubmit={handleSalvar}>
-                <p className="text-slate-400 text-xs mb-2">Registrar no Hall da Fama:</p>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={saveNome}
-                    onChange={(e) => setSaveNome(e.target.value)}
-                    placeholder="Apelido do astronauta"
-                    maxLength={30}
-                    className="flex-1 bg-white/5 border border-white/15 focus:border-violet-500 rounded-xl px-3 py-2 text-sm text-white focus:outline-none transition"
-                  />
-                  <button
-                    type="submit"
-                    disabled={saving || !saveNome.trim()}
-                    className="px-4 py-2 rounded-xl font-bold text-xs text-white disabled:opacity-40 transition hover:opacity-90"
-                    style={{ background: 'linear-gradient(135deg, #3b1fa8, #7c3aed)' }}
-                  >
-                    {saving ? '...' : '💾 Salvar'}
-                  </button>
-                </div>
-                {saveErro && <p className="text-red-400 text-xs mt-1">{saveErro}</p>}
-              </form>
-            )}
-          </div>
-        </main>
-      </div>
+      <ResumoFases
+        historico={historicoDeFases}
+        onNovoJogo={onNovoJogo}
+        onBack={onBack}
+        onOpenRanking={onOpenRanking}
+        gameIdFinal={gameId}
+        apiUrl={apiUrl}
+      />
     );
   }
 
@@ -2300,6 +2395,18 @@ function PrecedenciaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRankin
 
   return (
     <div className="min-h-screen text-white flex flex-col" style={{ background: BG, fontFamily: "'Inter', system-ui, sans-serif" }}>
+      {mostrandoProximaFase && historicoDeFases.length > 0 && (
+        <ProximaFaseModal
+          fase={faseAtual}
+          resultado={historicoDeFases[historicoDeFases.length - 1]}
+          onContinuar={handleContinuarFase}
+          onEncerrar={handleEncerrarMissao}
+          carregando={carregandoFase}
+          apiUrl={apiUrl}
+          onSalvar={handleSalvarFase}
+        />
+      )}
+
       <GameHeader onBack={onBack} onOpenRanking={onOpenRanking} />
 
       {/* Barra de progresso */}
@@ -2307,6 +2414,10 @@ function PrecedenciaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRankin
         <span className="text-xs font-bold px-3 py-1.5 rounded-full border"
           style={{ background: 'rgba(139,92,246,0.12)', borderColor: 'rgba(167,139,250,0.30)', color: '#a78bfa' }}>
           ⚙️ {atual + 1}/{total}
+        </span>
+        <span className="text-xs font-bold px-3 py-1.5 rounded-full border"
+          style={{ background: 'rgba(6,182,212,0.10)', borderColor: 'rgba(6,182,212,0.20)', color: '#67e8f9' }}>
+          🚀 Fase {faseAtual}
         </span>
         <span className="text-xs font-bold px-3 py-1.5 rounded-full border"
           style={{ background: 'rgba(167,139,250,0.10)', borderColor: 'rgba(167,139,250,0.25)', color: '#a78bfa' }}>
@@ -2319,19 +2430,19 @@ function PrecedenciaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRankin
           ❌ {erros}
         </span>
         <StreakBadge streak={streak} />
-        <span className={`ml-auto text-xs font-black px-3 py-1.5 rounded-full border ${expressaoTimer <= 5 ? 'animate-pulse' : ''}`}
-          style={expressaoTimer <= 5
+        <span className={`ml-auto text-xs font-black px-3 py-1.5 rounded-full border ${totalTimer <= 10 ? 'animate-pulse' : ''}`}
+          style={totalTimer <= 10
             ? { background: 'rgba(239,68,68,0.15)', borderColor: 'rgba(239,68,68,0.40)', color: '#f87171' }
-            : expressaoTimer <= 10
+            : totalTimer <= 20
             ? { background: 'rgba(249,115,22,0.12)', borderColor: 'rgba(249,115,22,0.35)', color: '#fb923c' }
             : { background: 'rgba(139,92,246,0.10)', borderColor: 'rgba(167,139,250,0.25)', color: '#c4b5fd' }}>
-          ⏱ {expressaoTimer}s
+          ⏱ {totalTimer}s
         </span>
       </div>
 
       {/* Timer bar */}
       <div className="px-5 pb-2">
-        <TimerBar seconds={expressaoTimer} maxSeconds={TIMER_PRECEDENCIA[dificuldade]} />
+        <TimerBar seconds={totalTimer} maxSeconds={TIMER_PRECEDENCIA[dificuldade]} />
       </div>
 
       <main className="flex-1 flex flex-col items-center px-4 pb-8 pt-2 max-w-2xl mx-auto w-full gap-4">
@@ -2354,15 +2465,6 @@ function PrecedenciaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRankin
             <span className="text-slate-400 ml-2 text-[10px]">· → associa à direita · demais associam à esquerda</span>
           </div>
         </div>
-
-        {/* Timeout flash */}
-        {timedOut && (
-          <div className="w-full rounded-2xl p-4 text-center border animate-pulse"
-            style={{ background: 'rgba(239,68,68,0.15)', borderColor: 'rgba(239,68,68,0.45)' }}>
-            <p className="text-red-400 font-black text-lg">⏱ Tempo esgotado!</p>
-            <p className="text-slate-400 text-xs mt-1">Próxima expressão...</p>
-          </div>
-        )}
 
         {/* Expressão interativa */}
         <div className="w-full rounded-2xl p-6 border border-white/10" style={{ background: '#0a1428' }}>
@@ -2471,7 +2573,7 @@ function PrecedenciaGame({ gameId, dificuldade, p1, apiUrl, onBack, onOpenRankin
                 ? { background: 'rgba(74,222,128,0.10)', borderColor: 'rgba(74,222,128,0.40)' }
                 : { background: 'rgba(248,113,113,0.10)', borderColor: 'rgba(248,113,113,0.40)' }}>
               <p className="text-xl font-black mb-2" style={{ color: resultado === 'correto' ? '#4ade80' : '#f87171' }}>
-                {resultado === 'correto' ? '⚙️ Hierarquia restaurada!' : '🔇 Sequência incorreta!'}
+                {resultado === 'correto' ? '⚙️ Hierarquia restaurada! +20s' : '🔇 Sequência incorreta! -5s'}
               </p>
               {resultado === 'errado' && (
                 <div className="mb-3">
@@ -2537,7 +2639,7 @@ function MemoriaVsGame({ gameId, dificuldade, p1, p2, apiUrl, onBack, onOpenRank
   const [bloqueado, setBloqueado] = useState(false);
   const [ganhou, setGanhou] = useState(false);
   const [gameOver, setGameOver] = useState(false);
-  const [timerRestante, setTimerRestante] = useState(MEMORIA_TIMER_INICIAL);
+  const [timerRestante, setTimerRestante] = useState(MEMORIA_TIMER[dificuldade]);
   const [iniciou, setIniciou] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
   const [statsP1, setStatsP1] = useState<EstatsJogador | null>(null);
@@ -2556,7 +2658,7 @@ function MemoriaVsGame({ gameId, dificuldade, p1, p2, apiUrl, onBack, onOpenRank
     setBloqueado(false);
     setGanhou(false);
     setGameOver(false);
-    setTimerRestante(MEMORIA_TIMER_INICIAL);
+    setTimerRestante(MEMORIA_TIMER[dificuldade]);
     setIniciou(false);
     clearInterval(timerRef.current);
   }, []);
@@ -2798,7 +2900,7 @@ function MemoriaVsGame({ gameId, dificuldade, p1, p2, apiUrl, onBack, onOpenRank
 
       {/* Timer bar */}
       <div className="px-5 pb-2">
-        <TimerBar seconds={timerRestante} maxSeconds={MEMORIA_TIMER_INICIAL} />
+        <TimerBar seconds={timerRestante} maxSeconds={MEMORIA_TIMER[dificuldade]} />
       </div>
 
       {/* Game over / win banners */}
