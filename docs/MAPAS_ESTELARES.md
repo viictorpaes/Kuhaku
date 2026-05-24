@@ -16,6 +16,7 @@
   </tr>
 </table>
 
+> [!NOTE]
 > **Lore:** As coordenadas estelares foram embaralhadas por uma tempestade cósmica. O astronauta precisa reconstruir o mapa do universo encontrando os pares de estrelas gêmeas antes que o tempo se esgote.
 
 
@@ -34,6 +35,9 @@ Encontre todos os **pares de cartas idênticas** no grid antes do tempo acabar. 
 | 🃏 Cartas viradas | 2 por vez — se iguais, permanecem abertas |
 | 🏆 Vitória | Encontrar todos os pares antes do timer zerar |
 | 💾 Ranking | Redirecionamento automático para `CARD_GUESS` ao salvar |
+
+> [!CAUTION]
+> Quando o timer chega a **0**, o jogo encerra imediatamente com **Game Over** — mesmo que esteja faltando apenas um par. Gerencie bem o tempo e priorize virar cartas que você já memorizou.
 
 
 ## 📋 Regras — Modo 1v1
@@ -64,7 +68,8 @@ Encontre todos os **pares de cartas idênticas** no grid antes do tempo acabar. 
 | 🚀 Piloto (4×5, 10p) | 60s | +25s/par | 310s |
 | 👨‍🚀 Comandante (6×6, 18p) | 60s | +25s/par | 510s |
 
-> ¹ Calculado assumindo que todos os pares são encontrados antes do timer zerar e o bônus é acumulativo.
+> [!NOTE]
+> ¹ Calculado assumindo que todos os pares são encontrados antes do timer zerar e o bônus é acumulativo. Na prática, erros não subtraem tempo — apenas desperdiçam o turno.
 
 
 ## 🖥️ Informações Técnicas
@@ -74,6 +79,9 @@ Encontre todos os **pares de cartas idênticas** no grid antes do tempo acabar. 
 | Frontend `Modo` (Solo) | `memoria` |
 | Frontend `Modo` (1v1) | `memoria-vs` |
 | Backend `GameType` | `CARD_GUESS` (ambos os modos) |
+
+> [!NOTE]
+> Os modos **Solo** e **1v1** compartilham o mesmo `GameType` (`CARD_GUESS`) e, portanto, aparecem juntos no ranking de Mapas Estelares.
 | Timer base | `MEMORIA_TIMER_INICIAL = 60s` |
 | Bônus por par | `MEMORIA_BONUS_PAR = 25s` |
 | Grid (Cadete) | `MEMORIA_GRID.EASY: { cols: 4, rows: 4, pairs: 8 }` |
@@ -100,4 +108,5 @@ O ranking **Mapas Estelares** (solo + 1v1 combinados) ordena por:
 | 🏅 Recorde | Menor número de viradas em uma única vitória |
 | 📈 Taxa de Vitória | `grids_completos / grids_jogados` |
 
-> 💡 **Dica de elite:** No Cadete (4×4), anote mentalmente a posição das cartas nas primeiras viradas. Com memória perfeita, é possível completar o grid em apenas 8 pares (16 viradas mínimas).
+> [!TIP]
+> **Dica de elite:** No Cadete (4×4), anote mentalmente a posição das cartas nas primeiras viradas. Com memória perfeita, é possível completar o grid em apenas 8 pares (16 viradas mínimas).

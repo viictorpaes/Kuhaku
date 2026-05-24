@@ -1,5 +1,6 @@
 # 🧑🏻‍🚀 Histórias de Usuário — Kuhaku
 
+> [!NOTE]
 > **Formato:** Como `[papel]`, quero `[funcionalidade]`, para que `[benefício]`.
 
 

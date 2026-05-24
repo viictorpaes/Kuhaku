@@ -9,6 +9,7 @@
   <img src="../img/hierarquia_de_comandos.jpeg" width="720" alt="Hierarquia de Comandos"/>
 </p>
 
+> [!NOTE]
 > **Lore:** O computador da nave sofreu uma falha catastrófica e perdeu todos os parênteses das equações lógicas de navegação! O astronauta deve restaurar a ordem de precedência dos operadores — ou a nave ficará à deriva para sempre.
 
 
@@ -31,6 +32,9 @@ Modo **single-player**. Dada uma expressão lógica **sem parênteses**, insira 
 
 ## 📐 Hierarquia de Precedência (do maior para o menor)
 
+> [!IMPORTANT]
+> Memorize esta ordem — ela é a base de todo o modo: **¬ > ∧ > ∨ > → > ↔**. Parênteses devem refletir exatamente essa precedência, agrupando os operadores de maior prioridade primeiro.
+
 | Prioridade | Operador | Símbolo | Exemplo |
 |---|---|---|---|
 | 1º (maior) | Negação | `¬` | `¬P` avaliado primeiro |
@@ -47,7 +51,8 @@ Expressão original:  P ∧ Q ∨ R → S
 Com parentização:   ((P ∧ Q) ∨ R) → S
 ```
 
-> A conjunção `∧` agrupa P e Q primeiro. O resultado dissocionado com `∨ R`. Por último, o condicional `→ S`.
+> [!NOTE]
+> A conjunção `∧` agrupa P e Q primeiro. O resultado é combinado com `∨ R`. Por último, o condicional `→ S` envolve toda a expressão.
 
 
 ## 🌍 Dificuldades
@@ -83,6 +88,9 @@ Com parentização:   ((P ∧ Q) ∨ R) → S
 | Timer (Piloto) | `TIMER_PRECEDENCIA.MEDIUM = 35s` |
 | Timer (Cmd) | `TIMER_PRECEDENCIA.HARD = 25s` |
 | Validação | `verificar()` vs `normalizar()` — equivalência estrutural |
+
+> [!WARNING]
+> A validação compara a **estrutura** da parentização, não apenas o valor lógico final. Expressões semanticamente equivalentes mas com parênteses em posições diferentes serão consideradas **incorretas**.
 | Endpoint criar jogo | `POST /api/games` → `{ gameType: "PRECEDENCE_PUZZLE" }` |
 | Endpoint encerrar | `POST /api/games/:id/finish` → `{ won: boolean }` |
 | Endpoint salvar | `POST /api/games/:id/save` → `{ name: string }` |
@@ -104,4 +112,5 @@ O ranking **Hierarquia de Comandos** ordena por:
 | 🏅 Recorde | Menor número de tentativas em uma única vitória |
 | 📈 Taxa de Vitória | `equações_restauradas / total_jogado` |
 
-> 💡 **Dica de elite:** Comece sempre pelos `∧` (maior precedência). Agrupe-os em pares, depois os `∨`, e por último os `→` e `↔`. Seguindo essa ordem de dentro para fora, a parentização estará sempre correta.
+> [!TIP]
+> **Dica de elite:** Comece sempre pelos `∧` (maior precedência). Agrupe-os em pares, depois os `∨`, e por último os `→` e `↔`. Seguindo essa ordem de dentro para fora, a parentização estará sempre correta.

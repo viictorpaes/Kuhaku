@@ -9,6 +9,7 @@
   <img src="../img/batalha_de_sinais.jpeg" width="720" alt="Batalha de Sinais"/>
 </p>
 
+> [!NOTE]
 > **Lore:** Dois astronautas captam a mesma frequência de emergência vinda do cosmos. Apenas um sintonizará o sinal certo primeiro — e salvará a missão.
 
 
@@ -23,10 +24,13 @@ Dois jogadores disputam em turnos, na **mesma tela**, para adivinhar o número-f
 |---|---|
 | 🔢 Rodadas totais | 3 |
 | 🔄 Tentativas por rodada | 12 por jogador (alternadas) |
-| ⏱️ Timer por jogada | **15 segundos** — tempo esgotado consome uma tentativa |
+| ⏱️ Timer por jogada | **15 segundos** — tempo esgotado consome uma tentativa ⚠️ |
 | 🏆 Vencedor da rodada | Quem acertar primeiro |
 | 🤝 Empate de rodada | Nenhum ponto atribuído |
 | 💾 Ranking | **Ambos** os jogadores podem salvar ao final |
+
+> [!IMPORTANT]
+> O timer de **15s por turno** é individual — ao esgotar, a tentativa é consumida automaticamente e passa a vez. Tentar adivinhar apenas para "não perder a vez" prejudica sua contagem total.
 
 
 ## 🌍 Dificuldades
@@ -79,4 +83,8 @@ O ranking **Batalha de Sinais** ordena os astronautas por:
 | 🏅 Recorde | Menor número de tentativas em uma única vitória |
 | 📈 Taxa de Vitória | `vitórias / partidas_finalizadas` |
 
-> 💡 Ambos os jogadores aparecem no ranking mesmo que apenas um vença a partida.
+> [!TIP]
+> Ambos os jogadores podem salvar no ranking ao final — mesmo quem perdeu a batalha terá sua participação registrada no Hall da Fama.
+
+> [!TIP]
+> **Estratégia:** Use os feedbacks proporcionais ao range para fazer busca binária — com 12 tentativas e range 1–100, é possível acertar qualquer número em até 7 tentativas pela estratégia ótima.

@@ -9,6 +9,7 @@
   <img src="../img/protocolo_lógico.jpeg" width="720" alt="Protocolo Lógico"/>
 </p>
 
+> [!NOTE]
 > **Lore:** A base espacial intercepta transmissões cifradas do cosmos. Cada sinal carrega uma fórmula lógica — o astronauta deve decodificar se ela é VERDADEIRA ou FALSA e revelar sua natureza cósmica: Tautologia, Contradição ou Contingência.
 
 
@@ -28,6 +29,9 @@ Modo **single-player**. Avalie fórmulas de **lógica proposicional** como `VERD
 | 🌟 Classificação | Revelada após cada resposta |
 | 💾 Ranking | Ordenado por **menor número de erros** |
 
+> [!IMPORTANT]
+> Neste modo, o campo `attempts` no banco armazena **erros**, não tentativas. O ranking exibe "erros (média)" — quanto menor, melhor a posição do astronauta.
+
 
 ## 🔣 Operadores Lógicos
 
@@ -41,6 +45,9 @@ Modo **single-player**. Avalie fórmulas de **lógica proposicional** como `VERD
 
 
 ## 🌟 Classificação das Fórmulas
+
+> [!NOTE]
+> A classificação é revelada **após** o jogador responder VERDADEIRO ou FALSO — não antes. Isso mantém o desafio de avaliar a fórmula sem saber antecipadamente se é uma tautologia ou contradição.
 
 | Tipo | Símbolo | Definição |
 |---|---|---|
@@ -86,7 +93,8 @@ Modo **single-player**. Avalie fórmulas de **lógica proposicional** como `VERD
 | Endpoint salvar | `POST /api/games/:id/save` → `{ name: string }` |
 | Ranking | `GET /api/ranking/global?gameType=LOGIC_PUZZLE` |
 
-> ⚠️ **Atenção:** Para `LOGIC_PUZZLE`, o campo `attempts` no banco de dados armazena o **número de erros** cometidos, não o número de tentativas. O ranking exibe "erros (média)" para esta modalidade.
+> [!WARNING]
+> Para `LOGIC_PUZZLE`, o campo `attempts` no banco de dados armazena o **número de erros** cometidos, não o número de tentativas. O ranking exibe "erros (média)" para esta modalidade — integre via `POST /api/games/:id/finish` com `{ mistakes: number }`.
 
 
 ## 🏆 Critério de Ranking
@@ -104,4 +112,5 @@ O ranking **Protocolo Lógico** ordena por:
 | 🏅 Recorde | Menor número de erros em uma única partida |
 | 📈 Taxa de Vitória | `partidas_concluídas_com_sucesso / total` |
 
-> 💡 **Dica de elite:** Lembre-se que `P → Q` é equivalente a `¬P ∨ Q`. Se P é FALSO, o condicional é sempre VERDADEIRO independentemente de Q.
+> [!TIP]
+> **Dica de elite:** Lembre-se que `P → Q` é equivalente a `¬P ∨ Q`. Se P é FALSO, o condicional é sempre VERDADEIRO independentemente de Q.

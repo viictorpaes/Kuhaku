@@ -9,6 +9,7 @@
   <img src="../img/operação_resgate.jpeg" width="720" alt="Operação Resgate"/>
 </p>
 
+> [!NOTE]
 > **Lore:** Uma nave à deriva envia pulsos de frequência pelo cosmos. O astronauta precisa sintonizar o canal exato de resgate antes que as tentativas se esgotem — e o silêncio tome conta.
 
 
@@ -23,7 +24,7 @@ Modo **single-player**. Descubra o número-frequência secreto (entre 1 e o rang
 |---|---|
 | 👤 Jogadores | 1 (Solo) |
 | 🔢 Tentativas | Limitadas por dificuldade |
-| ⏱️ Timer por tentativa | Limitado por dificuldade — tempo esgotado consome uma tentativa |
+| ⏱️ Timer por tentativa | Limitado por dificuldade — tempo esgotado consome uma tentativa ⚠️ |
 | 🎯 Feedback | Proporcional ao range (não ao range fixo) |
 | 🛸 Missão Livre | Range e timer personalizáveis pelo jogador |
 
@@ -37,7 +38,8 @@ Modo **single-player**. Descubra o número-frequência secreto (entre 1 e o rang
 | 👨‍🚀 **Comandante** | Elite | `1 – 100` | 10 | 15s |
 | 🛸 **Missão Livre** | — | Customizável | — | Customizável |
 
-> **Missão Livre** permite configurar o range de `1–100` até `1–100.000` e o timer de `sem limite` a `5s` por tentativa.
+> [!NOTE]
+> **Missão Livre** permite configurar o range de `1–100` até `1–100.000` e o timer de `sem limite` a `5s` por tentativa. O feedback continua proporcional ao range escolhido.
 
 
 ## 📶 Sistema de Feedback (proporcional ao range)
@@ -50,7 +52,8 @@ Modo **single-player**. Descubra o número-frequência secreto (entre 1 e o rang
 | `diff ≤ 40% range` | `morno ☔️` | 🌌 Interferência estática... |
 | `diff > 40% range` | `frio ❄️` | 🔇 Sem sinal no espaço... |
 
-> **Exemplo:** Range 1–100, frequência = 70, palpite = 50 → `diff = 20` → `20% do range` → quente 🌡️
+> [!TIP]
+> **Exemplo:** Range 1–100, frequência = 70, palpite = 50 → `diff = 20` → `20% do range` → quente 🌡️. Quanto menor o range, mais preciso precisa ser o palpite para acender o 🔥.
 
 
 ## 🖥️ Informações Técnicas
@@ -66,6 +69,9 @@ Modo **single-player**. Descubra o número-frequência secreto (entre 1 e o rang
 | Timer (Piloto) | `TIMER_SOLO.MEDIUM = 20s` |
 | Timer (Cmd) | `TIMER_SOLO.HARD = 15s` |
 | Range custom | Parâmetro `customRange` no DTO |
+
+> [!WARNING]
+> O parâmetro `customRange` sobrescreve o range da dificuldade. Ao usar Missão Livre, o backend ignora o range padrão e calcula todos os feedbacks com base no `customRange` enviado.
 | Endpoint criar jogo | `POST /api/games` → `{ difficulty, customRange? }` |
 | Endpoint palpite | `POST /api/games/:id/guess` → `{ value: number }` |
 | Endpoint encerrar | `POST /api/games/:id/finish` |
@@ -88,4 +94,5 @@ O ranking **Operação Resgate** ordena os astronautas por:
 | 🏅 Recorde | Menor número de tentativas em uma única missão |
 | 📈 Taxa de Vitória | `vitórias / missões_finalizadas` |
 
-> 💡 **Dica de elite:** No Cadete com 5 tentativas e range 1–10, a estratégia ótima é busca binária: tente 5, depois 2 ou 8, depois refine — garantindo vitória em qualquer número em até 4 tentativas.
+> [!TIP]
+> **Dica de elite:** No Cadete com 5 tentativas e range 1–10, a estratégia ótima é busca binária: tente 5, depois 2 ou 8, depois refine — garantindo vitória em qualquer número em até 4 tentativas.

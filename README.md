@@ -24,10 +24,8 @@
   <img src="https://img.shields.io/badge/GitHub_Desktop-111827?style=for-the-badge&logo=github&logoColor=purple" height="35" alt="GitHub Desktop"/>
 </p>
 
-
 <h2 align="center"> 🏰 Arquitetura do Projeto <br>
 <img src="https://img.shields.io/badge/Architecture-111827?style=flat-square&logo=instructure&logoColor=white"/></h2>
-
 
 <pre>
 Kuhaku/
@@ -130,7 +128,6 @@ Kuhaku/
 └── tsconfig.base.json <img src="https://img.shields.io/badge/TypeScript-Base-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>
 </pre>
 
-
 <h2 align="center">Telas 📱 <br>
 <img src="https://img.shields.io/badge/Vite-111827?style=for-the-badge&logo=vite&logoColor=purple" height="25" alt="Vite"/>
 <img src="https://img.shields.io/badge/🧑‍🚀_Astronautas-111827?style=for-the-badge" height="25" alt="Astronautas"/></h2>
@@ -211,7 +208,6 @@ git clone https://github.com/viictorpaes/Kuhaku
 <img src="https://img.shields.io/badge/Local_Host-111827?style=flat-square&logo=readme&logoColor=white"/>
 </h3>
 
-
 ```bash
 # 1. Sobe o banco PostgreSQL via Docker
 docker compose up db -d
@@ -232,7 +228,6 @@ cd ..
 npm run start:dev      # backend (:3001) + frontend (:5173)
 npm run dev:frontend   # só o frontend (:5173)
 ```
-
 
 <h2 align="center">1. Docker<br>
 <img src="https://img.shields.io/badge/-Docker-111827?style=flat-square&logo=docker&logoColor=2496ed"/>
@@ -399,7 +394,7 @@ npm run studio
 npm install
 
 # Inicia o servidor de desenvolvimento com hot reload (porta 5173)
-npm run start:dev
+npm run dev
 
 # Compila o projeto para produção (gera a pasta /dist)
 npm run build
@@ -407,11 +402,8 @@ npm run build
 # Pré-visualiza o build de produção localmente
 npm run preview
 
-# Verifica erros de lint
-npm run lint
-
-# Formata o código automaticamente com Prettier
-npm run format
+# Verifica tipos TypeScript
+npm run typecheck
 ```
 
 <h2 align="center">🔑 Versões Necessárias para Compilar:</h2>
@@ -443,15 +435,12 @@ Camada de **entrada da API**. Recebe as requisições HTTP e define as rotas (`@
  
 **Arquivos neste projeto:** `app.controller.ts` `game.controller.ts` `auth.controller.ts` `user.controller.ts`
  
----
- 
 ### ![Service](https://img.shields.io/badge/Service-TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=3178C6) `.service.ts`
  
 Camada de **lógica de negócio**. Processa os dados recebidos do Controller, aplica as regras da aplicação (validações, hash de senha com `bcrypt`, geração de JWT) e comunica com o banco via Prisma. Injetado no Controller via `@Injectable()`.
  
 **Arquivos neste projeto:** `prisma.service.ts` `game.service.ts` `auth.service.ts` `user.service.ts`
  
----
  
 ### ![Module](https://img.shields.io/badge/Module-TypeScript-E0234E?style=flat-square&logo=typescript&logoColor=E0234E) `.module.ts`
  
@@ -466,12 +455,12 @@ Camada de **lógica de negócio**. Processa os dados recebidos do Controller, ap
 
 | Modo | Frontend `Modo` | Backend `GameType` | Descrição | Timer |
 |---|---|---|---|---|
-| **📡 Batalha de Sinais** | `vs` | `VS_GUESS` | 2 astronautas adivinham a mesma frequência. Turnos alternados · 3 rodadas · 12 tentativas/rodada. Ambos se cadastram no ranking ao final. | 30s/turno · -5s (erro) |
-| **🔭 Operação Resgate** | `solo` | `NUMBER_GUESS` | Solo. Adivinha a frequência com feedback proporcional ao range. Range customizável via `customRange`. Missão Livre: fases infinitas — acerto avança fase, timer=0 → RESET. | Contínuo 30s · 20s (acerto) · -5s (erro) |
-| **🌕 Mapas Estelares** | `memoria` | `CARD_GUESS` | Solo. Grid de pares com cronômetro regressivo contínuo. Redireciona para ranking CARD_GUESS após salvar. | Contínuo 30s · +20s/par · -5s (erro) |
-| **🌕 1v1 Mapas Estelares** | `memoria-vs` | `CARD_GUESS` | 2 astronautas disputam pares no mesmo grid. Turnos alternados com timer. | 30s/turno |
-| **🧠 Protocolo Lógico** | `logica` | `LOGIC_PUZZLE` | Solo. Avalia fórmulas proposicionais (∧ ∨ ¬ → ↔) como V/F. Fases infinitas — complete tudo → avança fase, timer=0 → RESET. | Contínuo 30s · +20s (acerto) · -5s (erro) |
-| **⚙️ Hierarquia de Comandos** | `precedencia` | `PRECEDENCE_PUZZLE` | Solo. Reinsere parênteses para restaurar a precedência (∧>∨>→>↔). Fases infinitas — complete tudo → avança fase, timer=0 → RESET. | Contínuo 30s · +20s (acerto) · -5s (erro) |
+| **📡 Batalha de Sinais** | `vs` | `VS_GUESS` | 2 astronautas adivinham a mesma frequência. Turnos alternados · 3 rodadas · 12 tentativas/rodada. Ambos se cadastram no ranking ao final. | 15s/turno · -5s (erro) |
+| **🔭 Operação Resgate** | `solo` | `NUMBER_GUESS` | Solo. Adivinha a frequência com feedback proporcional ao range. Range customizável via `customRange`. Missão Livre: fases infinitas — acerto avança fase, timer=0 → RESET. | Contínuo 60/50/35s · +20s (acerto) · -5s (erro) |
+| **🌕 Mapas Estelares** | `memoria` | `CARD_GUESS` | Solo. Grid de pares com cronômetro regressivo contínuo. Redireciona para ranking CARD_GUESS após salvar. | Contínuo 60/50/35s · +20s/par · -5s (erro) |
+| **🌕 1v1 Mapas Estelares** | `memoria-vs` | `CARD_GUESS` | 2 astronautas disputam pares no mesmo grid. Turnos alternados com timer. | 60/50/35s/turno |
+| **🧠 Protocolo Lógico** | `logica` | `LOGIC_PUZZLE` | Solo. Avalia fórmulas proposicionais (∧ ∨ ¬ → ↔) como V/F. Fases infinitas — complete tudo → avança fase, timer=0 → RESET. | Contínuo 60/50/35s · +20s (acerto) · -5s (erro) |
+| **⚙️ Hierarquia de Comandos** | `precedencia` | `PRECEDENCE_PUZZLE` | Solo. Reinsere parênteses para restaurar a precedência (∧>∨>→>↔). Fases infinitas — complete tudo → avança fase, timer=0 → RESET. | Contínuo 60/50/35s · +20s (acerto) · -5s (erro) |
 
 **GameTypes do backend (Prisma):** `NUMBER_GUESS` · `VS_GUESS` · `CARD_GUESS` · `LOGIC_PUZZLE` · `PRECEDENCE_PUZZLE`
 
@@ -484,10 +473,10 @@ Camada de **lógica de negócio**. Processa os dados recebidos do Controller, ap
 | Constante | Valor | Descrição |
 |---|---|---|
 | `TIMER_VS_TURNO` | `15` | Segundos por turno no modo VS |
-| `TIMER_SOLO` | `30 / 20 / 15` | Segundos por dificuldade no modo Solo (Cadete/Piloto/Comandante) |
-| `TIMER_LOGICA` | `30 / 20 / 15` | Segundos por dificuldade no Protocolo Lógico |
-| `TIMER_PRECEDENCIA` | `45 / 35 / 25` | Segundos por dificuldade na Hierarquia de Comandos |
-| `MEMORIA_TIMER_INICIAL` | `30` | Segundos iniciais nos Mapas Estelares |
+| `TIMER_SOLO` | `60 / 50 / 35` | Segundos por dificuldade no modo Solo (Cadete/Piloto/Comandante) |
+| `TIMER_LOGICA` | `60 / 50 / 35` | Segundos por dificuldade no Protocolo Lógico |
+| `TIMER_PRECEDENCIA` | `60 / 50 / 35` | Segundos por dificuldade na Hierarquia de Comandos |
+| `MEMORIA_TIMER` | `60 / 50 / 35` | Segundos por dificuldade nos Mapas Estelares |
 | `TIMER_BONUS_ACERTO` | `+20` | Segundos ganhos ao acertar |
 | `MEMORIA_BONUS_PAR` | `+20` | Segundos ganhos por par encontrado |
 | `TIMER_PENALIDADE` | `-5` | Segundos perdidos ao errar |
@@ -1103,26 +1092,32 @@ export const TIMER_VS_TURNO = 15;
 
 export const TIMER_SOLO: Record<Dificuldade, number> =
 {
-  EASY:   30,
-  MEDIUM: 20,
-  HARD:   15,
+  EASY:   60,
+  MEDIUM: 50,
+  HARD:   35,
 };
 
 export const TIMER_LOGICA: Record<Dificuldade, number> =
 {
-  EASY:   30,
-  MEDIUM: 20,
-  HARD:   15,
+  EASY:   60,
+  MEDIUM: 50,
+  HARD:   35,
 };
 
 export const TIMER_PRECEDENCIA: Record<Dificuldade, number> =
 {
-  EASY:   45,
-  MEDIUM: 35,
-  HARD:   25,
+  EASY:   60,
+  MEDIUM: 50,
+  HARD:   35,
 };
 
-export const MEMORIA_TIMER_INICIAL = 30;
+export const MEMORIA_TIMER: Record<Dificuldade, number> =
+{
+  EASY:   60,
+  MEDIUM: 50,
+  HARD:   35,
+};
+
 export const MEMORIA_BONUS_PAR = 20;
 
 export const TIMER_PENALIDADE = 5;
@@ -1524,22 +1519,26 @@ Toca `StarWarsMainTheme.mp3` em loop contínuo durante toda a sessão do jogo. O
 
 
 ```ts
+const mainaudio = new Audio('src/components/song/StarWarsMainTheme.mp3');
+mainaudio.loop = true;
+mainaudio.volume = 1.0;
+
 export const starWarsTheme = 
 {
-  get muted() { return audio.muted; },
+  get muted() { return mainaudio.muted; },
   start() 
   {
-    if (audio.paused) audio.play().catch(() => {});
+    if (mainaudio.paused) mainaudio.play().catch(() => {});
   },
 
   stop() 
   {
-    audio.pause();
-    audio.currentTime = 0;
+    mainaudio.pause();
+    mainaudio.currentTime = 0;
   },
 
-  mute() { audio.muted = true; },
-  unmute() { audio.muted = false; },
+  mute() { mainaudio.muted = true; },
+  unmute() { mainaudio.muted = false; },
 };
 
 ```
@@ -1556,7 +1555,7 @@ Usa `AudioContext` para sintetizar sons em tempo real sem arquivos externos:
 
 
 ```ts
-et _audioCtx: AudioContext | null = null;
+let _audioCtx: AudioContext | null = null;
 
 function getAudioCtx(): AudioContext
 {
