@@ -157,7 +157,7 @@ export class GameService
     const updateData: Record<string, any> = {};
     if (!game.endedAt) updateData.endedAt = new Date();
     if (won !== undefined) updateData.won = won;
-    if (['LOGIC_PUZZLE', 'PRECEDENCE_PUZZLE', 'CARD_GUESS'].includes(gameType) && mistakes !== undefined)
+    if (['LOGIC_PUZZLE', 'PRECEDENCE_PUZZLE', 'CARD_GUESS', 'CARD_GUESS_VS'].includes(gameType) && mistakes !== undefined)
       updateData.attempts = mistakes;
 
     if (Object.keys(updateData).length > 0)
@@ -302,6 +302,9 @@ export class GameService
 
   async getGlobalRanking(limit = 10, gameType?: string)
   {
+    const VS_TYPES = ['VS_GUESS', 'CARD_GUESS_VS'];
+    const isVsMode = gameType ? VS_TYPES.includes(gameType) : false;
+
     const users = await this.prismaService.prisma.user.findMany
     ({ include: { games: true } });
 
@@ -313,12 +316,30 @@ export class GameService
         const finishedGames = games.filter((g: any) => g.endedAt !== null || g.won);
         const wonGames      = finishedGames.filter((g: any) => g.won);
         const wonAttempts   = wonGames.map((g: any) => Number(g.attempts ?? 0));
+        const losses        = finishedGames.length - wonGames.length;
 
-        if (wonAttempts.length === 0)
+        if (wonAttempts.length === 0 && (!isVsMode || losses === 0))
           return null;
 
         const totalGames = finishedGames.length;
         const winRate    = wonAttempts.length / Math.max(totalGames, 1);
+
+        if (wonAttempts.length === 0)
+        {
+          return {
+            userId:           u.id,
+            name:             u.name ?? u.email,
+            averageAttempts:  null,
+            medianAttempts:   null,
+            modeAttempts:     null,
+            bestAttempts:     null,
+            weightedAttempts: Infinity,
+            wins:             0,
+            losses,
+            totalGames,
+            winRate:          0,
+          };
+        }
 
         const sorted = [...wonAttempts].sort((a, b) => a - b);
         const avg    = sorted.reduce((a, b) => a + b, 0) / sorted.length;
@@ -348,6 +369,7 @@ export class GameService
           bestAttempts:     best,
           weightedAttempts,
           wins:             wonAttempts.length,
+          losses,
           totalGames,
           winRate,
         };
@@ -356,11 +378,11 @@ export class GameService
       .filter(Boolean)
       .sort((a: any, b: any) =>
       {
-        if (b.winRate !== a.winRate)  
+        if (b.winRate !== a.winRate)
           return b.winRate - a.winRate;
-        if (a.weightedAttempts !== b.weightedAttempts) 
+        if (a.weightedAttempts !== b.weightedAttempts)
           return a.weightedAttempts - b.weightedAttempts;
-        
+
         return a.averageAttempts - b.averageAttempts;
       })
       .slice(0, limit);

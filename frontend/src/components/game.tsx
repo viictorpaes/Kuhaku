@@ -2647,6 +2647,16 @@ function MemoriaVsGame({ gameId, dificuldade, p1, p2, apiUrl, onBack, onOpenRank
   const finishP1Ref = useRef(false);
   const finishP2Ref = useRef(false);
 
+  const [saveNomeP1, setSaveNomeP1] = useState(p1);
+  const [savingP1, setSavingP1] = useState(false);
+  const [savedPositionP1, setSavedPositionP1] = useState<{ position: number | null; total: number } | null>(null);
+  const [saveErroP1, setSaveErroP1] = useState('');
+
+  const [saveNomeP2, setSaveNomeP2] = useState(p2);
+  const [savingP2, setSavingP2] = useState(false);
+  const [savedPositionP2, setSavedPositionP2] = useState<{ position: number | null; total: number } | null>(null);
+  const [saveErroP2, setSaveErroP2] = useState('');
+
   const paresEncontrados = reveladas.size / 2;
   const nomeAtual = fase === 'p2' ? p2 : p1;
 
@@ -2662,6 +2672,55 @@ function MemoriaVsGame({ gameId, dificuldade, p1, p2, apiUrl, onBack, onOpenRank
     setIniciou(false);
     clearInterval(timerRef.current);
   }, []);
+
+  const handleSalvarP1 = async (e: React.FormEvent) =>
+  {
+    e.preventDefault();
+    const nome = saveNomeP1.trim();
+    if (!nome) { setSaveErroP1('Digite um apelido'); return; }
+    setSavingP1(true); setSaveErroP1('');
+    try
+    {
+      const res = await fetch(`${apiUrl}/api/games/${gameId}/save`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: nome }),
+      });
+      const data = await res.json();
+      if (data.saved)
+        setSavedPositionP1({ position: data.position ?? null, total: data.total });
+      else
+        setSaveErroP1('Não foi possível salvar. Tente novamente.');
+    }
+    catch { setSaveErroP1('Erro de conexão'); }
+    finally { setSavingP1(false); }
+  };
+
+  const handleSalvarP2 = async (e: React.FormEvent) =>
+  {
+    e.preventDefault();
+    const nome = saveNomeP2.trim();
+    if (!nome) { setSaveErroP2('Digite um apelido'); return; }
+    if (!gameIdP2) { setSaveErroP2('Partida de P2 não disponível'); return; }
+    setSavingP2(true); setSaveErroP2('');
+    try
+    {
+      const res = await fetch(`${apiUrl}/api/games/${gameIdP2}/save`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: nome }),
+      });
+      const data = await res.json();
+      if (data.saved)
+        setSavedPositionP2({ position: data.position ?? null, total: data.total });
+      else
+        setSaveErroP2('Não foi possível salvar. Tente novamente.');
+    }
+    catch { setSaveErroP2('Erro de conexão'); }
+    finally { setSavingP2(false); }
+  };
 
   useEffect(() =>
   {
@@ -2709,7 +2768,7 @@ function MemoriaVsGame({ gameId, dificuldade, p1, p2, apiUrl, onBack, onOpenRank
             if (!finishP1Ref.current)
             {
               finishP1Ref.current = true;
-              fetch(`${apiUrl}/api/games/${gameId}/finish`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ won: true }) }).catch(() => {});
+              fetch(`${apiUrl}/api/games/${gameId}/finish`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ won: true, mistakes: erros }) }).catch(() => {});
             }
             setStatsP1(stats);
           }
@@ -2718,7 +2777,7 @@ function MemoriaVsGame({ gameId, dificuldade, p1, p2, apiUrl, onBack, onOpenRank
             if (!finishP2Ref.current)
             {
               finishP2Ref.current = true;
-              if (gameIdP2) fetch(`${apiUrl}/api/games/${gameIdP2}/finish`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ won: true }) }).catch(() => {});
+              if (gameIdP2) fetch(`${apiUrl}/api/games/${gameIdP2}/finish`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ won: true, mistakes: erros }) }).catch(() => {});
             }
             setFase('resultado');
           }
@@ -2729,6 +2788,7 @@ function MemoriaVsGame({ gameId, dificuldade, p1, p2, apiUrl, onBack, onOpenRank
         playArcadeError();
         setErros((e) => e + 1);
         setParesErrados([a, b]);
+        setTimerRestante((t) => Math.max(1, t - TIMER_PENALIDADE));
         setTimeout(() => { setViradas([]); setParesErrados([]); setBloqueado(false); }, 900);
       }
     }
@@ -2743,7 +2803,7 @@ function MemoriaVsGame({ gameId, dificuldade, p1, p2, apiUrl, onBack, onOpenRank
       if (!finishP1Ref.current)
       {
         finishP1Ref.current = true;
-        fetch(`${apiUrl}/api/games/${gameId}/finish`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ won: false }) }).catch(() => {});
+        fetch(`${apiUrl}/api/games/${gameId}/finish`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ won: false, mistakes: erros }) }).catch(() => {});
       }
       setStatsP1(stats);
     }
@@ -2752,7 +2812,7 @@ function MemoriaVsGame({ gameId, dificuldade, p1, p2, apiUrl, onBack, onOpenRank
       if (!finishP2Ref.current)
       {
         finishP2Ref.current = true;
-        if (gameIdP2) fetch(`${apiUrl}/api/games/${gameIdP2}/finish`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ won: false }) }).catch(() => {});
+        if (gameIdP2) fetch(`${apiUrl}/api/games/${gameIdP2}/finish`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ won: false, mistakes: erros }) }).catch(() => {});
       }
       setFase('resultado');
     }
@@ -2767,7 +2827,7 @@ function MemoriaVsGame({ gameId, dificuldade, p1, p2, apiUrl, onBack, onOpenRank
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ difficulty: dificuldade, gameType: 'CARD_GUESS' }),
+        body: JSON.stringify({ difficulty: dificuldade, gameType: 'CARD_GUESS_VS' }),
       });
       const g = await res.json();
       setGameIdP2(g.id);
@@ -2852,13 +2912,42 @@ function MemoriaVsGame({ gameId, dificuldade, p1, p2, apiUrl, onBack, onOpenRank
               </div>
             ))}
           </div>
+          <div className="flex flex-col gap-3 mb-4">
+            <div className="rounded-xl p-3 text-left" style={{ background: 'rgba(6,182,212,0.06)', border: '1px solid rgba(6,182,212,0.20)' }}>
+              <p className="text-xs font-bold mb-2" style={{ color: '#67e8f9' }}>👨‍🚀 {p1}</p>
+              <SaveRankingPanel
+                gameId={gameId}
+                saveNome={saveNomeP1}
+                setSaveNome={setSaveNomeP1}
+                saving={savingP1}
+                savedPosition={savedPositionP1}
+                saveErro={saveErroP1}
+                onSalvar={handleSalvarP1}
+                onOpenRanking={() => onOpenRanking('CARD_GUESS_VS')}
+              />
+            </div>
+            <div className="rounded-xl p-3 text-left" style={{ background: 'rgba(168,85,247,0.06)', border: '1px solid rgba(168,85,247,0.20)' }}>
+              <p className="text-xs font-bold mb-2" style={{ color: '#c084fc' }}>🚀 {p2}</p>
+              <SaveRankingPanel
+                gameId={gameIdP2 ?? ''}
+                saveNome={saveNomeP2}
+                setSaveNome={setSaveNomeP2}
+                saving={savingP2}
+                savedPosition={savedPositionP2}
+                saveErro={saveErroP2}
+                onSalvar={handleSalvarP2}
+                onOpenRanking={() => onOpenRanking('CARD_GUESS_VS')}
+              />
+            </div>
+          </div>
+
           <div className="flex flex-col gap-2">
             <button onClick={onBack}
               className="w-full py-3 rounded-xl font-bold text-sm text-white transition hover:opacity-90"
               style={{ background: 'linear-gradient(135deg, #6d28d9, #a855f7)' }}>
               🏠 Menu Principal
             </button>
-            <button onClick={() => onOpenRanking('CARD_GUESS')}
+            <button onClick={() => onOpenRanking('CARD_GUESS_VS')}
               className="w-full bg-white/5 hover:bg-white/10 border border-white/10 py-3 rounded-xl font-semibold text-sm text-slate-300 transition">
               🏆 Ver Ranking
             </button>

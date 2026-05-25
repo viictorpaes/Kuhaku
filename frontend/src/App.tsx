@@ -65,7 +65,8 @@ export function App()
 
     const gameType =
       isVs          ? 'VS_GUESS' :
-      (isMemoria || isMemoriaVs) ? 'CARD_GUESS' :
+      isMemoria     ? 'CARD_GUESS' :
+      isMemoriaVs   ? 'CARD_GUESS_VS' :
       isLogica      ? 'LOGIC_PUZZLE' :
       isPrecedencia ? 'PRECEDENCE_PUZZLE' : undefined;
 
@@ -106,7 +107,7 @@ export function App()
   {
     const gameType =
       modo === 'memoria'    ? 'CARD_GUESS' :
-      modo === 'memoria-vs' ? 'CARD_GUESS' :
+      modo === 'memoria-vs' ? 'CARD_GUESS_VS' :
       modo === 'logica'     ? 'LOGIC_PUZZLE' :
       modo === 'precedencia'? 'PRECEDENCE_PUZZLE' : undefined;
     const id = await criarJogo(dificuldade!, gameType, rangeMaxCustom);

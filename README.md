@@ -158,7 +158,7 @@ Kuhaku/
 
 <table align="center" width="780">
   <tr><th align="center">🌕 1v1 Mapas Estelares</th></tr>
-  <tr><td align="center"><b>Modo multiplayer de memória: dois astronautas disputam quem encontra mais pares de coordenadas no mesmo grid. Turnos alternados com timer por jogada. Grids: 4×4, 4×5 ou 6×6.</b></td></tr>
+  <tr><td align="center"><b>Modo multiplayer de memória: dois astronautas disputam quem encontra mais pares de coordenadas no mesmo grid. Timer individual contínuo com bônus/penalidade. Ao final, ambos os jogadores podem salvar seus resultados no ranking com o apelido já pré-preenchido. Grids: 4×4, 4×5 ou 6×6.</b></td></tr>
   <tr><td align="center"><img src="img/1v1_mapas_estrelares.jpeg" width="750" alt="1v1 Mapas Estelares"/></td></tr>
 </table>
 
@@ -190,7 +190,7 @@ Kuhaku/
 
 <table align="center" width="780">
   <tr><th align="center">🏆 Hall da Fama</th></tr>
-  <tr><td align="center"><b>Ranking Galáctico com a pontuação de todos os astronautas por modalidade — filtre por Batalha de Sinais, Operação Resgate, Mapas Estelares, Protocolo Lógico ou Hierarquia de Comandos.</b></td></tr>
+  <tr><td align="center"><b>Ranking Galáctico com a pontuação de todos os astronautas por modalidade — filtre por Batalha de Sinais, Operação Resgate, Mapas Estelares, Protocolo Lógico ou Hierarquia de Comandos. Nos modos 1v1 (📡 Batalha de Sinais e ⚔️ Duelo de Mapas), exibe vitórias 🏆 e derrotas 💀 por jogador — astronautas sem vitória aparecem com ícone 💀 e placar de derrotas.</b></td></tr>
   <tr><td align="center"><img src="img/hall_da_fama.jpeg" width="750" alt="Hall da Fama"/></td></tr>
 </table>
 
@@ -209,24 +209,28 @@ git clone https://github.com/viictorpaes/Kuhaku
 </h3>
 
 ```bash
-# 1. Sobe o banco PostgreSQL via Docker
+# 1. Sobe o banco PostgreSQL via Docker:
 docker compose up db -d
 
-# 2. Prepara o banco (rode dentro de backend/)
+# 2. Prepara o banco (rode dentro de backend/):
 cd backend
 npm run prisma:generate       # gera o Prisma Client
 npm run prisma:migrate:deploy # aplica migrations (cria tabelas e GameTypes)
 npm run prisma:seed           # popula usuários iniciais (admin, dev, user)
 
-# OPCIONAL — dados de teste
+# OPCIONAL — dados de teste:
 npx tsx --env-file=.env prisma/test-user.ts  # cria usuários com senha bcrypt
 npx tsx --env-file=.env prisma/test-game.ts  # cria partidas NUMBER_GUESS de exemplo
 
 cd ..
 
-# 3. Inicia o projeto completo
+# 3. Inicia o projeto completo:
 npm run start:dev      # backend (:3001) + frontend (:5173)
 npm run dev:frontend   # só o frontend (:5173)
+
+
+# 4. Apagar o banco de dados / Ranking:
+npx prisma migrate reset     
 ```
 
 <h2 align="center">1. Docker<br>
@@ -458,11 +462,11 @@ Camada de **lógica de negócio**. Processa os dados recebidos do Controller, ap
 | **📡 Batalha de Sinais** | `vs` | `VS_GUESS` | 2 astronautas adivinham a mesma frequência. Turnos alternados · 3 rodadas · 12 tentativas/rodada. Ambos se cadastram no ranking ao final. | 15s/turno · -5s (erro) |
 | **🔭 Operação Resgate** | `solo` | `NUMBER_GUESS` | Solo. Adivinha a frequência com feedback proporcional ao range. Range customizável via `customRange`. Missão Livre: fases infinitas — acerto avança fase, timer=0 → RESET. | Contínuo 60/50/35s · +20s (acerto) · -5s (erro) |
 | **🌕 Mapas Estelares** | `memoria` | `CARD_GUESS` | Solo. Grid de pares com cronômetro regressivo contínuo. Redireciona para ranking CARD_GUESS após salvar. | Contínuo 60/50/35s · +20s/par · -5s (erro) |
-| **🌕 1v1 Mapas Estelares** | `memoria-vs` | `CARD_GUESS` | 2 astronautas disputam pares no mesmo grid. Turnos alternados com timer. | 60/50/35s/turno |
+| **⚔️ Duelo de Mapas** | `memoria-vs` | `CARD_GUESS_VS` | 2 astronautas disputam pares no mesmo grid. Timer progressivo individual — menor média de erros vence. Ambos salvam no ranking ao final com apelido pré-preenchido. | Contínuo 60/50/35s · +20s/par · −5s (erro) |
 | **🧠 Protocolo Lógico** | `logica` | `LOGIC_PUZZLE` | Solo. Avalia fórmulas proposicionais (∧ ∨ ¬ → ↔) como V/F. Fases infinitas — complete tudo → avança fase, timer=0 → RESET. | Contínuo 60/50/35s · +20s (acerto) · -5s (erro) |
 | **⚙️ Hierarquia de Comandos** | `precedencia` | `PRECEDENCE_PUZZLE` | Solo. Reinsere parênteses para restaurar a precedência (∧>∨>→>↔). Fases infinitas — complete tudo → avança fase, timer=0 → RESET. | Contínuo 60/50/35s · +20s (acerto) · -5s (erro) |
 
-**GameTypes do backend (Prisma):** `NUMBER_GUESS` · `VS_GUESS` · `CARD_GUESS` · `LOGIC_PUZZLE` · `PRECEDENCE_PUZZLE`
+**GameTypes do backend (Prisma):** `NUMBER_GUESS` · `VS_GUESS` · `CARD_GUESS` · `CARD_GUESS_VS` · `LOGIC_PUZZLE` · `PRECEDENCE_PUZZLE`
 
 **Tentativas por dificuldade (NUMBER_GUESS):** EASY → 5 · MEDIUM → 8 · HARD → 10
 
@@ -493,9 +497,10 @@ Camada de **lógica de negócio**. Processa os dados recebidos do Controller, ap
 |---|---|---|
 | `POST` | `/api/games/:id/finish` | Salva/encerra a partida — revela o target |
 | `POST` | `/api/games/:id/save` | Salva resultado no ranking com apelido `{ name }` → retorna `{ saved: true, position, total }` (`position` pode ser `null` se o jogador não venceu nenhuma partida) |
-| `GET` | `/api/ranking/global?gameType=VS_GUESS` | Ranking — 📡 Batalha de Sinais |
+| `GET` | `/api/ranking/global?gameType=VS_GUESS` | Ranking — 📡 Batalha de Sinais · retorna `wins` + `losses` · inclui jogadores sem vitória |
 | `GET` | `/api/ranking/global?gameType=NUMBER_GUESS` | Ranking — 🔭 Operação Resgate |
-| `GET` | `/api/ranking/global?gameType=CARD_GUESS` | Ranking — 🌕 Mapas Estelares (solo + 1v1) |
+| `GET` | `/api/ranking/global?gameType=CARD_GUESS` | Ranking — 🌕 Mapas Estelares (solo) |
+| `GET` | `/api/ranking/global?gameType=CARD_GUESS_VS` | Ranking — ⚔️ Duelo de Mapas (1v1) · retorna `wins` + `losses` · inclui jogadores sem vitória |
 | `GET` | `/api/ranking/global?gameType=LOGIC_PUZZLE` | Ranking — 🧠 Protocolo Lógico |
 | `GET` | `/api/ranking/global?gameType=PRECEDENCE_PUZZLE` | Ranking — ⚙️ Hierarquia de Comandos |
 
@@ -803,7 +808,7 @@ export class GameService
     const updateData: Record<string, any> = {};
     if (!game.endedAt) updateData.endedAt = new Date();
     if (won !== undefined) updateData.won = won;
-    if (gameType === 'LOGIC_PUZZLE' && mistakes !== undefined) updateData.attempts = mistakes;
+    if (['LOGIC_PUZZLE', 'PRECEDENCE_PUZZLE', 'CARD_GUESS', 'CARD_GUESS_VS'].includes(gameType) && mistakes !== undefined) updateData.attempts = mistakes;
 
     if (Object.keys(updateData).length > 0)
     {
@@ -831,6 +836,9 @@ export class GameService
 
   async getGlobalRanking(limit = 10, gameType?: string)
   {
+    const VS_TYPES = ['VS_GUESS', 'CARD_GUESS_VS'];
+    const isVsMode = gameType ? VS_TYPES.includes(gameType) : false;
+
     const users = await this.prismaService.prisma.user.findMany
     ({ include: { games: true } });
 
@@ -842,12 +850,31 @@ export class GameService
         const finishedGames = games.filter((g: any) => g.endedAt !== null || g.won);
         const wonGames      = finishedGames.filter((g: any) => g.won);
         const wonAttempts   = wonGames.map((g: any) => Number(g.attempts ?? 0));
+        const losses        = finishedGames.length - wonGames.length;
 
-        if (wonAttempts.length === 0)
+        // Nos modos 1v1, inclui jogadores que só perderam
+        if (wonAttempts.length === 0 && (!isVsMode || losses === 0))
           return null;
 
         const totalGames = finishedGames.length;
         const winRate    = wonAttempts.length / Math.max(totalGames, 1);
+
+        if (wonAttempts.length === 0)
+        {
+          return {
+            userId:           u.id,
+            name:             u.name ?? u.email,
+            averageAttempts:  null,
+            medianAttempts:   null,
+            modeAttempts:     null,
+            bestAttempts:     null,
+            weightedAttempts: Infinity,
+            wins:             0,
+            losses,
+            totalGames,
+            winRate:          0,
+          };
+        }
 
         const sorted = [...wonAttempts].sort((a, b) => a - b);
         const avg    = sorted.reduce((a, b) => a + b, 0) / sorted.length;
@@ -877,6 +904,7 @@ export class GameService
           bestAttempts:     best,
           weightedAttempts,
           wins:             wonAttempts.length,
+          losses,
           totalGames,
           winRate,
         };
@@ -885,11 +913,11 @@ export class GameService
       .filter(Boolean)
       .sort((a: any, b: any) =>
       {
-        if (b.winRate !== a.winRate)  
+        if (b.winRate !== a.winRate)
           return b.winRate - a.winRate;
-        if (a.weightedAttempts !== b.weightedAttempts) 
+        if (a.weightedAttempts !== b.weightedAttempts)
           return a.weightedAttempts - b.weightedAttempts;
-        
+
         return a.averageAttempts - b.averageAttempts;
       })
       .slice(0, limit);
@@ -938,7 +966,7 @@ export class GameService
 ```ts
 // Arquivo: backend/src/game/dto/create-game.dto.ts
 export type Difficulty = 'EASY' | 'MEDIUM' | 'HARD';
-export type GameType   = 'NUMBER_GUESS' | 'VS_GUESS' | 'CARD_GUESS' | 'LOGIC_PUZZLE' | 'PRECEDENCE_PUZZLE';
+export type GameType   = 'NUMBER_GUESS' | 'VS_GUESS' | 'CARD_GUESS' | 'CARD_GUESS_VS' | 'LOGIC_PUZZLE' | 'PRECEDENCE_PUZZLE';
 
 export class CreateGameDto
 {
@@ -1201,13 +1229,14 @@ export function App()
     setScore({ p1: 0, p2: 0 });
     setFinalScore(null);
     setVsRoundResults([]);
-    const isVs         = modo === 'vs';
-    const isMemoria    = modo === 'memoria';
-    const isLogica     = modo === 'logica';
+    const isVs          = modo === 'vs';
+    const isMemoria     = modo === 'memoria';
+    const isMemoriaVs   = modo === 'memoria-vs';
+    const isLogica      = modo === 'logica';
     const isPrecedencia = modo === 'precedencia';
     const id = await criarJogo(
       config.dificuldade,
-      isVs ? 'VS_GUESS' : isMemoria ? 'CARD_GUESS' : isLogica ? 'LOGIC_PUZZLE' : isPrecedencia ? 'PRECEDENCE_PUZZLE' : undefined,
+      isVs ? 'VS_GUESS' : isMemoria ? 'CARD_GUESS' : isMemoriaVs ? 'CARD_GUESS_VS' : isLogica ? 'LOGIC_PUZZLE' : isPrecedencia ? 'PRECEDENCE_PUZZLE' : undefined,
     );
     setGameId(id);
     setTela('game');
@@ -1239,6 +1268,7 @@ export function App()
   {
     const gameType =
       modo === 'memoria'     ? 'CARD_GUESS' :
+      modo === 'memoria-vs'  ? 'CARD_GUESS_VS' :
       modo === 'logica'      ? 'LOGIC_PUZZLE' :
       modo === 'precedencia' ? 'PRECEDENCE_PUZZLE' : undefined;
     const id = await criarJogo(dificuldade!, gameType);
@@ -1378,8 +1408,11 @@ export function Setup({ modo, onStart, onBack, onOpenRanking }: SetupProps)
 
 // VsGame: displayScore antecipa o +1 quando roundOver.winner é definido (sem esperar o clique em "avançar")
 // rodada encerra quando direction === 'correct' ou dados.gameOver === true (tentativas esgotadas no backend)
-// MemoriaGame: ao completar todos os pares chama POST /api/games/:id/finish com { won: true }
+// MemoriaGame: ao completar todos os pares chama POST /api/games/:id/finish com { won: true, mistakes: erros }
 // ao salvar (handleSalvar), chama onOpenRanking('CARD_GUESS') → abre o ranking já na aba correta
+// MemoriaVsGame: P1 e P2 finalizam com { won, mistakes: erros }; P2 game criado com gameType: 'CARD_GUESS_VS'
+// tela de resultado exibe SaveRankingPanel para ambos os jogadores com apelido pré-preenchido (p1/p2)
+// ao fechar, chama onOpenRanking('CARD_GUESS_VS') → abre o ranking já na aba Duelo de Mapas
 // LogicaGame: avalia fórmulas proposicionais V/F com timer por questão; classifica em Tautologia/Contradição/Contingência
 // PrecedenciaGame: o jogador insere parênteses clicando nos tokens; verificar() compara com normalizar()
 // SaveRankingPanel — reutilizado nos 5 modos solo + VsResultScreen; onOpenRanking recebe filtro opcional
@@ -1434,11 +1467,12 @@ export function Game(props: GameProps)
 
 ```ts
 // components/ranking.tsx — Hall da Fama com filtro por missão
-// Tabs: 🌌 Galáxia | 📡 Batalha de Sinais | 🔭 Operação Resgate | 🌕 Mapas Estelares | 🧠 Protocolo Lógico | ⚙️ Hierarquia de Cmds
+// Tabs: 🌌 Galáxia | 📡 Batalha de Sinais | 🔭 Operação Resgate | 🌕 Mapas Estelares | ⚔️ Duelo de Mapas | 🧠 Protocolo Lógico | ⚙️ Hierarquia de Cmds
 // GET /api/ranking/global?limit=10&gameType=<filtro>
-// Ordenação: menor mediana de tentativas = melhor posição · exibe mediana / média / moda por entrada
+// Ordenação: menor mediana de tentativas/erros = melhor posição · exibe mediana / média / moda por entrada
+// CARD_GUESS e CARD_GUESS_VS: attempts = erros; LOGIC_PUZZLE exibe só média de erros
 // Medalhas: 🥇🥈🥉 para top 3 · posição numérica para o restante
-// initialFilter: abre o ranking já na aba correta (ex: MemoriaGame abre CARD_GUESS após save)
+// initialFilter: abre o ranking já na aba correta (ex: MemoriaVsGame abre CARD_GUESS_VS após duelo)
 // Pluralização corrigida: "{n} missão" (n=1) / "{n} missões" (n≠1)
 
 interface RankingEntry
@@ -1451,14 +1485,15 @@ interface RankingEntry
   wins:            number;
 }
 
-export type GameTypeFilter = 'all' | 'NUMBER_GUESS' | 'VS_GUESS' | 'CARD_GUESS' | 'LOGIC_PUZZLE' | 'PRECEDENCE_PUZZLE';
+export type GameTypeFilter = 'all' | 'NUMBER_GUESS' | 'VS_GUESS' | 'CARD_GUESS' | 'CARD_GUESS_VS' | 'LOGIC_PUZZLE' | 'PRECEDENCE_PUZZLE';
 
 const TABS: { label: string; value: GameTypeFilter }[] =
 [
   { label: '🌌 Galáxia',               value: 'all'                },
   { label: '📡 Batalha de Sinais',     value: 'VS_GUESS'           },
   { label: '🔭 Operação Resgate',      value: 'NUMBER_GUESS'       },
-  { label: '🌕 Mapas Estrelares',      value: 'CARD_GUESS'         },
+  { label: '🌕 Mapas Estelares',       value: 'CARD_GUESS'         },
+  { label: '⚔️ Duelo de Mapas',        value: 'CARD_GUESS_VS'      },
   { label: '🧠 Protocolo Lógico',      value: 'LOGIC_PUZZLE'       },
   { label: '⚙️ Hierarquia de Cmds',    value: 'PRECEDENCE_PUZZLE'  },
 ];
@@ -1468,7 +1503,8 @@ const SUBTITULO: Record<GameTypeFilter, string> =
   all:               '🌌 Ranking Galáctico — todos os astronautas',
   VS_GUESS:          '📡 Batalha de Sinais — ambos se cadastram ao final',
   NUMBER_GUESS:      '🔭 Operação Resgate — missões solo',
-  CARD_GUESS:        '🌕 Mapas Estelares — jogo da memória',
+  CARD_GUESS:        '🌕 Mapas Estelares — jogo da memória solo',
+  CARD_GUESS_VS:     '⚔️ Duelo de Mapas — menor média de erros vence',
   LOGIC_PUZZLE:      '🧠 Protocolo Lógico — menor número de erros',
   PRECEDENCE_PUZZLE: '⚙️ Hierarquia de Comandos — precedência de operadores',
 };
@@ -1478,7 +1514,8 @@ const BADGE_LABEL: Record<GameTypeFilter, string> =
   all:               '🌌 Geral',
   VS_GUESS:          '📡 Batalha',
   NUMBER_GUESS:      '🔭 Resgate',
-  CARD_GUESS:        '🌕 Mapas',
+  CARD_GUESS:        '🌕 Mapas Solo',
+  CARD_GUESS_VS:     '⚔️ Duelo',
   LOGIC_PUZZLE:      '🧠 Protocolo',
   PRECEDENCE_PUZZLE: '⚙️ Hierarquia',
 };
