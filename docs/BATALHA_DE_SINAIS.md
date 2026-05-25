@@ -6,7 +6,7 @@
 </h1>
 
 <p align="center">
-  <img src="../img/batalha_de_sinais.jpeg" width="720" alt="Batalha de Sinais"/>
+  <img src="../img/batalha_de_sinais_resultado.png" width="720" alt="Batalha de Sinais"/>
 </p>
 
 > [!NOTE]

@@ -6,7 +6,7 @@
 </h1>
 
 <p align="center">
-  <img src="../img/protocolo_lógico.jpeg" width="720" alt="Protocolo Lógico"/>
+  <img src="../img/protocolo_logico_gameplay.png" width="720" alt="Protocolo Lógico"/>
 </p>
 
 > [!NOTE]

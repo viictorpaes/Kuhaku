@@ -11,8 +11,8 @@
     <th align="center">🌕 1v1 — Duelo de Mapas</th>
   </tr>
   <tr>
-    <td align="center"><img src="../img/mapas_estrelares.jpeg" width="360" alt="Mapas Estelares Solo"/></td>
-    <td align="center"><img src="../img/1v1_mapas_estrelares.jpeg" width="360" alt="1v1 Mapas Estelares"/></td>
+    <td align="center"><img src="../img/mapas_estelares_par.png" width="360" alt="Mapas Estelares Solo"/></td>
+    <td align="center"><img src="../img/duelo_de_mapas_resultado.png" width="360" alt="1v1 Mapas Estelares"/></td>
   </tr>
 </table>
 

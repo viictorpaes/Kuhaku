@@ -135,7 +135,7 @@ Kuhaku/
 <table align="center" width="780">
   <tr><th align="center">🏠 Tela Inicial</th></tr>
   <tr><td align="center"><b>Página de entrada do Kuhaku — o astronauta escolhe sua missão entre os seis modos de jogo disponíveis.</b></td></tr>
-  <tr><td align="center"><img src="img/tela_inicial.jpeg" width="750" alt="Tela Inicial"/></td></tr>
+  <tr><td align="center"><img src="img/tela_inicial.png" width="750" alt="Tela Inicial"/></td></tr>
 </table>
 
 <br>
@@ -143,7 +143,7 @@ Kuhaku/
 <table align="center" width="780">
   <tr><th align="center">📡 Batalha de Sinais</th></tr>
   <tr><td align="center"><b>Modo multiplayer local: dois astronautas disputam na mesma frequência secreta. Turnos alternados com timer de 30s/turno — erro custa -10s, acerto concede +15s. 3 rodadas · 12 tentativas/rodada. Ambos podem se cadastrar no ranking ao final. Dificuldades: 🌍 Cadete · 🚀 Piloto · 👨‍🚀 Comandante.</b></td></tr>
-  <td align="center"><img src="img/batalha_de_sinais.jpeg" width="750" alt="Batalha de Sinais"/></td></tr>
+  <td align="center"><img src="img/batalha_de_sinais_setup.png" width="750" alt="Batalha de Sinais"/></td></tr>
 </table>
 
 <br>
@@ -151,7 +151,7 @@ Kuhaku/
 <table align="center" width="780">
   <tr><th align="center">🌕 Mapas Estelares — Solo</th></tr>
   <tr><td align="center"><b>Modo single-player de memória: encontre os pares de coordenadas estelares com cronômetro regressivo contínuo (30s base · +15s por par encontrado · -10s por erro). Grids: 4×4, 4×5 ou 6×6 conforme a dificuldade.</b></td></tr>
-  <tr><td align="center"><img src="img/mapas_estrelares.jpeg" width="750" alt="Mapas Estelares"/></td></tr>
+  <tr><td align="center"><img src="img/mapas_estelares_setup.png" width="750" alt="Mapas Estelares"/></td></tr>
 </table>
 
 <br>
@@ -159,7 +159,7 @@ Kuhaku/
 <table align="center" width="780">
   <tr><th align="center">🌕 1v1 Mapas Estelares</th></tr>
   <tr><td align="center"><b>Modo multiplayer de memória: dois astronautas disputam quem encontra mais pares de coordenadas no mesmo grid. Timer individual contínuo com bônus/penalidade. Ao final, ambos os jogadores podem salvar seus resultados no ranking com o apelido já pré-preenchido. Grids: 4×4, 4×5 ou 6×6.</b></td></tr>
-  <tr><td align="center"><img src="img/1v1_mapas_estrelares.jpeg" width="750" alt="1v1 Mapas Estelares"/></td></tr>
+  <tr><td align="center"><img src="img/duelo_de_mapas_setup.png" width="750" alt="1v1 Mapas Estelares"/></td></tr>
 </table>
 
 <br>
@@ -167,7 +167,7 @@ Kuhaku/
 <table align="center" width="780">
   <tr><th align="center">🔭 Operação Resgate</th></tr>
   <tr><td align="center"><b>Modo single-player de adivinhação: sintonize a frequência de resgate correta dentro do número de tentativas. Timer contínuo 30s — acerto +15s, erro -10s. Range customizável. Feedback proporcional ao intervalo. <b>Missão Livre</b>: ao acertar avança de fase; timer=0 → RESET para a fase 1. Dificuldades: 🌍 Cadete (5 tent.) · 🚀 Piloto (8 tent.) · 👨‍🚀 Comandante (10 tent.).</b></td></tr>
-  <tr><td align="center"><img src="img/operação_resgate.jpeg" width="750" alt="Operação Resgate"/></td></tr>
+  <tr><td align="center"><img src="img/operacao_resgate_setup.png" width="750" alt="Operação Resgate"/></td></tr>
 </table>
 
 <br>
@@ -175,7 +175,7 @@ Kuhaku/
 <table align="center" width="780">
   <tr><th align="center">🧠 Protocolo Lógico</th></tr>
   <tr><td align="center"><b>A base espacial intercepta transmissões cifradas do cosmos. O astronauta decodifica cada sinal lógico avaliando fórmulas proposicionais (∧ ∨ ¬ → ↔) como VERDADEIRAS ou FALSAS. Cada transmissão revela seu tipo — 🌟 Tautologia, 🕳️ Contradição ou 🪐 Contingência. Timer contínuo 30s — acerto +15s, erro -10s. <b>Sistema de fases:</b> complete todas as questões → avança para a próxima fase; timer=0 → RESET para a fase 1. Dificuldades: 🌍 Cadete (8 · P,Q · ∧∨¬), 🚀 Piloto (10 · P,Q,R · ∧∨¬→), 👨‍🚀 Comandante (12 · todos).</b></td></tr>
-  <tr><td align="center"><img src="img/protocolo_lógico.jpeg" width="750" alt="Protocolo Lógico"/></td></tr>
+  <tr><td align="center"><img src="img/protocolo_logico_setup.png" width="750" alt="Protocolo Lógico"/></td></tr>
 </table>
 
 <br>
@@ -183,7 +183,7 @@ Kuhaku/
 <table align="center" width="780">
   <tr><th align="center">⚙️ Hierarquia de Comandos</th></tr>
   <tr><td align="center"><b>O computador da nave perdeu os parênteses das equações lógicas! Adicione os parênteses corretos para restaurar a ordem de precedência dos operadores (∧ antes de ∨, ∨ antes de →, → antes de ↔). Timer contínuo 30s — acerto +15s, erro -10s. <b>Sistema de fases:</b> complete todas as expressões → avança de fase; timer=0 → RESET para a fase 1. Dificuldades: 🌍 Cadete (8 · ∧∨), 🚀 Piloto (10 · ∧∨→), 👨‍🚀 Comandante (12 · ∧∨→↔).</b></td></tr>
-  <tr><td align="center"><img src="img/hierarquia_de_comandos.jpeg" width="750" alt="Hierarquia de Comandos"/></td></tr>
+  <tr><td align="center"><img src="img/hierarquia_de_comandos_setup.png" width="750" alt="Hierarquia de Comandos"/></td></tr>
 </table>
 
 <br>
@@ -191,7 +191,7 @@ Kuhaku/
 <table align="center" width="780">
   <tr><th align="center">🏆 Hall da Fama</th></tr>
   <tr><td align="center"><b>Ranking Galáctico com a pontuação de todos os astronautas por modalidade — filtre por Batalha de Sinais, Operação Resgate, Mapas Estelares, Protocolo Lógico ou Hierarquia de Comandos. Nos modos 1v1 (📡 Batalha de Sinais e ⚔️ Duelo de Mapas), exibe vitórias 🏆 e derrotas 💀 por jogador — astronautas sem vitória aparecem com ícone 💀 e placar de derrotas.</b></td></tr>
-  <tr><td align="center"><img src="img/hall_da_fama.jpeg" width="750" alt="Hall da Fama"/></td></tr>
+  <tr><td align="center"><img src="img/hall_da_fama.png" width="750" alt="Hall da Fama"/></td></tr>
 </table>
 
 <h2 align="center">🕹️ Comandos</h2>
@@ -808,7 +808,8 @@ export class GameService
     const updateData: Record<string, any> = {};
     if (!game.endedAt) updateData.endedAt = new Date();
     if (won !== undefined) updateData.won = won;
-    if (['LOGIC_PUZZLE', 'PRECEDENCE_PUZZLE', 'CARD_GUESS', 'CARD_GUESS_VS'].includes(gameType) && mistakes !== undefined) updateData.attempts = mistakes;
+    if (['LOGIC_PUZZLE', 'PRECEDENCE_PUZZLE', 'CARD_GUESS', 'CARD_GUESS_VS'].includes(gameType) && mistakes !== undefined)
+      updateData.attempts = mistakes;
 
     if (Object.keys(updateData).length > 0)
     {
@@ -834,6 +835,122 @@ export class GameService
     };
   }
 
+  async getGameHistory(gameId: string)
+  {
+    const [game, guesses] = await Promise.all
+    (
+      [
+        this.prismaService.prisma.game.findUnique({ where: { id: gameId } }),
+        this.prismaService.prisma.guess.findMany({ where: { gameId }, orderBy: { createdAt: 'asc' } }),
+      ]
+    );
+
+    if (!game)
+        throw new NotFoundException('Jogo não encontrado ❌');
+
+    return guesses;
+  }
+
+  async getGameSummary(gameId: string)
+  {
+    const game = await this.prismaService.prisma.game.findUnique
+    (
+      {
+        where:   { id: gameId },
+        include: { guesses: true },
+      }
+    );
+
+    if (!game)
+        throw new NotFoundException('Jogo não encontrado ❌');
+
+    const guesses = (game.guesses ?? []).sort(
+      (a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+    );
+
+    const first = guesses[0];
+    const last = guesses[guesses.length - 1];
+    const durationMs =
+      first && last
+        ? new Date(last.createdAt).getTime() - new Date(first.createdAt).getTime()
+        : null;
+
+    const gameType = (game as any).gameType as GameType ?? 'NUMBER_GUESS';
+    const isOver = game.won || !!game.endedAt;
+
+    return {
+      gameId:    game.id,
+      userId:    game.userId,
+      gameType,
+      difficulty: game.difficulty,
+      target:    isOver ? game.target : null,
+      attempts:  game.attempts,
+      won:       game.won,
+      guesses:   guesses.map((g: any) => ({
+        value:     g.value,
+        feedback:  g.feedback,
+        createdAt: g.createdAt,
+      })),
+      durationMs,
+    };
+  }
+
+  async listUserGames(userId: string)
+  {
+    return this.prismaService.prisma.game.findMany
+    (
+      {
+        where:   { userId },
+        orderBy: { createdAt: 'desc' },
+      }
+    );
+  }
+
+  async getUserStats(userId: string)
+  {
+    const allGames = await this.prismaService.prisma.game.findMany({ where: { userId } });
+    const wonGames = allGames.filter((g: any) => g.won);
+
+    if (wonGames.length === 0)
+      return { totalGames: allGames.length, wins: 0, losses: allGames.length, averageAttempts: 0, best: null, worst: null };
+
+    const attempts: number[] = wonGames.map((g: any) => Number(g.attempts ?? 0));
+    const totalAttempts = attempts.reduce((a: number, b: number) => a + b, 0);
+
+    return {
+      totalGames:      allGames.length,
+      wins:            wonGames.length,
+      losses:          allGames.length - wonGames.length,
+      averageAttempts: totalAttempts / wonGames.length,
+      best:            Math.min(...attempts),
+      worst:           Math.max(...attempts),
+    };
+  }
+
+  async saveGameToRanking(gameId: string, name: string)
+  {
+    const game = await this.prismaService.prisma.game.findUnique
+    ({ where: { id: gameId } });
+    if (!game)
+        throw new NotFoundException('Jogo não encontrado ❌');
+
+    const email = `${name.toLowerCase().replace(/\s+/g, '.')}@kuhaku.player`;
+    let user = await this.prismaService.prisma.user.findUnique({ where: { email } });
+    if (!user)
+      user = await this.prismaService.prisma.user.create({ data: { email, name } });
+
+    await this.prismaService.prisma.game.update
+    (
+      {
+        where: { id: gameId },
+        data:  { userId: user.id },
+      }
+    );
+
+    const ranking = await this.getUserRanking(user.id);
+    return { saved: true, ...ranking };
+  }
+
   async getGlobalRanking(limit = 10, gameType?: string)
   {
     const VS_TYPES = ['VS_GUESS', 'CARD_GUESS_VS'];
@@ -852,7 +969,6 @@ export class GameService
         const wonAttempts   = wonGames.map((g: any) => Number(g.attempts ?? 0));
         const losses        = finishedGames.length - wonGames.length;
 
-        // Nos modos 1v1, inclui jogadores que só perderam
         if (wonAttempts.length === 0 && (!isVsMode || losses === 0))
           return null;
 
@@ -931,28 +1047,73 @@ export class GameService
     return { position: index + 1, total: ranking.length, entry: ranking[index] };
   }
 
-  async saveGameToRanking(gameId: string, name: string)
+  async getUserAchievements(userId: string)
   {
-    const game = await this.prismaService.prisma.game.findUnique
-    ({ where: { id: gameId } });
-    if (!game)
-        throw new NotFoundException('Jogo não encontrado ❌');
-
-    const email = `${name.toLowerCase().replace(/\s+/g, '.')}@kuhaku.player`;
-    let user = await this.prismaService.prisma.user.findUnique({ where: { email } });
-    if (!user)
-      user = await this.prismaService.prisma.user.create({ data: { email, name } });
-
-    await this.prismaService.prisma.game.update
+    const games = await this.prismaService.prisma.game.findMany
     (
       {
-        where: { id: gameId },
-        data:  { userId: user.id },
+        where:   { userId },
+        include: { guesses: true },
+        orderBy: { createdAt: 'asc' },
       }
     );
 
-    const ranking = await this.getUserRanking(user.id);
-    return { saved: true, ...ranking };
+    const wins = games.filter((g: any) => g.won);
+
+    const fastestWinAttempts = wins.length ? Math.min(...wins.map((g: any) => g.attempts)) : null;
+
+    const winDurations = wins
+      .map((g: any) =>
+      {
+        const sorted = (g.guesses ?? []).sort(
+          (a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+        );
+        if (sorted.length < 1)
+          return null;
+        const first = sorted[0];
+        const last  = sorted[sorted.length - 1];
+        return first && last
+          ? new Date(last.createdAt).getTime() - new Date(first.createdAt).getTime()
+          : null;
+      })
+      .filter(Boolean) as number[];
+
+    const fastestWinTimeMs = winDurations.length ? Math.min(...winDurations) : null;
+
+    let bestStreak = 0;
+    let current = 0;
+    for (const g of games)
+    {
+      if (g.won) current += 1;
+      else current = 0;
+      if (current > bestStreak) bestStreak = current;
+    }
+
+    return { totalGames: games.length, totalWins: wins.length, fastestWinAttempts, fastestWinTimeMs, bestStreak };
+  }
+
+  async searchPlayersByName(q: string): Promise<{ id: string; name: string }[]>
+  {
+    const users = await this.prismaService.prisma.user.findMany
+    ({
+      where: { name: { contains: q, mode: 'insensitive' } },
+      take: 6,
+      select: { id: true, name: true },
+    });
+    return users.filter((u: any) => u.name) as { id: string; name: string }[];
+  }
+
+  async getUserSummary(userId: string)
+  {
+    const [stats, achievements, ranking] = await Promise.all
+    (
+      [
+        this.getUserStats(userId),
+        this.getUserAchievements(userId),
+        this.getUserRanking(userId),
+      ]
+    );
+    return { stats, achievements, ranking };
   }
 }
 ```
@@ -1408,14 +1569,29 @@ export function Setup({ modo, onStart, onBack, onOpenRanking }: SetupProps)
 
 // VsGame: displayScore antecipa o +1 quando roundOver.winner é definido (sem esperar o clique em "avançar")
 // rodada encerra quando direction === 'correct' ou dados.gameOver === true (tentativas esgotadas no backend)
+
 // MemoriaGame: ao completar todos os pares chama POST /api/games/:id/finish com { won: true, mistakes: erros }
 // ao salvar (handleSalvar), chama onOpenRanking('CARD_GUESS') → abre o ranking já na aba correta
+
 // MemoriaVsGame: P1 e P2 finalizam com { won, mistakes: erros }; P2 game criado com gameType: 'CARD_GUESS_VS'
 // tela de resultado exibe SaveRankingPanel para ambos os jogadores com apelido pré-preenchido (p1/p2)
 // ao fechar, chama onOpenRanking('CARD_GUESS_VS') → abre o ranking já na aba Duelo de Mapas
-// LogicaGame: avalia fórmulas proposicionais V/F com timer por questão; classifica em Tautologia/Contradição/Contingência
-// PrecedenciaGame: o jogador insere parênteses clicando nos tokens; verificar() compara com normalizar()
-// SaveRankingPanel — reutilizado nos 5 modos solo + VsResultScreen; onOpenRanking recebe filtro opcional
+
+// LogicaGame / PrecedenciaGame — sistema de fases com timer contínuo compartilhado:
+//   · ao completar todas as questões/expressões da fase → ProximaFaseModal (salvar apelido OU avançar fase OU encerrar)
+//   · handleSalvarFase: se finishRef.current === false, aguarda POST /finish { won: true, mistakes } antes de POST /save
+//   · handleContinuarFase: reinicia exercícios, zera erros/acertos/streak, incrementa faseAtual, reseta finishRef
+//   · handleEncerrarMissao: chama POST /finish (fire-and-forget) e exibe ResumoFases com histórico de todas as fases
+//   · timer === 0 → POST /finish { won: true, mistakes } + ResumoFases (fire-and-forget; finishRef evita duplo envio)
+//   · ResumoFases: exibe acertos/erros por fase + formulário de save → POST /api/games/:id/save { name }
+//   · LogicaGame: classifica cada fórmula em Tautologia / Contradição / Contingência; operadores ∧ ∨ ¬ → ↔
+//   · PrecedenciaGame: jogador clica nos tokens para selecionar intervalo e agrupa com ( ); verificar() compara
+//     a expressão montada com normalizar(exercicio.correta) — gameType: PRECEDENCE_PUZZLE
+
+// ProximaFaseModal — modal entre fases com save antecipado e botões "Avançar" / "Ver Pontuação Final"
+// ResumoFases      — tela final com tabela por fase + formulário de apelido; recebe gameIdFinal + apiUrl
+
+// SaveRankingPanel — reutilizado nos modos VS/Memória; onOpenRanking recebe filtro opcional
 
 // displayScore (VsGame): preview do placar antes do avanço de rodada
 const displayScore =
@@ -1424,7 +1600,7 @@ const displayScore =
   p2: score.p2 + (roundOver?.winner === 2 ? 1 : 0),
 };
 
-// SaveRankingPanel — exibido após vitória/derrota (reutilizado nos 5 modos solo + VsResultScreen)
+// SaveRankingPanel — exibido após vitória/derrota (reutilizado nos modos VS + VsResultScreen)
 // savedPosition: { position: number | null; total: number } | null
 //   null          → exibe formulário de apelido
 //   position != null → 🏆 #X de Y jogadores
@@ -2005,7 +2181,8 @@ model Guess {
 20260504000000_init                             20260513000000_add_logic_puzzle_gametype
 20260505210350                                  20260521100000_add_max_range
 20260506194440_init                             20260525031733_add_card_guess_vs
-20260508111350_add_game_ended_at                migration_lock.toml
+20260508111350_add_game_ended_at                20260525180000_add_precedence_puzzle
+migration_lock.toml
 ```
 
 <table align="center" width="780">

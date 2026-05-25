@@ -6,7 +6,7 @@
 </h1>
 
 <p align="center">
-  <img src="../img/operação_resgate.jpeg" width="720" alt="Operação Resgate"/>
+  <img src="../img/operacao_resgate_gameplay.png" width="720" alt="Operação Resgate"/>
 </p>
 
 > [!NOTE]

@@ -1819,7 +1819,18 @@ function LogicaGame({ gameId, dificuldade, p1: _p1, apiUrl, onBack, onOpenRankin
   {
     if (totalTimer !== 0 || mostrandoProximaFase || mostrandoResumo) return;
     clearInterval(totalTimerRef.current);
+    const totalErrosAgg = historicoDeFases.reduce((s, f) => s + f.erros, 0) + erros;
     setHistoricoDeFases((prev) => [...prev, { fase: faseAtual, acertos, erros }]);
+    if (!finishRef.current)
+    {
+      finishRef.current = true;
+      fetch(`${apiUrl}/api/games/${gameId}/finish`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ won: true, mistakes: totalErrosAgg }),
+      }).catch(() => {});
+    }
     setMostrandoResumo(true);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [totalTimer]);
@@ -2208,7 +2219,18 @@ function PrecedenciaGame({ gameId, dificuldade, p1: _p1, apiUrl, onBack, onOpenR
   {
     if (totalTimer !== 0 || mostrandoProximaFase || mostrandoResumo) return;
     clearInterval(totalTimerRef.current);
+    const totalErrosAgg = historicoDeFases.reduce((s, f) => s + f.erros, 0) + erros;
     setHistoricoDeFases((prev) => [...prev, { fase: faseAtual, acertos, erros }]);
+    if (!finishRef.current)
+    {
+      finishRef.current = true;
+      fetch(`${apiUrl}/api/games/${gameId}/finish`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ won: true, mistakes: totalErrosAgg }),
+      }).catch(() => {});
+    }
     setMostrandoResumo(true);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [totalTimer]);

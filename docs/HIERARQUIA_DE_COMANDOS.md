@@ -6,7 +6,7 @@
 </h1>
 
 <p align="center">
-  <img src="../img/hierarquia_de_comandos.jpeg" width="720" alt="Hierarquia de Comandos"/>
+  <img src="../img/hierarquia_de_comandos_acerto.png" width="720" alt="Hierarquia de Comandos"/>
 </p>
 
 > [!NOTE]
