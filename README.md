@@ -114,6 +114,7 @@ Kuhaku/
 │   ├── MAPAS_ESTELARES.md <img src="https://img.shields.io/badge/Mapas_Estelares-111827?style=flat&logo=markdown&logoColor=FFD700" height="18"/>
 │   ├── OPERACAO_RESGATE.md <img src="https://img.shields.io/badge/Operação_Resgate-111827?style=flat&logo=markdown&logoColor=F97316" height="18"/>
 │   ├── PROTOCOLO_LOGICO.md <img src="https://img.shields.io/badge/Protocolo_Lógico-111827?style=flat&logo=markdown&logoColor=22C55E" height="18"/>
+│   ├── Regras_Evento.md <img src="https://img.shields.io/badge/Regras_do_Evento-111827?style=flat&logo=markdown&logoColor=FFD700" height="18"/>
 │   └── Histórias_de_Usuário.md <img src="https://img.shields.io/badge/User_Stories-111827?style=flat&logo=markdown&logoColor=blue" height="18"/>
 │
 ├── img/ <img src="https://img.shields.io/badge/Assets-green?style=flat&logo=image&logoColor=white" height="18"/>
@@ -144,6 +145,15 @@ Kuhaku/
   <tr><th align="center">📡 Batalha de Sinais</th></tr>
   <tr><td align="center"><b>Modo multiplayer local: dois astronautas disputam na mesma frequência secreta. Turnos alternados com timer de 30s/turno — erro custa -10s, acerto concede +15s. 3 rodadas · 12 tentativas/rodada. Ambos podem se cadastrar no ranking ao final. Dificuldades: 🌍 Cadete · 🚀 Piloto · 👨‍🚀 Comandante.</b></td></tr>
   <td align="center"><img src="img/batalha_de_sinais_setup.png" width="750" alt="Batalha de Sinais"/></td></tr>
+  <tr><td><table width="100%"><tr>
+    <td align="center"><img src="img/batalha_de_sinais_gameplay.png" width="370" alt="Gameplay"/></td>
+    <td align="center"><img src="img/batalha_de_sinais_feedback.png" width="370" alt="Feedback"/></td>
+  </tr><tr>
+    <td align="center"><img src="img/batalha_de_sinais_acerto_p1.png" width="370" alt="Acerto Jogador 1"/></td>
+    <td align="center"><img src="img/batalha_de_sinais_acerto_p2.png" width="370" alt="Acerto Jogador 2"/></td>
+  </tr><tr>
+    <td colspan="2" align="center"><img src="img/batalha_de_sinais_resultado.png" width="750" alt="Resultado"/></td>
+  </tr></table></td></tr>
 </table>
 
 <br>
@@ -152,6 +162,16 @@ Kuhaku/
   <tr><th align="center">🌕 Mapas Estelares — Solo</th></tr>
   <tr><td align="center"><b>Modo single-player de memória: encontre os pares de coordenadas estelares com cronômetro regressivo contínuo (30s base · +15s por par encontrado · -10s por erro). Grids: 4×4, 4×5 ou 6×6 conforme a dificuldade.</b></td></tr>
   <tr><td align="center"><img src="img/mapas_estelares_setup.png" width="750" alt="Mapas Estelares"/></td></tr>
+  <tr><td><table width="100%"><tr>
+    <td align="center"><img src="img/mapas_estelares_gameplay.png" width="370" alt="Gameplay"/></td>
+    <td align="center"><img src="img/mapas_estelares_par.png" width="370" alt="Par encontrado"/></td>
+  </tr><tr>
+    <td align="center"><img src="img/mapas_estelares_erros.png" width="370" alt="Erros"/></td>
+    <td align="center"><img src="img/mapas_estelares_fase_completa.png" width="370" alt="Fase completa"/></td>
+  </tr><tr>
+    <td align="center"><img src="img/mapas_estelares_missao_encerrada.png" width="370" alt="Missão encerrada"/></td>
+    <td align="center"><img src="img/mapas_estelares_premio_salvo.png" width="370" alt="Prêmio salvo"/></td>
+  </tr></table></td></tr>
 </table>
 
 <br>
@@ -160,6 +180,13 @@ Kuhaku/
   <tr><th align="center">🌕 1v1 Mapas Estelares</th></tr>
   <tr><td align="center"><b>Modo multiplayer de memória: dois astronautas disputam quem encontra mais pares de coordenadas no mesmo grid. Timer individual contínuo com bônus/penalidade. Ao final, ambos os jogadores podem salvar seus resultados no ranking com o apelido já pré-preenchido. Grids: 4×4, 4×5 ou 6×6.</b></td></tr>
   <tr><td align="center"><img src="img/duelo_de_mapas_setup.png" width="750" alt="1v1 Mapas Estelares"/></td></tr>
+  <tr><td><table width="100%"><tr>
+    <td align="center"><img src="img/duelo_de_mapas_gameplay.png" width="370" alt="Gameplay"/></td>
+    <td align="center"><img src="img/duelo_de_mapas_transicao.png" width="370" alt="Transição de turno"/></td>
+  </tr><tr>
+    <td align="center"><img src="img/duelo_de_mapas_eliminado.png" width="370" alt="Jogador eliminado"/></td>
+    <td align="center"><img src="img/duelo_de_mapas_resultado.png" width="370" alt="Resultado final"/></td>
+  </tr></table></td></tr>
 </table>
 
 <br>
@@ -168,6 +195,15 @@ Kuhaku/
   <tr><th align="center">🔭 Operação Resgate</th></tr>
   <tr><td align="center"><b>Modo single-player de adivinhação: sintonize a frequência de resgate correta dentro do número de tentativas. Timer contínuo 30s — acerto +15s, erro -10s. Range customizável. Feedback proporcional ao intervalo. <b>Missão Livre</b>: ao acertar avança de fase; timer=0 → RESET para a fase 1. Dificuldades: 🌍 Cadete (5 tent.) · 🚀 Piloto (8 tent.) · 👨‍🚀 Comandante (10 tent.).</b></td></tr>
   <tr><td align="center"><img src="img/operacao_resgate_setup.png" width="750" alt="Operação Resgate"/></td></tr>
+  <tr><td><table width="100%"><tr>
+    <td align="center"><img src="img/operacao_resgate_gameplay.png" width="370" alt="Gameplay"/></td>
+    <td align="center"><img src="img/operacao_resgate_fase_nome.png" width="370" alt="Nome da fase"/></td>
+  </tr><tr>
+    <td align="center"><img src="img/operacao_resgate_fase_completa.png" width="370" alt="Fase completa"/></td>
+    <td align="center"><img src="img/operacao_resgate_salvar.png" width="370" alt="Salvar no ranking"/></td>
+  </tr><tr>
+    <td colspan="2" align="center"><img src="img/operacao_resgate_missao_encerrada.png" width="750" alt="Missão encerrada"/></td>
+  </tr></table></td></tr>
 </table>
 
 <br>
@@ -176,6 +212,15 @@ Kuhaku/
   <tr><th align="center">🧠 Protocolo Lógico</th></tr>
   <tr><td align="center"><b>A base espacial intercepta transmissões cifradas do cosmos. O astronauta decodifica cada sinal lógico avaliando fórmulas proposicionais (∧ ∨ ¬ → ↔) como VERDADEIRAS ou FALSAS. Cada transmissão revela seu tipo — 🌟 Tautologia, 🕳️ Contradição ou 🪐 Contingência. Timer contínuo 30s — acerto +15s, erro -10s. <b>Sistema de fases:</b> complete todas as questões → avança para a próxima fase; timer=0 → RESET para a fase 1. Dificuldades: 🌍 Cadete (8 · P,Q · ∧∨¬), 🚀 Piloto (10 · P,Q,R · ∧∨¬→), 👨‍🚀 Comandante (12 · todos).</b></td></tr>
   <tr><td align="center"><img src="img/protocolo_logico_setup.png" width="750" alt="Protocolo Lógico"/></td></tr>
+  <tr><td><table width="100%"><tr>
+    <td align="center"><img src="img/protocolo_logico_gameplay.png" width="370" alt="Gameplay"/></td>
+    <td align="center"><img src="img/protocolo_logico_acerto.png" width="370" alt="Acerto"/></td>
+  </tr><tr>
+    <td align="center"><img src="img/protocolo_logico_erro.png" width="370" alt="Erro"/></td>
+    <td align="center"><img src="img/protocolo_logico_fase_completa.png" width="370" alt="Fase completa"/></td>
+  </tr><tr>
+    <td colspan="2" align="center"><img src="img/protocolo_logico_missao_encerrada.png" width="750" alt="Missão encerrada"/></td>
+  </tr></table></td></tr>
 </table>
 
 <br>
@@ -184,6 +229,12 @@ Kuhaku/
   <tr><th align="center">⚙️ Hierarquia de Comandos</th></tr>
   <tr><td align="center"><b>O computador da nave perdeu os parênteses das equações lógicas! Adicione os parênteses corretos para restaurar a ordem de precedência dos operadores (∧ antes de ∨, ∨ antes de →, → antes de ↔). Timer contínuo 30s — acerto +15s, erro -10s. <b>Sistema de fases:</b> complete todas as expressões → avança de fase; timer=0 → RESET para a fase 1. Dificuldades: 🌍 Cadete (8 · ∧∨), 🚀 Piloto (10 · ∧∨→), 👨‍🚀 Comandante (12 · ∧∨→↔).</b></td></tr>
   <tr><td align="center"><img src="img/hierarquia_de_comandos_setup.png" width="750" alt="Hierarquia de Comandos"/></td></tr>
+  <tr><td><table width="100%"><tr>
+    <td align="center"><img src="img/hierarquia_de_comandos_acerto.png" width="370" alt="Acerto"/></td>
+    <td align="center"><img src="img/hierarquia_de_comandos_erro.png" width="370" alt="Erro"/></td>
+  </tr><tr>
+    <td colspan="2" align="center"><img src="img/hierarquia_de_comandos_fase_completa.png" width="750" alt="Fase completa"/></td>
+  </tr></table></td></tr>
 </table>
 
 <br>

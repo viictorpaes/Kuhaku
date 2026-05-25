@@ -9,6 +9,14 @@
   <img src="../img/batalha_de_sinais_resultado.png" width="720" alt="Batalha de Sinais"/>
 </p>
 
+<table align="center" width="760"><tr>
+  <td align="center"><img src="../img/batalha_de_sinais_gameplay.png" width="370" alt="Gameplay"/></td>
+  <td align="center"><img src="../img/batalha_de_sinais_feedback.png" width="370" alt="Feedback de frequência"/></td>
+</tr><tr>
+  <td align="center"><img src="../img/batalha_de_sinais_acerto_p1.png" width="370" alt="Acerto — Jogador 1"/></td>
+  <td align="center"><img src="../img/batalha_de_sinais_acerto_p2.png" width="370" alt="Acerto — Jogador 2"/></td>
+</tr></table>
+
 > [!NOTE]
 > **Lore:** Dois astronautas captam a mesma frequência de emergência vinda do cosmos. Apenas um sintonizará o sinal certo primeiro — e salvará a missão.
 

@@ -9,6 +9,14 @@
   <img src="../img/protocolo_logico_gameplay.png" width="720" alt="Protocolo Lógico"/>
 </p>
 
+<table align="center" width="760"><tr>
+  <td align="center"><img src="../img/protocolo_logico_acerto.png" width="370" alt="Acerto"/></td>
+  <td align="center"><img src="../img/protocolo_logico_erro.png" width="370" alt="Erro"/></td>
+</tr><tr>
+  <td align="center"><img src="../img/protocolo_logico_fase_completa.png" width="370" alt="Fase completa"/></td>
+  <td align="center"><img src="../img/protocolo_logico_missao_encerrada.png" width="370" alt="Missão encerrada"/></td>
+</tr></table>
+
 > [!NOTE]
 > **Lore:** A base espacial intercepta transmissões cifradas do cosmos. Cada sinal carrega uma fórmula lógica — o astronauta deve decodificar se ela é VERDADEIRA ou FALSA e revelar sua natureza cósmica: Tautologia, Contradição ou Contingência.
 

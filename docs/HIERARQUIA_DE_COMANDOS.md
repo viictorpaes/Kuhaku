@@ -9,6 +9,11 @@
   <img src="../img/hierarquia_de_comandos_acerto.png" width="720" alt="Hierarquia de Comandos"/>
 </p>
 
+<table align="center" width="760"><tr>
+  <td align="center"><img src="../img/hierarquia_de_comandos_erro.png" width="370" alt="Erro"/></td>
+  <td align="center"><img src="../img/hierarquia_de_comandos_fase_completa.png" width="370" alt="Fase completa"/></td>
+</tr></table>
+
 > [!NOTE]
 > **Lore:** O computador da nave sofreu uma falha catastrófica e perdeu todos os parênteses das equações lógicas de navegação! O astronauta deve restaurar a ordem de precedência dos operadores — ou a nave ficará à deriva para sempre.
 

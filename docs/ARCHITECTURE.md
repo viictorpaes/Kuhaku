@@ -170,16 +170,19 @@ Documentação do projeto: histórias de usuário, arquitetura, regras de evento
 | Arquivo | Conteúdo |
 |---|---|
 | `ARCHITECTURE.md` | Visão geral do sistema, API REST, banco de dados e fluxo de dados |
-| `BATALHA_DE_SINAIS.md` | Regras e mecânicas do modo `VS_GUESS` |
-| `HIERARQUIA_DE_COMANDOS.md` | Regras e mecânicas do modo `PRECEDENCE_PUZZLE` |
-| `MAPAS_ESTELARES.md` | Regras e mecânicas do modo `CARD_GUESS` / `CARD_GUESS_VS` |
-| `OPERACAO_RESGATE.md` | Regras e mecânicas do modo `NUMBER_GUESS` |
-| `PROTOCOLO_LOGICO.md` | Regras e mecânicas do modo `LOGIC_PUZZLE` |
-| `Regras_Evento.md` | Estrutura oficial do evento: categorias Arena/Jornada, premiação e fluxo geral |
-| `Histórias_de_Usuário.md` | User stories e requisitos funcionais |
+| [`BATALHA_DE_SINAIS.md`](BATALHA_DE_SINAIS.md) | Regras e mecânicas do modo `VS_GUESS` |
+| [`HIERARQUIA_DE_COMANDOS.md`](HIERARQUIA_DE_COMANDOS.md) | Regras e mecânicas do modo `PRECEDENCE_PUZZLE` |
+| [`MAPAS_ESTELARES.md`](MAPAS_ESTELARES.md) | Regras e mecânicas do modo `CARD_GUESS` / `CARD_GUESS_VS` |
+| [`OPERACAO_RESGATE.md`](OPERACAO_RESGATE.md) | Regras e mecânicas do modo `NUMBER_GUESS` |
+| [`PROTOCOLO_LOGICO.md`](PROTOCOLO_LOGICO.md) | Regras e mecânicas do modo `LOGIC_PUZZLE` |
+| **[`Regras_Evento.md`](Regras_Evento.md)** | **Estrutura oficial do evento: categorias Arena/Jornada, mecânica de premiação, fluxo geral e sistema de pontuação** |
+| [`Histórias_de_Usuário.md`](Histórias_de_Usuário.md) | User stories e requisitos funcionais |
+
+> [!IMPORTANT]
+> **[`Regras_Evento.md`](Regras_Evento.md)** é o documento de referência para o dia do evento — contém as regras oficiais de premiação, o fluxo de estações Arena/Jornada e o sistema "Dobrar ou Nada". Consulte-o ao configurar o operador ou exibir as regras nos telões.
 
 ### `img/` <img src="https://img.shields.io/badge/Assets-green?style=flat&logo=image&logoColor=white" height="18"/>
-Screenshots e assets visuais usados no README e na documentação.
+Screenshots e assets visuais usados no README e na documentação: capturas de gameplay de todos os seis modos, telas de setup, resultados, fases completas e missões encerradas. Inclui também `logs.jpeg` com exemplo de output do servidor em desenvolvimento e `logo_atualizada.jpeg` com a identidade visual do projeto.
 
 ### Raiz do monorepo
 | Arquivo | Papel |

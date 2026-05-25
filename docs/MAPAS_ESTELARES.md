@@ -14,6 +14,22 @@
     <td align="center"><img src="../img/mapas_estelares_par.png" width="360" alt="Mapas Estelares Solo"/></td>
     <td align="center"><img src="../img/duelo_de_mapas_resultado.png" width="360" alt="1v1 Mapas Estelares"/></td>
   </tr>
+  <tr>
+    <td align="center"><img src="../img/mapas_estelares_gameplay.png" width="360" alt="Solo — Gameplay"/></td>
+    <td align="center"><img src="../img/duelo_de_mapas_gameplay.png" width="360" alt="1v1 — Gameplay"/></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="../img/mapas_estelares_erros.png" width="360" alt="Solo — Erros"/></td>
+    <td align="center"><img src="../img/duelo_de_mapas_transicao.png" width="360" alt="1v1 — Transição de turno"/></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="../img/mapas_estelares_fase_completa.png" width="360" alt="Solo — Fase completa"/></td>
+    <td align="center"><img src="../img/duelo_de_mapas_eliminado.png" width="360" alt="1v1 — Jogador eliminado"/></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="../img/mapas_estelares_missao_encerrada.png" width="360" alt="Solo — Missão encerrada"/></td>
+    <td align="center"><img src="../img/mapas_estelares_premio_salvo.png" width="360" alt="Solo — Prêmio salvo"/></td>
+  </tr>
 </table>
 
 > [!NOTE]

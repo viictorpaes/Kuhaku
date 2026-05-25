@@ -9,6 +9,14 @@
   <img src="../img/operacao_resgate_gameplay.png" width="720" alt="Operação Resgate"/>
 </p>
 
+<table align="center" width="760"><tr>
+  <td align="center"><img src="../img/operacao_resgate_fase_nome.png" width="370" alt="Nome da fase"/></td>
+  <td align="center"><img src="../img/operacao_resgate_fase_completa.png" width="370" alt="Fase completa"/></td>
+</tr><tr>
+  <td align="center"><img src="../img/operacao_resgate_salvar.png" width="370" alt="Salvar no ranking"/></td>
+  <td align="center"><img src="../img/operacao_resgate_missao_encerrada.png" width="370" alt="Missão encerrada"/></td>
+</tr></table>
+
 > [!NOTE]
 > **Lore:** Uma nave à deriva envia pulsos de frequência pelo cosmos. O astronauta precisa sintonizar o canal exato de resgate antes que as tentativas se esgotem — e o silêncio tome conta.
 
