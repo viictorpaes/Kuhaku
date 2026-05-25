@@ -120,6 +120,7 @@ Kuhaku/
 │   ├── MAPAS_ESTELARES.md <img src="https://img.shields.io/badge/Mapas_Estelares-111827?style=flat&logo=markdown&logoColor=FFD700" height="18"/>
 │   ├── OPERACAO_RESGATE.md <img src="https://img.shields.io/badge/Operação_Resgate-111827?style=flat&logo=markdown&logoColor=F97316" height="18"/>
 │   ├── PROTOCOLO_LOGICO.md <img src="https://img.shields.io/badge/Protocolo_Lógico-111827?style=flat&logo=markdown&logoColor=22C55E" height="18"/>
+│   ├── Regras_Evento.md <img src="https://img.shields.io/badge/Regras_do_Evento-111827?style=flat&logo=markdown&logoColor=FFD700" height="18"/>
 │   └── Histórias_de_Usuário.md <img src="https://img.shields.io/badge/User_Stories-111827?style=flat&logo=markdown&logoColor=blue" height="18"/>
 │
 ├── img <img src="https://img.shields.io/badge/Assets-green?style=flat&logo=image&logoColor=white" height="18"/>/
@@ -164,7 +165,18 @@ SPA React compilada pelo Vite. Toda a navegação é controlada por estado (`tel
 - **`src/types.ts`** — tipos globais do frontend: `Tela`, `Modo`, `Dificuldade`, `Palpite`, `ConfigJogo`.
 
 ### `docs/` <img src="https://img.shields.io/badge/Docs-111827?style=flat&logo=markdown&logoColor=blue" height="18"/>
-Documentação do projeto: histórias de usuário, arquitetura e descrições detalhadas de cada modo de jogo.
+Documentação do projeto: histórias de usuário, arquitetura, regras de evento e descrições detalhadas de cada modo de jogo.
+
+| Arquivo | Conteúdo |
+|---|---|
+| `ARCHITECTURE.md` | Visão geral do sistema, API REST, banco de dados e fluxo de dados |
+| `BATALHA_DE_SINAIS.md` | Regras e mecânicas do modo `VS_GUESS` |
+| `HIERARQUIA_DE_COMANDOS.md` | Regras e mecânicas do modo `PRECEDENCE_PUZZLE` |
+| `MAPAS_ESTELARES.md` | Regras e mecânicas do modo `CARD_GUESS` / `CARD_GUESS_VS` |
+| `OPERACAO_RESGATE.md` | Regras e mecânicas do modo `NUMBER_GUESS` |
+| `PROTOCOLO_LOGICO.md` | Regras e mecânicas do modo `LOGIC_PUZZLE` |
+| `Regras_Evento.md` | Estrutura oficial do evento: categorias Arena/Jornada, premiação e fluxo geral |
+| `Histórias_de_Usuário.md` | User stories e requisitos funcionais |
 
 ### `img/` <img src="https://img.shields.io/badge/Assets-green?style=flat&logo=image&logoColor=white" height="18"/>
 Screenshots e assets visuais usados no README e na documentação.

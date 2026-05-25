@@ -12,4 +12,5 @@ import { GameModule } from './game/ts/game.module';
   }
 )
 
-export class AppModule{}
+export class AppModule
+{}
