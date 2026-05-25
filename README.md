@@ -1933,6 +1933,86 @@ main().catch
 );
 ```
 
+<h2 align="center">Schema do Prisma<br>
+<img src="https://img.shields.io/badge/Schema_Prisma-4ade80?style=flat-square&logo=prisma&logoColor=black" height="18"/></h2>
+
+
+```Prisma
+// backend/prisma/schema.prisma 
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  password  String?
+  createdAt DateTime @default(now())
+  games     Game[]
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum GameType {
+  NUMBER_GUESS
+  VS_GUESS
+  CARD_GUESS
+  CARD_GUESS_VS
+  LOGIC_PUZZLE
+  PRECEDENCE_PUZZLE
+}
+
+model Game {
+  id         String     @id @default(cuid())
+  userId     String?
+  user       User?      @relation(fields: [userId], references: [id])
+  gameType   GameType   @default(NUMBER_GUESS)
+  difficulty Difficulty
+  target     Int
+  maxRange   Int?
+  attempts   Int        @default(0)
+  won        Boolean    @default(false)
+  createdAt  DateTime   @default(now())
+  endedAt    DateTime?
+  guesses    Guess[]
+}
+
+model Guess {
+  id        String   @id @default(cuid())
+  gameId    String
+  game      Game     @relation(fields: [gameId], references: [id])
+  value     Int
+  feedback  String
+  createdAt DateTime @default(now())
+}
+```
+
+<h2 align="center">Logs e Migrations<br>
+<img src="https://img.shields.io/badge/-Logs-111827?style=flat-square&logo=elastic&logoColor=FF3621" height="18"><img src="https://img.shields.io/badge/-Migrations-111827?style=flat-square&logo=databricks&logoColor=FF3621" height="18"></h2>
+
+
+```Migrations
+20260504000000_init                             20260513000000_add_logic_puzzle_gametype
+20260505210350                                  20260521100000_add_max_range
+20260506194440_init                             20260525031733_add_card_guess_vs
+20260508111350_add_game_ended_at                migration_lock.toml
+```
+
+<table align="center" width="780">
+  <tr><td align="left">O <b>Hall da Fama</b> apresenta o ranking dos 10 melhores astronautas da aplicação. É possível filtrar a visualização por sete modalidades: <b>Galáxia</b> (geral), <b>Batalha de Sinais</b>, <b>Operação Resgate</b>, <b>Mapas Estelares</b>, <b>Duelo de Mapas</b>, <b>Protocolo Lógico</b> ou <b>Hierarquia de Comandos</b>.<br><br>As métricas são exibidas conforme o tipo de jogo:<ul><li><b>Modos Solo:</b> Exibe a mediana, a média e a moda das tentativas realizadas.</li><li><b>Protocolo Lógico:</b> Exibe especificamente a média de erros.</li><li><b>Modos 1v1 (Batalha de Sinais e Duelo de Mapas):</b> Exibe o saldo de vitórias 🏆 e derrotas 💀. Astronautas que ainda não venceram são identificados apenas com o ícone 💀 e agrupados em uma classificação separada.</li></ul></td></tr>
+  <tr><td align="center"><img src="img/logs.jpeg" width="750" alt="Hall da Fama"/></td></tr>
+</table>
+
 <h2 align="center"> License <br>
 <img src="https://img.shields.io/badge/License-MIT-orange?style=flat&logo=opensourceinitiative&logoColor=orange" height="18"/> <br>
 </h2>
