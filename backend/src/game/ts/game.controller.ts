@@ -49,9 +49,9 @@ export class GameController
   }
 
   @Post('games/:id/save')
-  async salvarNoRanking(@Param('id') id: string, @Body() body: { name: string })
+  async salvarNoRanking(@Param('id') id: string, @Body() body: { name: string; won?: boolean })
   {
-    return this.gameService.saveGameToRanking(id, body.name);
+    return this.gameService.saveGameToRanking(id, body.name, body.won);
   }
 
   @Get('games/:id/history')

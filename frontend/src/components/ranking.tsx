@@ -37,11 +37,11 @@ const MEDALHAS = ['🥇', '🥈', '🥉'];
 const SUBTITULO: Record<GameTypeFilter, string> =
 {
   all:               '🌌 Ranking Galáctico — todos os astronautas',
-  VS_GUESS:          '📡 Batalha de Sinais — ambos se cadastram ao final',
+  VS_GUESS:          '📡 Batalha de Sinais — menor mediana de tentativas vence',
   NUMBER_GUESS:      '🔭 Operação Resgate — missões solo',
   CARD_GUESS:        '🌕 Mapas Estelares — jogo da memória solo',
-  CARD_GUESS_VS:     '⚔️ Duelo de Mapas — menor média de erros vence',
-  LOGIC_PUZZLE:      '🧠 Protocolo Lógico — menor número de erros',
+  CARD_GUESS_VS:     '⚔️ Duelo de Mapas — menor mediana de tentativas vence',
+  LOGIC_PUZZLE:      '🧠 Protocolo Lógico — menor mediana de erros',
   PRECEDENCE_PUZZLE: '⚙️ Hierarquia de Comandos — precedência de operadores',
 };
 
@@ -54,6 +54,12 @@ const BADGE_LABEL: Record<GameTypeFilter, string> =
   CARD_GUESS_VS:     '⚔️ Duelo',
   LOGIC_PUZZLE:      '🧠 Protocolo',
   PRECEDENCE_PUZZLE: '⚙️ Hierarquia',
+};
+
+const VS_ICONS: Partial<Record<GameTypeFilter, { win: string; loss: string; loser: string; noWins: string }>> =
+{
+  VS_GUESS:      { win: '📡', loss: '🔇', loser: '🔇', noWins: 'sem sinal' },
+  CARD_GUESS_VS: { win: '🌟', loss: '💀', loser: '💀', noWins: 'sem vitórias' },
 };
 
 
@@ -74,15 +80,25 @@ export function Ranking({ onBack, apiUrl, initialFilter }: RankingProps)
       .then((data) =>
       {
         const lista = Array.isArray(data) ? data : [];
+        const isVsFilter = filtro === 'VS_GUESS' || filtro === 'CARD_GUESS_VS';
         const ordenada = [...lista].sort((a: RankingEntry, b: RankingEntry) =>
         {
+          if (isVsFilter)
+          {
+            const winsA = a.wins ?? 0;
+            const winsB = b.wins ?? 0;
+            if (winsB !== winsA) return winsB - winsA;
+          }
+
+          const medianaA = a.medianAttempts ?? Number.POSITIVE_INFINITY;
+          const medianaB = b.medianAttempts ?? Number.POSITIVE_INFINITY;
+          if (medianaA !== medianaB) return medianaA - medianaB;
+
           const mediaA = a.averageAttempts ?? Number.POSITIVE_INFINITY;
           const mediaB = b.averageAttempts ?? Number.POSITIVE_INFINITY;
+          if (mediaA !== mediaB) return mediaA - mediaB;
 
-          if (mediaA !== mediaB)
-            return mediaA - mediaB;
-
-          return a.wins - b.wins;
+          return (b.wins ?? 0) - (a.wins ?? 0);
         });
 
         setRanking(ordenada);
@@ -171,7 +187,8 @@ export function Ranking({ onBack, apiUrl, initialFilter }: RankingProps)
           (
             <div className="divide-y divide-white/5">
               {ranking.map((entry, i) => {
-                const isVsMode = filtro === 'VS_GUESS' || filtro === 'CARD_GUESS_VS';
+                const vsIcons = VS_ICONS[filtro];
+                const isVsMode = vsIcons !== undefined;
                 const isOnlyLoser = isVsMode && entry.wins === 0;
                 return (
                 <div
@@ -181,7 +198,7 @@ export function Ranking({ onBack, apiUrl, initialFilter }: RankingProps)
                 >
                   <span className="text-xl w-8 text-center shrink-0 font-black">
                     {isOnlyLoser
-                      ? <span className="text-2xl">💀</span>
+                      ? <span className="text-2xl">{vsIcons!.loser}</span>
                       : i < 3
                         ? MEDALHAS[i]
                         : <span className="text-slate-500 text-sm">{i + 1}</span>
@@ -196,8 +213,12 @@ export function Ranking({ onBack, apiUrl, initialFilter }: RankingProps)
                       {isVsMode
                         ? (
                           <span className="text-[10px] flex items-center gap-1.5">
-                            <span style={{ color: '#4ade80' }}>🏆 {entry.wins}V</span>
-                            <span style={{ color: '#f87171' }}>💀 {entry.losses ?? 0}D</span>
+                            <span style={{ color: entry.wins > 0 ? '#4ade80' : '#94a3b8' }}>
+                              {entry.wins > 0 ? vsIcons!.win : vsIcons!.loss} {entry.wins}V
+                            </span>
+                            <span style={{ color: (entry.losses ?? 0) > 0 ? '#f87171' : '#94a3b8' }}>
+                              {vsIcons!.loss} {entry.losses ?? 0}D
+                            </span>
                           </span>
                         )
                         : (
@@ -209,43 +230,34 @@ export function Ranking({ onBack, apiUrl, initialFilter }: RankingProps)
                     </div>
                   </div>
                   <div className="text-right shrink-0 flex flex-col gap-0.5">
-                    {filtro === 'LOGIC_PUZZLE'
+                    {isOnlyLoser
                       ? (
                         <div className="flex flex-col items-end gap-0.5">
-                          <p className="font-black text-lg" style={{ color: '#4ade80' }}>
-                            {entry.averageAttempts != null ? (Math.round(entry.averageAttempts * 10) / 10).toFixed(1) : '—'}
-                          </p>
-                          <p className="text-[10px] text-slate-500 uppercase tracking-wide">erros (média)</p>
+                          <p className="font-semibold text-sm" style={{ color: '#f87171' }}>{vsIcons!.noWins}</p>
                         </div>
                       )
-                      : isOnlyLoser
-                        ? (
-                          <div className="flex flex-col items-end gap-0.5">
-                            <p className="font-semibold text-sm" style={{ color: '#f87171' }}>sem vitórias</p>
+                      : (
+                        <div className="flex gap-3 items-end justify-end">
+                          <div className="text-center">
+                            <p className="font-black text-base" style={{ color: '#06b6d4' }}>
+                              {entry.medianAttempts != null ? (Math.round(entry.medianAttempts * 10) / 10).toFixed(1) : '—'}
+                            </p>
+                            <p className="text-[9px] text-slate-500 uppercase tracking-wide">mediana</p>
                           </div>
-                        )
-                        : (
-                          <div className="flex gap-3 items-end justify-end">
-                            <div className="text-center">
-                              <p className="font-black text-base" style={{ color: '#06b6d4' }}>
-                                {entry.medianAttempts != null ? (Math.round(entry.medianAttempts * 10) / 10).toFixed(1) : '—'}
-                              </p>
-                              <p className="text-[9px] text-slate-500 uppercase tracking-wide">mediana</p>
-                            </div>
-                            <div className="text-center">
-                              <p className="font-semibold text-sm" style={{ color: '#7dd3fc' }}>
-                                {entry.averageAttempts != null ? (Math.round(entry.averageAttempts * 10) / 10).toFixed(1) : '—'}
-                              </p>
-                              <p className="text-[9px] text-slate-500 uppercase tracking-wide">média</p>
-                            </div>
-                            <div className="text-center">
-                              <p className="font-semibold text-sm" style={{ color: '#a5b4fc' }}>
-                                {entry.modeAttempts != null ? (Math.round(entry.modeAttempts * 10) / 10).toFixed(1) : '—'}
-                              </p>
-                              <p className="text-[9px] text-slate-500 uppercase tracking-wide">moda</p>
-                            </div>
+                          <div className="text-center">
+                            <p className="font-semibold text-sm" style={{ color: '#7dd3fc' }}>
+                              {entry.averageAttempts != null ? (Math.round(entry.averageAttempts * 10) / 10).toFixed(1) : '—'}
+                            </p>
+                            <p className="text-[9px] text-slate-500 uppercase tracking-wide">média</p>
                           </div>
-                        )
+                          <div className="text-center">
+                            <p className="font-semibold text-sm" style={{ color: '#a5b4fc' }}>
+                              {entry.modeAttempts != null ? (Math.round(entry.modeAttempts * 10) / 10).toFixed(1) : '—'}
+                            </p>
+                            <p className="text-[9px] text-slate-500 uppercase tracking-wide">moda</p>
+                          </div>
+                        </div>
+                      )
                     }
                   </div>
                 </div>
@@ -256,11 +268,7 @@ export function Ranking({ onBack, apiUrl, initialFilter }: RankingProps)
         </div>
 
         <p className="text-slate-600 text-xs mt-6">
-          {filtro === 'LOGIC_PUZZLE'
-            ? 'Menor média de erros = astronauta de elite lógico'
-            : filtro === 'CARD_GUESS' || filtro === 'CARD_GUESS_VS'
-            ? 'Menor mediana de erros = astronauta de elite'
-            : 'Menor mediana de tentativas = astronauta de elite'}
+          Menor mediana = astronauta de elite
         </p>
       </main>
     </div>

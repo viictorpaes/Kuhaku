@@ -89,7 +89,25 @@ export const MEMORIA_TIMER: Record<Dificuldade, number> =
   HARD:   35,
 };
 
-export const MEMORIA_BONUS_PAR = 20;
+export const MEMORIA_BONUS_PAR: Record<Dificuldade, number> =
+{
+  EASY:   8,
+  MEDIUM: 20,
+  HARD:   20,
+};
 
 export const TIMER_PENALIDADE = 5;
-export const TIMER_BONUS_ACERTO = 20;
+
+export const TIMER_BONUS_ACERTO: Record<Dificuldade, number> =
+{
+  EASY:   8,   // menor bônus no fácil pra não monopolizar a máquina
+  MEDIUM: 20,
+  HARD:   25,
+};
+
+export const TIMER_MAX: Record<Dificuldade, number> =
+{
+  EASY:   90,
+  MEDIUM: 150,
+  HARD:   999,
+};

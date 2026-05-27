@@ -276,7 +276,7 @@ export class GameService
     };
   }
 
-  async saveGameToRanking(gameId: string, name: string)
+  async saveGameToRanking(gameId: string, name: string, won?: boolean)
   {
     const game = await this.prismaService.prisma.game.findUnique
     ({ where: { id: gameId } });
@@ -292,7 +292,10 @@ export class GameService
     (
       {
         where: { id: gameId },
-        data:  { userId: user.id },
+        data:  {
+          userId: user.id,
+          ...(won !== undefined && { won }),
+        },
       }
     );
 
@@ -378,6 +381,15 @@ export class GameService
       .filter(Boolean)
       .sort((a: any, b: any) =>
       {
+        if (isVsMode)
+        {
+          if (b.wins !== a.wins) return b.wins - a.wins;
+          const mA = a.medianAttempts ?? Infinity;
+          const mB = b.medianAttempts ?? Infinity;
+          if (mA !== mB) return mA - mB;
+          return (a.averageAttempts ?? Infinity) - (b.averageAttempts ?? Infinity);
+        }
+
         if (b.winRate !== a.winRate)
           return b.winRate - a.winRate;
         if (a.weightedAttempts !== b.weightedAttempts)

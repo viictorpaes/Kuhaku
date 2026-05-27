@@ -24,6 +24,13 @@
   <img src="https://img.shields.io/badge/GitHub_Desktop-111827?style=for-the-badge&logo=github&logoColor=purple" height="35" alt="GitHub Desktop"/>
 </p>
 
+<h2 align="center">🖥️ Plataformas Disponíveis:</h2>
+<p align="center">
+<img src="https://img.shields.io/badge/windows%2010%2F11-2563EB?style=flat&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cGF0aCBmaWxsPSIjMDBBREVGIiBkPSJNMTI2IDEuNjM3bC02NyA5LjgzNHY0OS44MzFsNjctLjUzNHpNMS42NDcgNjYuNzA5bC4wMDMgNDIuNDA0IDUwLjc5MSA2Ljk4My0uMDQtNDkuMDU3em01Ni44Mi42OGwuMDk0IDQ5LjQ2NSA2Ny4zNzYgOS41MDkuMDE2LTU4Ljg2M3pNMS42MSAxOS4yOTdsLjA0NyA0Mi4zODMgNTAuNzkxLS4yODktLjAyMy00OS4wMTZ6Ii8+PC9zdmc+" height="35" alt="Windows 10/11"/>
+<img src="https://img.shields.io/badge/Ubuntu-E95420?style=flat-square&logo=ubuntu&logoColor=white" height="35" alt="Linux / Ubuntu"/>
+<img src="https://img.shields.io/badge/macOS-white?style=flat&logo=apple&logoColor=black" alt="macOS" height="35"/> 
+</p>
+
 <h2 align="center"> 🏰 Arquitetura do Projeto <br>
 <img src="https://img.shields.io/badge/Architecture-111827?style=flat-square&logo=instructure&logoColor=white"/></h2>
 
@@ -256,8 +263,19 @@ git clone https://github.com/viictorpaes/Kuhaku
 ```
 
 <h3 align="center">Rodar localmente <br>
-<img src="https://img.shields.io/badge/Local_Host-111827?style=flat-square&logo=readme&logoColor=white"/>
+<img src="https://img.shields.io/badge/Local_Host-111827?style=flat-square&logo=readme&logoColor=white"/><img src="https://img.shields.io/badge/-NPM-111827?style=flat-square&logo=npm&logoColor=CB3837"/>
 </h3>
+
+```bash
+# Instala as dependências da raiz (root) do projeto (workspace npm)
+npm install
+
+# Instala as dependências do backend/
+cd backend && npm install && cd ..
+
+# Instala as dependências do frontend'
+cd frontend && npm install && cd ..
+```
 
 ```bash
 # 1. Sobe o banco PostgreSQL via Docker:
@@ -1080,6 +1098,15 @@ export class GameService
       .filter(Boolean)
       .sort((a: any, b: any) =>
       {
+        if (isVsMode)
+        {
+          if (b.wins !== a.wins) return b.wins - a.wins;
+          const mA = a.medianAttempts ?? Infinity;
+          const mB = b.medianAttempts ?? Infinity;
+          if (mA !== mB) return mA - mB;
+          return (a.averageAttempts ?? Infinity) - (b.averageAttempts ?? Infinity);
+        }
+
         if (b.winRate !== a.winRate)
           return b.winRate - a.winRate;
         if (a.weightedAttempts !== b.weightedAttempts)
@@ -1696,7 +1723,8 @@ export function Game(props: GameProps)
 // components/ranking.tsx — Hall da Fama com filtro por missão
 // Tabs: 🌌 Galáxia | 📡 Batalha de Sinais | 🔭 Operação Resgate | 🌕 Mapas Estelares | ⚔️ Duelo de Mapas | 🧠 Protocolo Lógico | ⚙️ Hierarquia de Cmds
 // GET /api/ranking/global?limit=10&gameType=<filtro>
-// Ordenação: menor mediana de tentativas/erros = melhor posição · exibe mediana / média / moda por entrada
+// Ordenação modos VS (VS_GUESS, CARD_GUESS_VS): mais vitórias primeiro → entre iguais, menor mediana vence
+// Ordenação demais modos: menor mediana de tentativas/erros = melhor posição · exibe mediana / média / moda por entrada
 // CARD_GUESS e CARD_GUESS_VS: attempts = erros; LOGIC_PUZZLE exibe só média de erros
 // Medalhas: 🥇🥈🥉 para top 3 · posição numérica para o restante
 // initialFilter: abre o ranking já na aba correta (ex: MemoriaVsGame abre CARD_GUESS_VS após duelo)
@@ -1728,11 +1756,11 @@ const TABS: { label: string; value: GameTypeFilter }[] =
 const SUBTITULO: Record<GameTypeFilter, string> =
 {
   all:               '🌌 Ranking Galáctico — todos os astronautas',
-  VS_GUESS:          '📡 Batalha de Sinais — ambos se cadastram ao final',
+  VS_GUESS:          '📡 Batalha de Sinais — menor mediana de tentativas vence',
   NUMBER_GUESS:      '🔭 Operação Resgate — missões solo',
   CARD_GUESS:        '🌕 Mapas Estelares — jogo da memória solo',
-  CARD_GUESS_VS:     '⚔️ Duelo de Mapas — menor média de erros vence',
-  LOGIC_PUZZLE:      '🧠 Protocolo Lógico — menor número de erros',
+  CARD_GUESS_VS:     '⚔️ Duelo de Mapas — menor mediana de tentativas vence',
+  LOGIC_PUZZLE:      '🧠 Protocolo Lógico — menor mediana de erros',
   PRECEDENCE_PUZZLE: '⚙️ Hierarquia de Comandos — precedência de operadores',
 };
 
@@ -1763,7 +1791,20 @@ export function Ranking({ onBack, apiUrl, initialFilter }: RankingProps)
     const query = filtro === 'all' ? '' : `&gameType=${filtro}`;
     fetch(`${apiUrl}/api/ranking/global?limit=10${query}`)
       .then((r) => r.json())
-      .then((data) => setRanking(Array.isArray(data) ? data : []));
+      .then((data) =>
+      {
+        const lista = Array.isArray(data) ? data : [];
+        const isVsFilter = filtro === 'VS_GUESS' || filtro === 'CARD_GUESS_VS';
+        const ordenada = [...lista].sort((a, b) =>
+        {
+          if (isVsFilter && (b.wins ?? 0) !== (a.wins ?? 0)) return (b.wins ?? 0) - (a.wins ?? 0);
+          const mA = a.medianAttempts ?? Infinity;
+          const mB = b.medianAttempts ?? Infinity;
+          if (mA !== mB) return mA - mB;
+          return (a.averageAttempts ?? Infinity) - (b.averageAttempts ?? Infinity);
+        });
+        setRanking(ordenada);
+      });
   }, [apiUrl, filtro]);
 }
 ```

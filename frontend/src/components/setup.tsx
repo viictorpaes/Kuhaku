@@ -429,7 +429,7 @@ function MemoriaSetup({ onStart, onBack, onOpenRanking }: SetupProps)
         <div className="flex items-center gap-3 mb-8 px-4 py-2.5 rounded-xl"
           style={{ background: 'rgba(99,102,241,0.10)', border: '1px solid rgba(99,102,241,0.25)' }}>
           <span className="text-indigo-400 font-black text-sm">⏱ 60/50/40s</span>
-          <span className="text-slate-500 text-xs">+{MEMORIA_BONUS_PAR}s por par · 0s = 💀 Game Over</span>
+          <span className="text-slate-500 text-xs">+{MEMORIA_BONUS_PAR.MEDIUM}s por par (fácil: +{MEMORIA_BONUS_PAR.EASY}s) · 0s = 💀 Game Over</span>
         </div>
 
         <div className="grid grid-cols-3 gap-4 w-full max-w-lg">
@@ -505,7 +505,7 @@ function MemoriaVsSetup({ onStart, onBack, onOpenRanking }: SetupProps)
         <div className="flex items-center gap-3 mb-6 px-4 py-2.5 rounded-xl"
           style={{ background: 'rgba(168,85,247,0.10)', border: '1px solid rgba(168,85,247,0.25)' }}>
           <span className="text-purple-400 font-black text-sm">⏱ 60/50/40s</span>
-          <span className="text-slate-500 text-xs">+{MEMORIA_BONUS_PAR}s por par · 0s = 💀 Eliminado</span>
+          <span className="text-slate-500 text-xs">+{MEMORIA_BONUS_PAR.MEDIUM}s por par (fácil: +{MEMORIA_BONUS_PAR.EASY}s) · 0s = 💀 Eliminado</span>
         </div>
 
         {/* Player names */}

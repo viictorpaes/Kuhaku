@@ -7,7 +7,7 @@ import
   MAX_TENTATIVAS_SOLO, MAX_TENTATIVAS_VS, TOTAL_ROUNDS_VS, RANGE_MAX,
   MEMORIA_GRID, LOGICA_CONFIG, PARENTESES_CONFIG,
   TIMER_VS_TURNO, TIMER_LOGICA, TIMER_PRECEDENCIA,
-  MEMORIA_TIMER, MEMORIA_BONUS_PAR, TIMER_PENALIDADE, TIMER_BONUS_ACERTO,
+  MEMORIA_TIMER, MEMORIA_BONUS_PAR, TIMER_PENALIDADE, TIMER_BONUS_ACERTO, TIMER_MAX,
 } from '../constants';
 
 
@@ -268,9 +268,10 @@ function NameSearchInput({ value, onChange, apiUrl, placeholder }: {
   );
 }
 
-function ProximaFaseModal({ fase, resultado, onContinuar, onEncerrar, carregando, apiUrl, onSalvar }: {
+function ProximaFaseModal({ fase, resultado, passou, onContinuar, onEncerrar, carregando, apiUrl, onSalvar }: {
   fase: number;
   resultado: ResultadoFase;
+  passou: boolean;
   onContinuar: () => void;
   onEncerrar: () => void;
   carregando?: boolean;
@@ -304,10 +305,17 @@ function ProximaFaseModal({ fase, resultado, onContinuar, onEncerrar, carregando
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4"
       style={{ background: 'rgba(2,8,24,0.90)', backdropFilter: 'blur(4px)' }}>
       <div className="w-full max-w-sm bg-[#0c1729] border border-white/12 rounded-3xl p-8 text-center shadow-2xl">
-        <div className="text-5xl mb-3">🚀</div>
-        <h2 className="text-2xl font-black text-white mb-1">Fase {fase} Completa!</h2>
-        <p className="text-slate-400 text-sm mb-5">Missão concluída, Astronauta!</p>
-        <div className="flex gap-3 mb-5">
+        <div className="text-5xl mb-3">{passou ? '🚀' : '🚨'}</div>
+        <h2 className="text-2xl font-black text-white mb-1">
+          {passou ? `Fase ${fase} Completa!` : 'Acesso Bloqueado!'}
+        </h2>
+        <p className="text-slate-400 text-sm mb-4">
+          {passou
+            ? 'Missão concluída, Astronauta!'
+            : 'A estação está lotada — outro piloto assume a posição.'}
+        </p>
+
+        <div className="flex gap-3 mb-3">
           <div className="flex-1 rounded-2xl p-3"
             style={{ background: 'rgba(74,222,128,0.10)', border: '1px solid rgba(74,222,128,0.30)' }}>
             <p className="text-2xl font-black text-green-400">{resultado.acertos}</p>
@@ -320,6 +328,17 @@ function ProximaFaseModal({ fase, resultado, onContinuar, onEncerrar, carregando
             <p className="text-2xl font-black" style={{ color: resultado.erros > 0 ? '#f87171' : '#94a3b8' }}>{resultado.erros}</p>
             <p className="text-xs text-slate-400 mt-1">❌ Erros</p>
           </div>
+        </div>
+
+        <div className={`rounded-xl px-3 py-2 text-xs font-bold text-center mb-4 ${
+          passou
+            ? 'border border-emerald-500/30 text-emerald-400'
+            : 'border border-red-500/30 text-red-400'
+        }`}
+          style={{ background: passou ? 'rgba(16,185,129,0.08)' : 'rgba(239,68,68,0.08)' }}>
+          {passou
+            ? '✅ Acertos > Erros — vaga garantida na fila!'
+            : '🚫 Erros ≥ Acertos — próximo piloto na fila!'}
         </div>
 
         {onSalvar && apiUrl && (
@@ -346,20 +365,22 @@ function ProximaFaseModal({ fase, resultado, onContinuar, onEncerrar, carregando
           )
         )}
 
-        <button
-          onClick={onContinuar}
-          disabled={carregando}
-          className="w-full py-3 rounded-xl font-bold text-white mb-2 transition hover:opacity-90 disabled:opacity-50"
-          style={{ background: 'linear-gradient(135deg, #06b6d4, #6366f1)' }}
-        >
-          {carregando ? 'Preparando missão...' : `⚡ Fase ${fase + 1} →`}
-        </button>
+        {passou && (
+          <button
+            onClick={onContinuar}
+            disabled={carregando}
+            className="w-full py-3 rounded-xl font-bold text-white mb-2 transition hover:opacity-90 disabled:opacity-50"
+            style={{ background: 'linear-gradient(135deg, #06b6d4, #6366f1)' }}
+          >
+            {carregando ? 'Preparando missão...' : `⚡ Fase ${fase + 1} →`}
+          </button>
+        )}
         <button
           onClick={onEncerrar}
           className="w-full py-3 rounded-xl font-semibold text-sm text-slate-300 transition hover:bg-white/10"
           style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.10)' }}
         >
-          🏁 Ver Pontuação Final
+          {passou ? '🏁 Ver Pontuação Final' : '📊 Ver Resultado Final'}
         </button>
       </div>
     </div>
@@ -1013,6 +1034,7 @@ function SoloGame({ gameId, dificuldade, apiUrl, onBack, onOpenRanking, onNovoJo
   const [mostrandoResumo, setMostrandoResumo] = useState(false);
   const [currentGameId, setCurrentGameId] = useState(gameId);
   const [carregandoFase, setCarregandoFase] = useState(false);
+  const [fasePassou, setFasePassou] = useState(false);
 
   const effectiveRangeMax = rangeMax ?? RANGE_MAX[dificuldade];
   const maxTentativas = rangeMax
@@ -1092,9 +1114,11 @@ function SoloGame({ gameId, dificuldade, apiUrl, onBack, onOpenRanking, onNovoJo
       if (dados.direction === 'correct')
       {
         playArcadeCorrect();
-        if (timerSegundos) setTentativaTimer(t => t + TIMER_BONUS_ACERTO);
+        if (timerSegundos) setTentativaTimer(t => Math.min(t + TIMER_BONUS_ACERTO[dificuldade], TIMER_MAX[dificuldade]));
         const errosEstaFase = novoHistorico.filter(p => p.direcao !== 'correct').length;
-        setHistoricoDeFases(prev => [...prev, { fase: faseAtual, acertos: 1, erros: errosEstaFase }]);
+        const acertosEstaFase = maxTentativas - errosEstaFase;
+        setFasePassou(acertosEstaFase > errosEstaFase);
+        setHistoricoDeFases(prev => [...prev, { fase: faseAtual, acertos: acertosEstaFase, erros: errosEstaFase }]);
         setGanhou(true);
         setMostrandoProximaFase(true);
         return;
@@ -1184,6 +1208,7 @@ function SoloGame({ gameId, dificuldade, apiUrl, onBack, onOpenRanking, onNovoJo
         <ProximaFaseModal
           fase={faseAtual}
           resultado={historicoDeFases[historicoDeFases.length - 1]}
+          passou={fasePassou}
           onContinuar={handleContinuarFase}
           onEncerrar={handleEncerrarMissao}
           carregando={carregandoFase}
@@ -1340,6 +1365,7 @@ function MemoriaGame({ gameId, dificuldade, p1: _p1, apiUrl, onBack, onOpenRanki
   const [mostrandoProximaFase, setMostrandoProximaFase] = useState(false);
   const [mostrandoResumo, setMostrandoResumo] = useState(false);
   const [carregandoFase, setCarregandoFase] = useState(false);
+  const [fasePassou, setFasePassou] = useState(false);
 
   useEffect(() =>
   {
@@ -1387,7 +1413,7 @@ function MemoriaGame({ gameId, dificuldade, p1: _p1, apiUrl, onBack, onOpenRanki
         setReveladas(novasReveladas);
         setViradas([]);
         setBloqueado(false);
-        setTimerRestante((t: number) => t + MEMORIA_BONUS_PAR);
+        setTimerRestante((t: number) => Math.min(t + MEMORIA_BONUS_PAR[dificuldade], TIMER_MAX[dificuldade]));
         if (novasReveladas.size === totalCards)
         {
           setGanhou(true);
@@ -1402,6 +1428,8 @@ function MemoriaGame({ gameId, dificuldade, p1: _p1, apiUrl, onBack, onOpenRanki
               body: JSON.stringify({ won: true, mistakes: erros }),
             }).catch(() => {});
           }
+          const passou = totalPairs > erros;
+          setFasePassou(passou);
           setHistoricoDeFases((prev) => [...prev, { fase: faseAtual, acertos: totalPairs, erros }]);
           setMostrandoProximaFase(true);
         }
@@ -1412,6 +1440,7 @@ function MemoriaGame({ gameId, dificuldade, p1: _p1, apiUrl, onBack, onOpenRanki
         setErros((e) => e + 1);
         setParesErrados([a, b]);
         setTimerRestante((t: number) => Math.max(1, t - TIMER_PENALIDADE));
+
         setTimeout(() =>
         {
           setViradas([]);
@@ -1478,6 +1507,7 @@ function MemoriaGame({ gameId, dificuldade, p1: _p1, apiUrl, onBack, onOpenRanki
         <ProximaFaseModal
           fase={faseAtual}
           resultado={historicoDeFases[historicoDeFases.length - 1]}
+          passou={fasePassou}
           onContinuar={handleContinuarFase}
           onEncerrar={handleEncerrarMissao}
           carregando={carregandoFase}
@@ -1640,7 +1670,7 @@ export function VsResultScreen({ p1, p2, finalScore, vsRoundResults, apiUrl, onJ
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: nome }),
+        body: JSON.stringify({ name: nome, won: finalScore.p1 > finalScore.p2 }),
       });
       const data = await res.json();
       if (data.saved)
@@ -1672,7 +1702,7 @@ export function VsResultScreen({ p1, p2, finalScore, vsRoundResults, apiUrl, onJ
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: nome }),
+        body: JSON.stringify({ name: nome, won: finalScore.p2 > finalScore.p1 }),
       });
       const data = await res.json();
       if (data.saved)
@@ -1787,6 +1817,7 @@ function LogicaGame({ gameId, dificuldade, p1: _p1, apiUrl, onBack, onOpenRankin
   const [mostrandoProximaFase, setMostrandoProximaFase] = useState(false);
   const [mostrandoResumo, setMostrandoResumo] = useState(false);
   const [carregandoFase, setCarregandoFase] = useState(false);
+  const [fasePassou, setFasePassou] = useState(false);
 
   const [totalTimer, setTotalTimer] = useState(TIMER_LOGICA[dificuldade]);
   const totalTimerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
@@ -1849,15 +1880,17 @@ function LogicaGame({ gameId, dificuldade, p1: _p1, apiUrl, onBack, onOpenRankin
     {
       setAcertos((a) => a + 1);
       setStreak((s) => s + 1);
-      setTotalTimer((t: number) => t + TIMER_BONUS_ACERTO);
+      setTotalTimer((t: number) => Math.min(t + TIMER_BONUS_ACERTO[dificuldade], TIMER_MAX[dificuldade]));
     }
-  }, [respondido, questao, totalTimer]);
+  }, [respondido, questao, totalTimer, dificuldade]);
 
   const proximo = () =>
   {
     if (atual + 1 >= total)
     {
       clearInterval(totalTimerRef.current);
+      const passou = acertos > erros;
+      setFasePassou(passou);
       setHistoricoDeFases((prev) => [...prev, { fase: faseAtual, acertos, erros }]);
       setMostrandoProximaFase(true);
     }
@@ -1946,6 +1979,7 @@ function LogicaGame({ gameId, dificuldade, p1: _p1, apiUrl, onBack, onOpenRankin
         <ProximaFaseModal
           fase={faseAtual}
           resultado={historicoDeFases[historicoDeFases.length - 1]}
+          passou={fasePassou}
           onContinuar={handleContinuarFase}
           onEncerrar={handleEncerrarMissao}
           carregando={carregandoFase}
@@ -2075,7 +2109,7 @@ function LogicaGame({ gameId, dificuldade, p1: _p1, apiUrl, onBack, onOpenRankin
                 ? { background: 'rgba(74,222,128,0.10)', borderColor: 'rgba(74,222,128,0.40)' }
                 : { background: 'rgba(248,113,113,0.10)', borderColor: 'rgba(248,113,113,0.40)' }}>
               <p className="text-xl font-black mb-1" style={{ color: acertou ? '#4ade80' : '#f87171' }}>
-                {acertou ? '📡 Sinal decodificado! +20s' : '🔇 Falha na decodificação! -5s'}
+                {acertou ? `📡 Sinal decodificado! +${TIMER_BONUS_ACERTO[dificuldade]}s` : `🔇 Falha na decodificação! -${TIMER_PENALIDADE}s`}
               </p>
               <p className="text-sm text-slate-300">
                 A transmissão é{' '}
@@ -2191,6 +2225,7 @@ function PrecedenciaGame({ gameId, dificuldade, p1: _p1, apiUrl, onBack, onOpenR
   const [mostrandoProximaFase, setMostrandoProximaFase] = useState(false);
   const [mostrandoResumo, setMostrandoResumo] = useState(false);
   const [carregandoFase, setCarregandoFase] = useState(false);
+  const [fasePassou, setFasePassou] = useState(false);
 
   const [totalTimer, setTotalTimer] = useState(TIMER_PRECEDENCIA[dificuldade]);
   const totalTimerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
@@ -2309,7 +2344,7 @@ function PrecedenciaGame({ gameId, dificuldade, p1: _p1, apiUrl, onBack, onOpenR
     {
       setAcertos((a) => a + 1);
       setStreak((s) => s + 1);
-      setTotalTimer((t: number) => t + TIMER_BONUS_ACERTO);
+      setTotalTimer((t: number) => Math.min(t + TIMER_BONUS_ACERTO[dificuldade], TIMER_MAX[dificuldade]));
     }
     else
     {
@@ -2324,6 +2359,8 @@ function PrecedenciaGame({ gameId, dificuldade, p1: _p1, apiUrl, onBack, onOpenR
     if (atual + 1 >= total)
     {
       clearInterval(totalTimerRef.current);
+      const passou = acertos > erros;
+      setFasePassou(passou);
       setHistoricoDeFases((prev) => [...prev, { fase: faseAtual, acertos, erros }]);
       setMostrandoProximaFase(true);
     }
@@ -2421,6 +2458,7 @@ function PrecedenciaGame({ gameId, dificuldade, p1: _p1, apiUrl, onBack, onOpenR
         <ProximaFaseModal
           fase={faseAtual}
           resultado={historicoDeFases[historicoDeFases.length - 1]}
+          passou={fasePassou}
           onContinuar={handleContinuarFase}
           onEncerrar={handleEncerrarMissao}
           carregando={carregandoFase}
@@ -2595,7 +2633,7 @@ function PrecedenciaGame({ gameId, dificuldade, p1: _p1, apiUrl, onBack, onOpenR
                 ? { background: 'rgba(74,222,128,0.10)', borderColor: 'rgba(74,222,128,0.40)' }
                 : { background: 'rgba(248,113,113,0.10)', borderColor: 'rgba(248,113,113,0.40)' }}>
               <p className="text-xl font-black mb-2" style={{ color: resultado === 'correto' ? '#4ade80' : '#f87171' }}>
-                {resultado === 'correto' ? '⚙️ Hierarquia restaurada! +20s' : '🔇 Sequência incorreta! -5s'}
+                {resultado === 'correto' ? `⚙️ Hierarquia restaurada! +${TIMER_BONUS_ACERTO[dificuldade]}s` : `🔇 Sequência incorreta! -${TIMER_PENALIDADE}s`}
               </p>
               {resultado === 'errado' && (
                 <div className="mb-3">
@@ -2779,12 +2817,12 @@ function MemoriaVsGame({ gameId, dificuldade, p1, p2, apiUrl, onBack, onOpenRank
         setReveladas(novasReveladas);
         setViradas([]);
         setBloqueado(false);
-        setTimerRestante((t) => t + MEMORIA_BONUS_PAR);
+        setTimerRestante((t) => Math.min(t + MEMORIA_BONUS_PAR[dificuldade], TIMER_MAX[dificuldade]));
         if (novasReveladas.size === totalCards)
         {
           setGanhou(true);
           clearInterval(timerRef.current);
-          const stats = { pares: totalPairs, erros, timerRestante: timerRestante + MEMORIA_BONUS_PAR, eliminou: false };
+          const stats = { pares: totalPairs, erros, timerRestante: timerRestante + MEMORIA_BONUS_PAR[dificuldade], eliminou: false };
           if (fase === 'p1')
           {
             if (!finishP1Ref.current)
