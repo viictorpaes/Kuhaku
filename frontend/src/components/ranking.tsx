@@ -76,13 +76,13 @@ export function Ranking({ onBack, apiUrl, initialFilter }: RankingProps)
         const lista = Array.isArray(data) ? data : [];
         const ordenada = [...lista].sort((a: RankingEntry, b: RankingEntry) =>
         {
-          const mediaA = a.averageAttempts ?? Number.NEGATIVE_INFINITY;
-          const mediaB = b.averageAttempts ?? Number.NEGATIVE_INFINITY;
+          const mediaA = a.averageAttempts ?? Number.POSITIVE_INFINITY;
+          const mediaB = b.averageAttempts ?? Number.POSITIVE_INFINITY;
 
-          if (mediaB !== mediaA)
-            return mediaB - mediaA;
+          if (mediaA !== mediaB)
+            return mediaA - mediaB;
 
-          return b.wins - a.wins;
+          return a.wins - b.wins;
         });
 
         setRanking(ordenada);
