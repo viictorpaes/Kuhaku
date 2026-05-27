@@ -1,23 +1,95 @@
-const mainaudio = new Audio('src/components/song/StarWarsMainTheme.mp3');
-mainaudio.loop = true;
-mainaudio.volume = 1.0;
+const homeThemeAudio = new Audio(new URL('../components/song/StarWarsMainTheme.mp3', import.meta.url).href);
+const cantinaThemeAudio = new Audio(new URL('../components/song/Cantina Band - John Williams (youtube).mp3', import.meta.url).href);
+
+homeThemeAudio.loop = true;
+homeThemeAudio.volume = 1.0;
+
+cantinaThemeAudio.loop = true;
+cantinaThemeAudio.volume = 0.0;
+
+let fadeTimer: ReturnType<typeof setInterval> | undefined;
+
+function clearFade()
+{
+  if (fadeTimer !== undefined)
+  {
+    clearInterval(fadeTimer);
+    fadeTimer = undefined;
+  }
+}
+
+function playAudio(audio: HTMLAudioElement, volume: number)
+{
+  audio.volume = volume;
+
+  if (!audio.paused)
+    return;
+
+  void audio.play().catch(() => {});
+}
+
+function stopAudio(audio: HTMLAudioElement)
+{
+  audio.pause();
+  audio.currentTime = 0;
+}
+
+function fadeBetween(fromAudio: HTMLAudioElement, toAudio: HTMLAudioElement, fromVolume: number, toVolume: number, duration = 900, onFinish?: () => void)
+{
+  clearFade();
+  playAudio(toAudio, toAudio.volume);
+
+  const startedAt = Date.now();
+  const toStartVolume = toAudio.volume;
+
+  fromAudio.volume = fromVolume;
+  toAudio.volume = toVolume === 1 ? 0 : toStartVolume;
+
+  fadeTimer = setInterval(() =>
+  {
+    const progress = Math.min(1, (Date.now() - startedAt) / duration);
+    fromAudio.volume = fromVolume * (1 - progress);
+    toAudio.volume = toVolume * progress;
+
+    if (progress >= 1)
+    {
+      clearFade();
+      fromAudio.volume = 0;
+      toAudio.volume = toVolume;
+      stopAudio(fromAudio);
+      onFinish?.();
+    }
+  }, 32);
+}
+
+function setMuted(muted: boolean)
+{
+  homeThemeAudio.muted = muted;
+  cantinaThemeAudio.muted = muted;
+}
 
 export const starWarsTheme = 
 {
-  get muted() { return mainaudio.muted; },
+  get muted() { return homeThemeAudio.muted && cantinaThemeAudio.muted; },
   start() 
   {
-    if (mainaudio.paused) mainaudio.play().catch(() => {});
+    fadeBetween(cantinaThemeAudio, homeThemeAudio, cantinaThemeAudio.volume || 1, 1, 900);
+  },
+
+  fadeToCantina()
+  {
+    fadeBetween(homeThemeAudio, cantinaThemeAudio, homeThemeAudio.volume || 1, 1, 900);
   },
 
   stop() 
   {
-    mainaudio.pause();
-    mainaudio.currentTime = 0;
+    clearFade();
+    stopAudio(homeThemeAudio);
+    stopAudio(cantinaThemeAudio);
   },
 
-  mute() { mainaudio.muted = true; },
-  unmute() { mainaudio.muted = false; },
+  mute() { setMuted(true); },
+  unmute() { setMuted(false); },
 };
 
 let _audioCtx: AudioContext | null = null;

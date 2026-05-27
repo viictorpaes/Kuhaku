@@ -116,14 +116,10 @@ export function App()
 
   useEffect(() => 
   {
-    if (tela === 'game' || tela === 'result') 
-    {
-      starWarsTheme.stop();
-    } 
-    else 
-    {
+    if (tela === 'game' || tela === 'result')
+      starWarsTheme.fadeToCantina();
+    else
       starWarsTheme.start();
-    }
   }, [tela]);
 
   const voltarParaHome = () =>
