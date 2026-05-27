@@ -71,7 +71,22 @@ export function Ranking({ onBack, apiUrl, initialFilter }: RankingProps)
     const query = filtro === 'all' ? '' : `&gameType=${filtro}`;
     fetch(`${apiUrl}/api/ranking/global?limit=10${query}`)
       .then((r) => r.json())
-      .then((data) => setRanking(Array.isArray(data) ? data : []))
+      .then((data) =>
+      {
+        const lista = Array.isArray(data) ? data : [];
+        const ordenada = [...lista].sort((a: RankingEntry, b: RankingEntry) =>
+        {
+          const mediaA = a.averageAttempts ?? Number.NEGATIVE_INFINITY;
+          const mediaB = b.averageAttempts ?? Number.NEGATIVE_INFINITY;
+
+          if (mediaB !== mediaA)
+            return mediaB - mediaA;
+
+          return b.wins - a.wins;
+        });
+
+        setRanking(ordenada);
+      })
       .catch(() => setErro(true))
       .finally(() => setLoading(false));
   }, [apiUrl, filtro]);
