@@ -1,4 +1,6 @@
+import { useEffect, useState } from 'react';
 import type { Modo } from '../types';
+import { starWarsTheme } from '../ts/audio';
 
 interface HomeProps
 {
@@ -10,6 +12,23 @@ const SPACE_BG = 'radial-gradient(ellipse at 50% 0%, rgba(6,182,212,0.14) 0%, tr
 
 export function Home({ onSelectMode, onOpenRanking }: HomeProps)
 {
+  const [muted, setMuted] = useState(() => starWarsTheme.muted);
+
+  useEffect(() =>
+  {
+    setMuted(starWarsTheme.muted);
+  }, []);
+
+  const toggleMute = () =>
+  {
+    if (starWarsTheme.muted)
+      starWarsTheme.unmute();
+    else
+      starWarsTheme.mute();
+
+    setMuted(starWarsTheme.muted);
+  };
+
   return (
     <div
       className="min-h-screen text-white flex flex-col items-center justify-center px-4 py-12 relative overflow-hidden"
@@ -228,7 +247,17 @@ export function Home({ onSelectMode, onOpenRanking }: HomeProps)
         🏆 Ver Ranking da Missão &nbsp;
       </button>
 
-      <p className="mt-6 z-10 text-slate-600 text-xs">@ Cesar School, 2026.1</p>
+      <footer className="mt-6 z-10 flex flex-col items-center gap-3">
+        <button
+          type="button"
+          onClick={toggleMute}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition"
+          style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(148,163,184,0.18)', color: muted ? '#f8fafc' : '#67e8f9' }}
+        >
+          {muted ? '🔇 Som mutado' : '🔊 Mutar música'}
+        </button>
+        <p className="text-slate-600 text-xs">@ Cesar School, 2026.1</p>
+      </footer>
     </div>
   );
 }
