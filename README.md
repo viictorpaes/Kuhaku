@@ -102,7 +102,7 @@ Kuhaku/
 │   └── index.html <img src="https://img.shields.io/badge/-HTML5-111827?style=flat&logo=html5&logoColor=E34F26" height="18"/>
 │
 ├── docs <img src="https://img.shields.io/badge/Docs-111827?style=flat&logo=markdown&logoColor=blue" height="18"/>/
-│   ├── CONTRIBUTING.md <img src="https://img.shields.io/badge/-CONTRIBUTING-111827?style=flat&logo=markdown&logoColor=yellow" height="18"/>
+│   ├── CONTRIBUTING.md <img src="https://img.shields.io/badge/-CONTRIBUTING-111827?style=flat&logo=markdown&logoColor=red" height="18"/>
 │   ├── ARCHITECTURE.md <img src="https://img.shields.io/badge/Architecture-111827?style=flat&logo=markdown&logoColor=white" height="18"/>
 │   ├── BATALHA_DE_SINAIS.md <img src="https://img.shields.io/badge/Batalha_de_Sinais-111827?style=flat&logo=markdown&logoColor=06B6D4" height="18"/>
 │   ├── HIERARQUIA_DE_COMANDOS.md <img src="https://img.shields.io/badge/Hierarquia_de_Comandos-111827?style=flat&logo=markdown&logoColor=A855F7" height="18"/>
