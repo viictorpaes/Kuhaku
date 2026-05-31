@@ -5,8 +5,10 @@ dist
 .env.*
 coverage
 
-# TypeScript build info
+# TypeScript build artifacts
 **/*.tsbuildinfo
+**/*.base.json
+**/tsconfig.build.json
 
 # Vite and other caches
 .vite
