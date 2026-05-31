@@ -21,7 +21,6 @@
   <img src="https://img.shields.io/badge/Git-111827?style=for-the-badge&logo=git&logoColor=F05032" height="25" alt="Git"/>
   <img src="https://img.shields.io/badge/GitHub-111827?style=for-the-badge&logo=github&logoColor=white" height="25" alt="GitHub"/>
   <img src="https://img.shields.io/badge/GitHub_Desktop-111827?style=for-the-badge&logo=github&logoColor=purple" height="25" alt="GitHub Desktop"/>
-  <img src="https://img.shields.io/badge/Claude_Code-111827?style=for-the-badge&logo=anthropic&logoColor=white" height="25" alt="Claude Code"/>
 </p>
 
 <h2 align="center">🖥️ Plataformas Disponíveis:</h2>
