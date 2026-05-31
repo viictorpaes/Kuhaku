@@ -2,33 +2,33 @@
 <img src="./img/logo_atualizada.jpeg" width="450" alt="logo"></h1>
 
 <h2 align="center">💻⛏️ Tecnologias e Ferramentas Utilizadas: </h2>
-
 <p align="center">
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/vscode/vscode-original.svg" height="35" alt="VS Code"/><br>
-  <img src="https://img.shields.io/badge/Node.js-111827?style=for-the-badge&logo=nodedotjs&logoColor=339933" height="35" alt="Node.js"/>
-  <img src="https://img.shields.io/badge/NestJS-111827?style=for-the-badge&logo=nestjs&logoColor=E0234E" height="35" alt="NestJS"/>
-  <img src="https://img.shields.io/badge/TypeScript-111827?style=for-the-badge&logo=typescript&logoColor=3178C6" height="35" alt="TypeScript"/>
-  <img src="https://img.shields.io/badge/React-111827?style=for-the-badge&logo=react&logoColor=61DAFB" height="35" alt="React"/>
-  <img src="https://img.shields.io/badge/Vite-111827?style=for-the-badge&logo=vite&logoColor=purple" height="35" alt="Vite"/>
-  <img src="https://img.shields.io/badge/HTML5-111827?style=for-the-badge&logo=html5&logoColor=E34F26" height="35" alt="HTML5"/>
-  <img src="https://img.shields.io/badge/-CSS-111827?style=flat-square&logo=css&logoColor=663399" height="35"/>
-  <img src="https://img.shields.io/badge/TailwindCSS-111827?style=for-the-badge&logo=tailwindcss&logoColor=06B6D4" height="35" alt="TailwindCSS"/>
-  <img src="https://img.shields.io/badge/Prisma-111827?style=for-the-badge&logo=prisma&logoColor=5A67D8" height="35" alt="Prisma"/>
-  <img src="https://img.shields.io/badge/Docker-111827?style=for-the-badge&logo=docker&logoColor=2496ed" height="35" alt="Docker"/>
-  <img src="https://img.shields.io/badge/-PostgreSQL-111827?style=flat-square&logo=postgresql&logoColor=white" height="35" alt="PostgreSQL"/>
-  <img src="https://img.shields.io/badge/Architecture-111827?style=for-the-badge&logo=instructure&logoColor=white" height="35" alt="Architecture"/>
-  <img src="https://img.shields.io/badge/Figma-111827?style=for-the-badge&logo=figma&logoColor=F24E1E" height="35" alt="Figma"/>
-  <img src="https://img.shields.io/badge/%E2%9A%94%EF%B8%8F_Star_Wars-111827?style=for-the-badge&labelColor=111827&logo=starwars&logoColor=FFE81F" height="35" alt="Star Wars"/> <br>
-  <img src="https://img.shields.io/badge/Git-111827?style=for-the-badge&logo=git&logoColor=F05032" height="35" alt="Git"/>
-  <img src="https://img.shields.io/badge/GitHub-111827?style=for-the-badge&logo=github&logoColor=white" height="35" alt="GitHub"/>
-  <img src="https://img.shields.io/badge/GitHub_Desktop-111827?style=for-the-badge&logo=github&logoColor=purple" height="35" alt="GitHub Desktop"/>
+  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/vscode/vscode-original.svg" height="25" alt="VS Code"/><br>
+  <img src="https://img.shields.io/badge/Node.js-111827?style=for-the-badge&logo=nodedotjs&logoColor=339933" height="25" alt="Node.js"/>
+  <img src="https://img.shields.io/badge/NestJS-111827?style=for-the-badge&logo=nestjs&logoColor=E0234E" height="25" alt="NestJS"/>
+  <img src="https://img.shields.io/badge/TypeScript-111827?style=for-the-badge&logo=typescript&logoColor=3178C6" height="25" alt="TypeScript"/>
+  <img src="https://img.shields.io/badge/React-111827?style=for-the-badge&logo=react&logoColor=61DAFB" height="25" alt="React"/>
+  <img src="https://img.shields.io/badge/Vite-111827?style=for-the-badge&logo=vite&logoColor=purple" height="25" alt="Vite"/>
+  <img src="https://img.shields.io/badge/HTML5-111827?style=for-the-badge&logo=html5&logoColor=E34F26" height="25" alt="HTML5"/>
+  <img src="https://img.shields.io/badge/-CSS-111827?style=flat-square&logo=css&logoColor=663399" height="25"/>
+  <img src="https://img.shields.io/badge/TailwindCSS-111827?style=for-the-badge&logo=tailwindcss&logoColor=06B6D4" height="25" alt="TailwindCSS"/>
+  <img src="https://img.shields.io/badge/Prisma-111827?style=for-the-badge&logo=prisma&logoColor=5A67D8" height="25" alt="Prisma"/>
+  <img src="https://img.shields.io/badge/Docker-111827?style=for-the-badge&logo=docker&logoColor=2496ed" height="25" alt="Docker"/>
+  <img src="https://img.shields.io/badge/-PostgreSQL-111827?style=flat-square&logo=postgresql&logoColor=white" height="25" alt="PostgreSQL"/>
+  <img src="https://img.shields.io/badge/Architecture-111827?style=for-the-badge&logo=instructure&logoColor=white" height="25" alt="Architecture"/>
+  <img src="https://img.shields.io/badge/Figma-111827?style=for-the-badge&logo=figma&logoColor=F24E1E" height="25" alt="Figma"/>
+  <img src="https://img.shields.io/badge/%E2%9A%94%EF%B8%8F_Star_Wars-111827?style=for-the-badge&labelColor=111827&logo=starwars&logoColor=FFE81F" height="25" alt="Star Wars"/> <br>
+  <img src="https://img.shields.io/badge/Git-111827?style=for-the-badge&logo=git&logoColor=F05032" height="25" alt="Git"/>
+  <img src="https://img.shields.io/badge/GitHub-111827?style=for-the-badge&logo=github&logoColor=white" height="25" alt="GitHub"/>
+  <img src="https://img.shields.io/badge/GitHub_Desktop-111827?style=for-the-badge&logo=github&logoColor=purple" height="25" alt="GitHub Desktop"/>
+  <img src="https://img.shields.io/badge/Claude_Code-111827?style=for-the-badge&logo=anthropic&logoColor=white" height="25" alt="Claude Code"/>
 </p>
 
 <h2 align="center">🖥️ Plataformas Disponíveis:</h2>
 <p align="center">
-<img src="https://img.shields.io/badge/windows%2010%2F11-2563EB?style=flat&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cGF0aCBmaWxsPSIjMDBBREVGIiBkPSJNMTI2IDEuNjM3bC02NyA5LjgzNHY0OS44MzFsNjctLjUzNHpNMS42NDcgNjYuNzA5bC4wMDMgNDIuNDA0IDUwLjc5MSA2Ljk4My0uMDQtNDkuMDU3em01Ni44Mi42OGwuMDk0IDQ5LjQ2NSA2Ny4zNzYgOS41MDkuMDE2LTU4Ljg2M3pNMS42MSAxOS4yOTdsLjA0NyA0Mi4zODMgNTAuNzkxLS4yODktLjAyMy00OS4wMTZ6Ii8+PC9zdmc+" height="35" alt="Windows 10/11"/>
-<img src="https://img.shields.io/badge/Ubuntu-E95420?style=flat-square&logo=ubuntu&logoColor=white" height="35" alt="Linux / Ubuntu"/>
-<img src="https://img.shields.io/badge/macOS-white?style=flat&logo=apple&logoColor=black" alt="macOS" height="35"/> 
+<img src="https://img.shields.io/badge/windows%2010%2F11-2563EB?style=flat&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cGF0aCBmaWxsPSIjMDBBREVGIiBkPSJNMTI2IDEuNjM3bC02NyA5LjgzNHY0OS44MzFsNjctLjUzNHpNMS42NDcgNjYuNzA5bC4wMDMgNDIuNDA0IDUwLjc5MSA2Ljk4My0uMDQtNDkuMDU3em01Ni44Mi42OGwuMDk0IDQ5LjQ2NSA2Ny4zNzYgOS41MDkuMDE2LTU4Ljg2M3pNMS42MSAxOS4yOTdsLjA0NyA0Mi4zODMgNTAuNzkxLS4yODktLjAyMy00OS4wMTZ6Ii8+PC9zdmc+" height="20" alt="Windows 10/11"/>
+<img src="https://img.shields.io/badge/Ubuntu-E95420?style=flat-square&logo=ubuntu&logoColor=white" height="20" alt="Linux / Ubuntu"/>
+<img src="https://img.shields.io/badge/macOS-white?style=flat&logo=apple&logoColor=black" alt="macOS" height="20"/> 
 </p>
 
 <h2 align="center"> 🏰 Arquitetura do Projeto <br>
@@ -94,7 +94,8 @@ Kuhaku/
 │   ├── src <img src="https://img.shields.io/badge/src-61DAFB?style=flat&logo=react&logoColor=black" height="18"/>/
 │   │   ├── components <img src="https://img.shields.io/badge/components-2B2D42?style=flat&logo=react&logoColor=61DAFB" height="18"/>/
 │   │   │   ├── song <img src="https://img.shields.io/badge/-Módulo%20Song-111827?style=flat-square&logo=musicbrainz&logoColor=red" height="18">/
-│   │   │   │   └── StarWarsMainTheme.mp3 <img src="https://img.shields.io/badge/MP3-111827?style=flat&logo=audacity&logoColor=red" height="18"/>
+│   │   │   │   ├── StarWarsMainTheme.mp3 <img src="https://img.shields.io/badge/MP3-111827?style=flat&logo=audacity&logoColor=red" height="18"/>
+│   │   │   │   └── Cantina Band - John Williams (youtube).mp3 <img src="https://img.shields.io/badge/MP3-111827?style=flat&logo=audacity&logoColor=red" height="18"/>
 │   │   │   ├── home.tsx <img src="https://img.shields.io/badge/-Home-111827?style=flat&logo=react&logoColor=61DAFB" height="18"/>
 │   │   │   ├── game.tsx <img src="https://img.shields.io/badge/-Game-111827?style=flat&logo=react&logoColor=61DAFB" height="18"/>
 │   │   │   ├── ranking.tsx <img src="https://img.shields.io/badge/-Ranking-111827?style=flat&logo=react&logoColor=61DAFB" height="18"/>
@@ -1809,41 +1810,63 @@ export function Ranking({ onBack, apiUrl, initialFilter }: RankingProps)
 }
 ```
 
-5. `frontend/src/components/song/StarWarsMainTheme.mp3` + `frontend/src/ts/audio.ts` <br>
+5. `frontend/src/components/song/StarWarsMainTheme.mp3` + `frontend/src/components/song/Cantina Band - John Williams (youtube).mp3` + `frontend/src/ts/audio.ts` <br>
 <img src="https://img.shields.io/badge/%E2%9A%94%EF%B8%8F_Star_Wars-111827?style=for-the-badge&labelColor=111827&logo=starwars&logoColor=FFE81F" height="18" alt="Star Wars"/>
 <img src="https://img.shields.io/badge/Web_Audio_API-111827?style=flat&logo=typescript&logoColor=red" height="18"/>
 <img src="https://img.shields.io/badge/MP3-111827?style=flat&logo=audacity&logoColor=red" height="18"/>
 
 ### 🎵🎧 Sistema de Áudio:
 
-O <mark><b>Kuhaku</b></mark> possui dois mecanismos de áudio independentes, ambos implementados em `frontend/src/ts/audio.ts`:
+O <mark><b>Kuhaku</b></mark> possui três mecanismos de áudio independentes, todos implementados em `frontend/src/ts/audio.ts`:
 
-**1. Trilha sonora de fundo — `starWarsTheme`**
+**1. Trilha sonora com crossfade — `starWarsTheme`**
 
-Toca `StarWarsMainTheme.mp3` em loop contínuo durante toda a sessão do jogo. O objeto exportado expõe os métodos `start()`, `stop()`, `mute()` e `unmute()`, e o getter `muted` para verificar o estado atual. A reprodução é iniciada na primeira interação do usuário (obrigatório pelos navegadores modernos para respeitar a política de autoplay).
+Dois arquivos MP3 tocam em loop e fazem crossfade entre si conforme o contexto do jogo:
+
+| Track | Arquivo | Quando toca |
+|---|---|---|
+| `homeThemeAudio` | `StarWarsMainTheme.mp3` | Menu / tela inicial |
+| `cantinaThemeAudio` | `Cantina Band - John Williams.mp3` | Durante uma partida |
+
+Ao entrar em um jogo chama-se `starWarsTheme.fadeToCantina()`, que faz um fade-out do tema principal e fade-in da Cantina Band em ~900 ms. Ao voltar ao menu, `starWarsTheme.start()` faz o crossfade inverso. O objeto exportado expõe os métodos `start()`, `fadeToCantina()`, `stop()`, `mute()` e `unmute()`, e o getter `muted` que retorna `true` apenas quando ambos os tracks estão mutados.
 
 
 ```ts
-const mainaudio = new Audio('src/components/song/StarWarsMainTheme.mp3');
-mainaudio.loop = true;
-mainaudio.volume = 1.0;
+const homeThemeAudio   = new Audio(new URL('../components/song/StarWarsMainTheme.mp3', import.meta.url).href);
+const cantinaThemeAudio = new Audio(new URL('../components/song/Cantina Band - John Williams (youtube).mp3', import.meta.url).href);
 
-export const starWarsTheme = 
+homeThemeAudio.loop    = true;  homeThemeAudio.volume    = 1.0;
+cantinaThemeAudio.loop = true;  cantinaThemeAudio.volume = 0.0;
+
+let fadeTimer: ReturnType<typeof setInterval> | undefined;
+
+function fadeBetween(fromAudio, toAudio, fromVolume, toVolume, duration = 900, onFinish?)
 {
-  get muted() { return mainaudio.muted; },
-  start() 
-  {
-    if (mainaudio.paused) mainaudio.play().catch(() => {});
-  },
+  clearFade();
+  playAudio(toAudio, toAudio.volume);
+  const startedAt = Date.now();
+  fromAudio.volume = fromVolume;
+  toAudio.volume   = toVolume === 1 ? 0 : toAudio.volume;
 
-  stop() 
+  fadeTimer = setInterval(() =>
   {
-    mainaudio.pause();
-    mainaudio.currentTime = 0;
-  },
+    const progress   = Math.min(1, (Date.now() - startedAt) / duration);
+    fromAudio.volume = fromVolume * (1 - progress);
+    toAudio.volume   = toVolume   * progress;
+    if (progress >= 1) { clearFade(); stopAudio(fromAudio); onFinish?.(); }
+  }, 32);
+}
 
-  mute() { mainaudio.muted = true; },
-  unmute() { mainaudio.muted = false; },
+export const starWarsTheme =
+{
+  get muted() { return homeThemeAudio.muted && cantinaThemeAudio.muted; },
+
+  start()        { fadeBetween(cantinaThemeAudio, homeThemeAudio,   cantinaThemeAudio.volume || 1, 1, 900); },
+  fadeToCantina(){ fadeBetween(homeThemeAudio,    cantinaThemeAudio, homeThemeAudio.volume   || 1, 1, 900); },
+
+  stop()  { clearFade(); stopAudio(homeThemeAudio); stopAudio(cantinaThemeAudio); },
+  mute()  { homeThemeAudio.muted = true;  cantinaThemeAudio.muted = true;  },
+  unmute(){ homeThemeAudio.muted = false; cantinaThemeAudio.muted = false; },
 };
 
 ```

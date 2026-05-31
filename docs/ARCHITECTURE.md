@@ -93,7 +93,8 @@ Kuhaku/
 │   ├── src <img src="https://img.shields.io/badge/src-61DAFB?style=flat&logo=react&logoColor=black" height="18"/>/
 │   │   ├── components <img src="https://img.shields.io/badge/components-2B2D42?style=flat&logo=react&logoColor=61DAFB" height="18"/>/
 │   │   │   ├── song <img src="https://img.shields.io/badge/-Módulo%20Song-111827?style=flat-square&logo=musicbrainz&logoColor=red" height="18">/
-│   │   │   │   └── StarWarsMainTheme.mp3 <img src="https://img.shields.io/badge/MP3-111827?style=flat&logo=audacity&logoColor=red" height="18"/>
+│   │   │   │   ├── StarWarsMainTheme.mp3 <img src="https://img.shields.io/badge/MP3-111827?style=flat&logo=audacity&logoColor=red" height="18"/>
+│   │   │   │   └── Cantina Band - John Williams (youtube).mp3 <img src="https://img.shields.io/badge/MP3-111827?style=flat&logo=audacity&logoColor=orange" height="18"/>
 │   │   │   ├── home.tsx <img src="https://img.shields.io/badge/-Home-111827?style=flat&logo=react&logoColor=61DAFB" height="18"/>
 │   │   │   ├── game.tsx <img src="https://img.shields.io/badge/-Game-111827?style=flat&logo=react&logoColor=61DAFB" height="18"/>
 │   │   │   ├── ranking.tsx <img src="https://img.shields.io/badge/-Ranking-111827?style=flat&logo=react&logoColor=61DAFB" height="18"/>
@@ -158,7 +159,7 @@ SPA React compilada pelo Vite. Toda a navegação é controlada por estado (`tel
   - `setup.tsx` — configuração antes de iniciar (dificuldade, nomes, range).
   - `game.tsx` — todos os 6 modos de jogo em um único arquivo (`SoloGame`, `VsGame`, `MemoriaGame`, `MemoriaVsGame`, `LogicaGame`, `PrecedenciaGame`). Também exporta `VsResultScreen` e o painel reutilizável `SaveRankingPanel`.
   - `ranking.tsx` — Hall da Fama com filtro por `GameType` via tabs.
-- **`src/components/song/`** — `StarWarsMainTheme.mp3` tocado em loop durante a sessão.
+- **`src/components/song/`** — trilhas MP3 da sessão: `StarWarsMainTheme.mp3` (tema principal, tocado em loop) e `Cantina Band - John Williams (youtube).mp3`.
 - **`src/ts/audio.ts`** — sistema de áudio duplo: trilha de fundo (objeto `starWarsTheme`) e efeitos sonoros procedurais via Web Audio API (`playArcadeCorrect` / `playArcadeError`).
 - **`src/App.tsx`** — roteador de telas por estado; gerencia `gameId`, `round`, `score` e coordena as chamadas `POST /api/games` entre rodadas VS.
 - **`src/constants.ts`** — fonte única de verdade para timers (`TIMER_BASE=30`, `TIMER_BONUS_ACERTO=15`, `TIMER_PENALIDADE_ERRO=10`), grids de memória e configs de dificuldade por modo.
@@ -256,7 +257,7 @@ Screenshots e assets visuais usados no README e na documentação: capturas de g
 | `components/setup.tsx` | Tela de configuração — dificuldade, nome dos jogadores |
 | `components/game.tsx` | Todos os 6 modos de jogo em um único arquivo |
 | `components/ranking.tsx` | Tabela de ranking global com filtro por `gameType` |
-| `components/song/` | Áudio: efeitos sonoros e música de fundo |
+| `components/song/` | Trilhas MP3: `StarWarsMainTheme.mp3` (loop principal) e `Cantina Band - John Williams (youtube).mp3` |
 | `ts/` | Lógica pura de geração de questões (Lógica, Precedência, Memória) |
 
 
