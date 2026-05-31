@@ -111,11 +111,13 @@ Kuhaku/
 │   ├── Regras_Evento.md <img src="https://img.shields.io/badge/Regras_do_Evento-111827?style=flat&logo=markdown&logoColor=FFD700" height="18"/>
 │   └── Histórias_de_Usuário.md <img src="https://img.shields.io/badge/User_Stories-111827?style=flat&logo=markdown&logoColor=blue" height="18"/>
 │
+├── docker <img src="https://img.shields.io/badge/-Docker-111827?style=flat&logo=docker&logoColor=2496ED" height="18"/>/
+│   ├── .dockerignore <img src="https://img.shields.io/badge/-DockerIgnore-111827?style=flat&logo=docker&logoColor=2496ED" height="18"/>
+│   ├── docker-compose.yml <img src="https://img.shields.io/badge/-Docker_Compose-111827?style=flat&logo=docker&logoColor=2496ED" height="18"/>
+│   └── Dockerfile <img src="https://img.shields.io/badge/-Dockerfile-111827?style=flat&logo=docker&logoColor=2496ED" height="18"/>
+│
 ├── img/ <img src="https://img.shields.io/badge/Assets-green?style=flat&logo=image&logoColor=white" height="18"/>
-├── .dockerignore <img src="https://img.shields.io/badge/-DockerIgnore-111827?style=flat&logo=docker&logoColor=2496ED" height="18"/>
 ├── .gitignore <img src="https://img.shields.io/badge/-GitIgnore-111827?style=flat&logo=git&logoColor=F05032" height="18"/>
-├── docker-compose.yml <img src="https://img.shields.io/badge/-Docker_Compose-111827?style=flat&logo=docker&logoColor=2496ED" height="18"/>
-├── Dockerfile <img src="https://img.shields.io/badge/-Docker-111827?style=flat&logo=docker&logoColor=2496ED" height="18"/>
 ├── LICENSE <img src="https://img.shields.io/badge/License-MIT-FF8C00?style=flat&logo=opensource&logoColor=white" height="18"/>
 ├── protótipo.fig <img src="https://img.shields.io/badge/-Figma-111827?style=flat&logo=figma&logoColor=orange" height="18"/>
 ├── README.md <img src="https://img.shields.io/badge/-Markdown-111827?style=flat&logo=markdown&logoColor=white" height="18"/>
@@ -264,28 +266,29 @@ cd frontend && npm install && cd ..
 ```
 
 ```bash
-# 1. Sobe o banco PostgreSQL via Docker:
-docker compose up db -d
+# Sobe banco, backend e frontend de uma vez (com rebuild das imagens):
+npm run docker:up
 
-# 2. Prepara o banco (rode dentro de backend/):
-cd backend
-npm run prisma:generate       # gera o Prisma Client
-npm run prisma:migrate:deploy # aplica migrations (cria tabelas e GameTypes)
-npm run prisma:seed           # popula usuários iniciais (admin, dev, user)
+# ou diretamente:
+docker compose -f docker/docker-compose.yml up --build
 
-# OPCIONAL — dados de teste:
-npx tsx --env-file=.env prisma/test-user.ts  # cria usuários com senha bcrypt
-npx tsx --env-file=.env prisma/test-game.ts  # cria partidas NUMBER_GUESS de exemplo
+# O docker-compose já executa automaticamente na inicialização do backend:
+prisma generate  →  prisma migrate deploy  →  prisma db seed
 
-cd ..
+# Frontend:  
 
-# 3. Inicia o projeto completo:
-npm run start:dev      # backend (:3001) + frontend (:5173)
-npm run dev:frontend   # só o frontend (:5173)
+# Backend:   
+http://localhost:3001
+# Banco:     
+https://localhost:5432
+```
 
+```bash
+# Apagar os containers (mantém o volume do banco):
+npm run docker:down
 
-# 4. Apagar o banco de dados / Ranking:
-npx prisma migrate reset     
+# Apagar containers + banco de dados (reset total):
+docker compose -f docker/docker-compose.yml down -v
 ```
 
 <h2 align="center">1. Docker<br>
@@ -298,46 +301,46 @@ npx prisma migrate reset
 
 ```bash
 # Constrói (ou reconstrói) as imagens definidas no docker-compose.yml
-docker-compose build
+docker compose -f docker/docker-compose.yml build
 
 # Reconstrói sem usar cache (forçar rebuild completo)
-docker-compose build --no-cache
+docker compose -f docker/docker-compose.yml build --no-cache
 
 # Sobe todos os containers em background
-docker-compose up -d
+docker compose -f docker/docker-compose.yml up -d
 
 # Sobe apenas o container do banco de dados
-docker-compose up -d db
+docker compose -f docker/docker-compose.yml up -d db
 
 # Sobe e reconstrói as imagens antes de iniciar
-docker-compose up -d --build
+docker compose -f docker/docker-compose.yml up -d --build
 
 # Para os containers sem removê-los
-docker-compose stop
+docker compose -f docker/docker-compose.yml stop
 
 # Para e remove os containers (útil quando algo trava)
-docker-compose down
+docker compose -f docker/docker-compose.yml down
 
 # Para, remove containers E volumes (reseta o banco de dados)
-docker-compose down -v
+docker compose -f docker/docker-compose.yml down -v
 
 # Reinicia um container específico
-docker compose restart api
+docker compose -f docker/docker-compose.yml restart api
 
 # Mostra os logs em tempo real
-docker-compose logs -f
+docker compose -f docker/docker-compose.yml logs -f
 
 # Mostra os logs de um serviço específico
-docker-compose logs -f api
+docker compose -f docker/docker-compose.yml logs -f api
 
 # Lista os containers em execução
-docker-compose ps
+docker compose -f docker/docker-compose.yml ps
 
 # Lista todos os containers (incluindo parados)
-docker-compose ps -a
+docker compose -f docker/docker-compose.yml ps -a
 
 # Executa um comando dentro de um container em execução
-docker-compose exec api bash
+docker compose -f docker/docker-compose.yml exec api bash
 
 # Remove containers parados, redes e imagens não usadas
 docker system prune -f

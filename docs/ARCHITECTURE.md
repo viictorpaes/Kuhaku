@@ -18,7 +18,7 @@
 
 ## 📐 Visão Geral:
 
-<mark><b>Kuhaku</b></mark> é uma plataforma de jogos educativos com tema espacial, construída como um **monorepo npm workspaces** com dois pacotes independentes: `backend` (API REST) e `frontend` (SPA React). O sistema roda em Docker com três serviços orquestrados via `docker-compose`.
+<mark><b>Kuhaku</b></mark> é uma plataforma de jogos educativos com tema espacial, construída como um **monorepo npm workspaces** com dois pacotes independentes: `backend` (API REST) e `frontend` (SPA React). O sistema roda em Docker com três serviços orquestrados via `docker/docker-compose.yml`.
 
 ```
 kuhaku/
@@ -26,8 +26,7 @@ kuhaku/
 ├── frontend/         # @kuhaku/frontend — React + Vite + TailwindCSS
 ├── docs/             # Documentação dos modos de jogo e arquitetura
 ├── img/              # Assets de imagem para documentação
-├── docker-compose.yml
-├── Dockerfile
+├── docker/           # Configurações Docker (Dockerfile, docker-compose.yml, .dockerignore)
 └── package.json      # Workspace root (npm workspaces)
 ```
 
@@ -111,11 +110,13 @@ Kuhaku/
 │   ├── Regras_Evento.md <img src="https://img.shields.io/badge/Regras_do_Evento-111827?style=flat&logo=markdown&logoColor=FFD700" height="18"/>
 │   └── Histórias_de_Usuário.md <img src="https://img.shields.io/badge/User_Stories-111827?style=flat&logo=markdown&logoColor=blue" height="18"/>
 │
+├── docker <img src="https://img.shields.io/badge/-Docker-111827?style=flat&logo=docker&logoColor=2496ED" height="18"/>/
+│   ├── .dockerignore <img src="https://img.shields.io/badge/-DockerIgnore-111827?style=flat&logo=docker&logoColor=2496ED" height="18"/>
+│   ├── docker-compose.yml <img src="https://img.shields.io/badge/-Docker_Compose-111827?style=flat&logo=docker&logoColor=2496ED" height="18"/>
+│   └── Dockerfile <img src="https://img.shields.io/badge/-Dockerfile-111827?style=flat&logo=docker&logoColor=2496ED" height="18"/>
+│
 ├── img <img src="https://img.shields.io/badge/Assets-green?style=flat&logo=image&logoColor=white" height="18"/>/
-├── .dockerignore <img src="https://img.shields.io/badge/-DockerIgnore-111827?style=flat&logo=docker&logoColor=2496ED" height="18"/>
 ├── .gitignore <img src="https://img.shields.io/badge/-GitIgnore-111827?style=flat&logo=git&logoColor=F05032" height="18"/>
-├── docker-compose.yml <img src="https://img.shields.io/badge/-Docker_Compose-111827?style=flat&logo=docker&logoColor=2496ED" height="18"/>
-├── Dockerfile <img src="https://img.shields.io/badge/-Docker-111827?style=flat&logo=docker&logoColor=2496ED" height="18"/>
 ├── LICENSE <img src="https://img.shields.io/badge/License-MIT-FF8C00?style=flat&logo=opensource&logoColor=white" height="18"/>
 ├── protótipo.fig <img src="https://img.shields.io/badge/-Figma-111827?style=flat&logo=figma&logoColor=orange" height="18"/>
 ├── README.md <img src="https://img.shields.io/badge/-Markdown-111827?style=flat&logo=markdown&logoColor=white" height="18"/>
