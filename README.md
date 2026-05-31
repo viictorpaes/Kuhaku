@@ -34,7 +34,7 @@
 <img src="https://img.shields.io/badge/Architecture-111827?style=flat-square&logo=instructure&logoColor=white"/></h2>
 
 <pre>
-Kuhaku/
+Kuhaku🧑🏻‍🚀/
 ├── backend <img src="https://img.shields.io/badge/Node.js-111827?style=flat&logo=nodedotjs&logoColor=339933" height="18"/> <img src="https://img.shields.io/badge/-NestJS-111827?style=flat&logo=nestjs&logoColor=E0234E" height="18"/> <img src="https://img.shields.io/badge/-TypeScript-111827?style=flat&logo=typescript&logoColor=3178C6" height="18"/>/
 │   ├── prisma <img src="https://img.shields.io/badge/-Prisma-111827?style=flat&logo=prisma&logoColor=5A67D8" height="18"/>/
 │   │   ├── migrations <img src="https://img.shields.io/badge/Migrations-111827?style=flat&logo=databricks&logoColor=FF3621" height="18"/>/
@@ -272,11 +272,7 @@ docker compose -f docker/docker-compose.yml up --build
 prisma generate  →  prisma migrate deploy  →  prisma db seed
 
 # Frontend:  
-
-# Backend:   
-http://localhost:3001
-# Banco:     
-https://localhost:5432
+http://localhost:5173
 ```
 
 ```bash
