@@ -5,21 +5,6 @@ dist
 .env.*
 coverage
 
-# TypeScript build artifacts
-**/*.tsbuildinfo
-**/*.base.json
-**/tsconfig.build.json
-
-# Workspace config files (backend e frontend)
-**/tsconfig.json
-**/tsconfig.node.json
-**/vite.config.*
-**/postcss.config.*
-**/tailwind.config.*
-**/nest-cli.json
-**/prisma.config.*
-backend/public/
-
 # Vite and other caches
 .vite
 .parcel-cache
