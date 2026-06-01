@@ -10,20 +10,21 @@
   <img src="https://img.shields.io/badge/React-111827?style=for-the-badge&logo=react&logoColor=61DAFB" height="25" alt="React"/>
   <img src="https://img.shields.io/badge/Vite-111827?style=for-the-badge&logo=vite&logoColor=purple" height="25" alt="Vite"/>
   <img src="https://img.shields.io/badge/HTML5-111827?style=for-the-badge&logo=html5&logoColor=E34F26" height="25" alt="HTML5"/>
-  <img src="https://img.shields.io/badge/-CSS-111827?style=flat-square&logo=css&logoColor=663399" height="25"/>
+  <img src="https://img.shields.io/badge/CSS-111827?style=for-the-badge&logo=css3&logoColor=663399" height="25" alt="CSS"/>
   <img src="https://img.shields.io/badge/TailwindCSS-111827?style=for-the-badge&logo=tailwindcss&logoColor=06B6D4" height="25" alt="TailwindCSS"/>
   <img src="https://img.shields.io/badge/Prisma-111827?style=for-the-badge&logo=prisma&logoColor=5A67D8" height="25" alt="Prisma"/>
   <img src="https://img.shields.io/badge/Docker-111827?style=for-the-badge&logo=docker&logoColor=2496ed" height="25" alt="Docker"/>
-  <img src="https://img.shields.io/badge/-PostgreSQL-111827?style=flat-square&logo=postgresql&logoColor=white" height="25" alt="PostgreSQL"/>
+  <img src="https://img.shields.io/badge/PostgreSQL-111827?style=for-the-badge&logo=postgresql&logoColor=white" height="25" alt="PostgreSQL"/>
   <img src="https://img.shields.io/badge/Architecture-111827?style=for-the-badge&logo=instructure&logoColor=white" height="25" alt="Architecture"/>
   <img src="https://img.shields.io/badge/Figma-111827?style=for-the-badge&logo=figma&logoColor=F24E1E" height="25" alt="Figma"/>
+  <img src="https://img.shields.io/badge/Spec_T%C3%A9cnica-111827?style=for-the-badge&logo=jest&logoColor=green" height="25" alt="Spec Técnica"/>
   <img src="https://img.shields.io/badge/%E2%9A%94%EF%B8%8F_Star_Wars-111827?style=for-the-badge&labelColor=111827&logo=starwars&logoColor=FFE81F" height="25" alt="Star Wars"/> <br>
   <img src="https://img.shields.io/badge/Git-111827?style=for-the-badge&logo=git&logoColor=F05032" height="25" alt="Git"/>
   <img src="https://img.shields.io/badge/GitHub-111827?style=for-the-badge&logo=github&logoColor=white" height="25" alt="GitHub"/>
   <img src="https://img.shields.io/badge/GitHub_Desktop-111827?style=for-the-badge&logo=github&logoColor=purple" height="25" alt="GitHub Desktop"/>
 </p>
 
-<h2 align="center">🖥️ Plataformas Disponíveis:</h2>
+<h2 align="center">🖥️ Plataformas Disponíveis: </h2>
 <p align="center">
 <img src="https://img.shields.io/badge/windows%2010%2F11-2563EB?style=flat&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij48cGF0aCBmaWxsPSIjMDBBREVGIiBkPSJNMTI2IDEuNjM3bC02NyA5LjgzNHY0OS44MzFsNjctLjUzNHpNMS42NDcgNjYuNzA5bC4wMDMgNDIuNDA0IDUwLjc5MSA2Ljk4My0uMDQtNDkuMDU3em01Ni44Mi42OGwuMDk0IDQ5LjQ2NSA2Ny4zNzYgOS41MDkuMDE2LTU4Ljg2M3pNMS42MSAxOS4yOTdsLjA0NyA0Mi4zODMgNTAuNzkxLS4yODktLjAyMy00OS4wMTZ6Ii8+PC9zdmc+" height="20" alt="Windows 10/11"/>
 <img src="https://img.shields.io/badge/Ubuntu-E95420?style=flat-square&logo=ubuntu&logoColor=white" height="20" alt="Linux / Ubuntu"/>
@@ -107,6 +108,18 @@ Kuhaku🧑🏻‍🚀/
 │   ├── PROTOCOLO_LOGICO.md <img src="https://img.shields.io/badge/Protocolo_Lógico-111827?style=flat&logo=markdown&logoColor=22C55E" height="18"/>
 │   ├── Regras_Evento.md <img src="https://img.shields.io/badge/Regras_do_Evento-111827?style=flat&logo=markdown&logoColor=FFD700" height="18"/>
 │   └── Histórias_de_Usuário.md <img src="https://img.shields.io/badge/User_Stories-111827?style=flat&logo=markdown&logoColor=blue" height="18"/>
+│
+├── spec <img src="https://img.shields.io/badge/Spec_T%C3%A9cnica-111827?style=flat-square&logo=jest&logoColor=green" alt="Spec Técnica" height="18"/>/
+│   ├── api <img src="https://img.shields.io/badge/OpenAPI-111827?style=flat&logo=openapiinitiative&logoColor=6BA539" height="18"/>/
+│   │   └── openapi.yml <img src="https://img.shields.io/badge/OpenAPI_3.0-111827?style=flat&logo=openapiinitiative&logoColor=6BA539" height="18"/>
+│   ├── game <img src="https://img.shields.io/badge/Game_Specs-111827?style=flat&logo=markdown&logoColor=purple" height="18"/>/
+│   │   ├── NUMBER_GUESS.md <img src="https://img.shields.io/badge/Operação_Resgate-111827?style=flat&logo=markdown&logoColor=F97316" height="18"/>
+│   │   ├── VS_GUESS.md <img src="https://img.shields.io/badge/Batalha_de_Sinais-111827?style=flat&logo=markdown&logoColor=06B6D4" height="18"/>
+│   │   ├── CARD_GUESS.md <img src="https://img.shields.io/badge/Mapas_Estelares-111827?style=flat&logo=markdown&logoColor=FFD700" height="18"/>
+│   │   ├── LOGIC_PUZZLE.md <img src="https://img.shields.io/badge/Protocolo_Lógico-111827?style=flat&logo=markdown&logoColor=22C55E" height="18"/>
+│   │   └── PRECEDENCE_PUZZLE.md <img src="https://img.shields.io/badge/Hierarquia_de_Comandos-111827?style=flat&logo=markdown&logoColor=A855F7" height="18"/>
+│   ├── timer.md <img src="https://img.shields.io/badge/Timer_System-111827?style=flat&logo=markdown&logoColor=red" height="18"/>
+│   └── ranking.md <img src="https://img.shields.io/badge/Ranking_Algorithm-111827?style=flat&logo=markdown&logoColor=FFD700" height="18"/>
 │
 ├── docker <img src="https://img.shields.io/badge/-Docker-111827?style=flat&logo=docker&logoColor=2496ED" height="18"/>/
 │   ├── .dockerignore <img src="https://img.shields.io/badge/-DockerIgnore-111827?style=flat&logo=docker&logoColor=2496ED" height="18"/>

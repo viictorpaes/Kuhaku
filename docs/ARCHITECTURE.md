@@ -24,7 +24,8 @@
 kuhaku/
 ├── backend/          # @kuhaku/backend  — NestJS + Prisma + PostgreSQL
 ├── frontend/         # @kuhaku/frontend — React + Vite + TailwindCSS
-├── docs/             # Documentação dos modos de jogo e arquitetura
+├── docs/             # Documentação narrativa: regras, histórias, arquitetura
+├── spec/             # Especificações técnicas: OpenAPI, algoritmos, contratos
 ├── img/              # Assets de imagem para documentação
 ├── docker/           # Configurações Docker (Dockerfile, docker-compose.yml, .dockerignore)
 └── package.json      # Workspace root (npm workspaces)
@@ -110,6 +111,18 @@ Kuhaku/
 │   ├── Regras_Evento.md <img src="https://img.shields.io/badge/Regras_do_Evento-111827?style=flat&logo=markdown&logoColor=FFD700" height="18"/>
 │   └── Histórias_de_Usuário.md <img src="https://img.shields.io/badge/User_Stories-111827?style=flat&logo=markdown&logoColor=blue" height="18"/>
 │
+├── spec <img src="https://img.shields.io/badge/Spec-111827?style=flat&logo=openapiinitiative&logoColor=6BA539" height="18"/>/
+│   ├── api <img src="https://img.shields.io/badge/OpenAPI-111827?style=flat&logo=openapiinitiative&logoColor=6BA539" height="18"/>/
+│   │   └── openapi.yml <img src="https://img.shields.io/badge/OpenAPI_3.0-111827?style=flat&logo=openapiinitiative&logoColor=6BA539" height="18"/>
+│   ├── game <img src="https://img.shields.io/badge/Game_Specs-111827?style=flat&logo=markdown&logoColor=purple" height="18"/>/
+│   │   ├── NUMBER_GUESS.md <img src="https://img.shields.io/badge/Operação_Resgate-111827?style=flat&logo=markdown&logoColor=F97316" height="18"/>
+│   │   ├── VS_GUESS.md <img src="https://img.shields.io/badge/Batalha_de_Sinais-111827?style=flat&logo=markdown&logoColor=06B6D4" height="18"/>
+│   │   ├── CARD_GUESS.md <img src="https://img.shields.io/badge/Mapas_Estelares-111827?style=flat&logo=markdown&logoColor=FFD700" height="18"/>
+│   │   ├── LOGIC_PUZZLE.md <img src="https://img.shields.io/badge/Protocolo_Lógico-111827?style=flat&logo=markdown&logoColor=22C55E" height="18"/>
+│   │   └── PRECEDENCE_PUZZLE.md <img src="https://img.shields.io/badge/Hierarquia_de_Comandos-111827?style=flat&logo=markdown&logoColor=A855F7" height="18"/>
+│   ├── timer.md <img src="https://img.shields.io/badge/Timer_System-111827?style=flat&logo=markdown&logoColor=red" height="18"/>
+│   └── ranking.md <img src="https://img.shields.io/badge/Ranking_Algorithm-111827?style=flat&logo=markdown&logoColor=FFD700" height="18"/>
+│
 ├── docker <img src="https://img.shields.io/badge/-Docker-111827?style=flat&logo=docker&logoColor=2496ED" height="18"/>/
 │   ├── .dockerignore <img src="https://img.shields.io/badge/-DockerIgnore-111827?style=flat&logo=docker&logoColor=2496ED" height="18"/>
 │   ├── docker-compose.yml <img src="https://img.shields.io/badge/-Docker_Compose-111827?style=flat&logo=docker&logoColor=2496ED" height="18"/>
@@ -153,7 +166,7 @@ SPA React compilada pelo Vite. Toda a navegação é controlada por estado (`tel
 - **`src/types.ts`** — tipos globais do frontend: `Tela`, `Modo`, `Dificuldade`, `Palpite`, `ConfigJogo`.
 
 ### `docs/` <img src="https://img.shields.io/badge/Docs-111827?style=flat&logo=markdown&logoColor=blue" height="18"/>
-Documentação do projeto: histórias de usuário, arquitetura, regras de evento e descrições detalhadas de cada modo de jogo.
+Documentação narrativa: histórias de usuário, regras de jogo do ponto de vista do jogador, regras de evento e arquitetura.
 
 | Arquivo | Conteúdo |
 |---|---|
@@ -165,6 +178,22 @@ Documentação do projeto: histórias de usuário, arquitetura, regras de evento
 | [`PROTOCOLO_LOGICO.md`](PROTOCOLO_LOGICO.md) | Regras e mecânicas do modo `LOGIC_PUZZLE` |
 | **[`Regras_Evento.md`](Regras_Evento.md)** | **Estrutura oficial do evento: categorias Arena/Jornada, mecânica de premiação, fluxo geral e sistema de pontuação** |
 | [`Histórias_de_Usuário.md`](Histórias_de_Usuário.md) | User stories e requisitos funcionais |
+
+### `spec/` <img src="https://img.shields.io/badge/Spec-111827?style=flat&logo=openapiinitiative&logoColor=6BA539" height="18"/>
+Especificações técnicas formais — contratos de API, algoritmos e parâmetros precisos de implementação.
+
+> **Diferença de `docs/`:** `docs/` descreve *o que* o jogo faz (perspectiva do jogador); `spec/` descreve *como exatamente* funciona tecnicamente (perspectiva do desenvolvedor / implementador).
+
+| Arquivo | Conteúdo |
+|---|---|
+| [`spec/api/openapi.yml`](../spec/api/openapi.yml) | Contrato REST completo — OpenAPI 3.0: todos os endpoints, schemas, DTOs, enums |
+| [`spec/game/NUMBER_GUESS.md`](../spec/game/NUMBER_GUESS.md) | Algoritmo de feedback, params de dificuldade, fluxo Missão Livre |
+| [`spec/game/VS_GUESS.md`](../spec/game/VS_GUESS.md) | Estrutura de rodadas, timer por turno, critério de vitória |
+| [`spec/game/CARD_GUESS.md`](../spec/game/CARD_GUESS.md) | Geração do grid, lógica de pares, fluxo 1v1 sequencial |
+| [`spec/game/LOGIC_PUZZLE.md`](../spec/game/LOGIC_PUZZLE.md) | Geração de fórmulas, avaliação, streak combo, sistema de fases |
+| [`spec/game/PRECEDENCE_PUZZLE.md`](../spec/game/PRECEDENCE_PUZZLE.md) | Precedência de operadores, lógica de tokens, avaliação de parênteses |
+| [`spec/timer.md`](../spec/timer.md) | Constantes, countdown, flash de feedback, comportamento timer = 0 |
+| [`spec/ranking.md`](../spec/ranking.md) | Fórmula weightedAttempts, critérios de ordenação, campos retornados |
 
 > [!IMPORTANT]
 > **[`Regras_Evento.md`](Regras_Evento.md)** é o documento de referência para o dia do evento — contém as regras oficiais de premiação, o fluxo de estações Arena/Jornada e o sistema "Dobrar ou Nada". Consulte-o ao configurar o operador ou exibir as regras nos telões.

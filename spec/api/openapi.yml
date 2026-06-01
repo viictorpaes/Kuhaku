@@ -1,0 +1,705 @@
+openapi: 3.0.3
+info:
+  title: Kuhaku API
+  version: 1.0.0
+  description: |
+    REST API da plataforma de jogos educativos Kuhaku.
+    Backend: NestJS 11 + Prisma 7 + PostgreSQL 16.
+    Todos os IDs são CUIDs gerados pelo Prisma (@default(cuid())).
+servers:
+  - url: http://localhost:3001
+    description: Desenvolvimento local
+  - url: http://backend:3001
+    description: Docker Compose (inter-serviço)
+tags:
+  - name: Usuários
+    description: Gerenciamento de usuários e estatísticas
+  - name: Games
+    description: Criação e operação de partidas
+  - name: Ranking
+    description: Hall da Fama global (Galáxia)
+
+paths:
+
+  # ─── Usuários ───────────────────────────────────────────────────────────────────
+
+  /api/users:
+    post:
+      summary: Criar ou recuperar usuário por e-mail
+      description: |
+        Upsert por e-mail: cria o usuário se não existir; caso contrário retorna o existente.
+        Senha é opcional — usada apenas quando o módulo `auth` estiver ativo no frontend.
+      tags: [Users]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserDto'
+            example:
+              email: piloto@kuhaku.space
+              name: Piloto Alpha
+      responses:
+        '200':
+          description: Usuário já existia — retornado sem alteração
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '201':
+          description: Novo usuário criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /api/users/{id}:
+    put:
+      summary: Atualizar nome ou e-mail do usuário
+      tags: [Users]
+      parameters:
+        - $ref: '#/components/parameters/userId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserDto'
+      responses:
+        '200':
+          description: Usuário atualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      summary: Remover usuário permanentemente
+      tags: [Users]
+      parameters:
+        - $ref: '#/components/parameters/userId'
+      responses:
+        '200':
+          description: Usuário removido
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/users/{id}/games:
+    get:
+      summary: Listar todos os jogos do usuário
+      tags: [Users]
+      parameters:
+        - $ref: '#/components/parameters/userId'
+      responses:
+        '200':
+          description: Lista de partidas (mais recentes primeiro)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Game'
+
+  /api/users/{id}/stats:
+    get:
+      summary: Estatísticas agregadas do usuário
+      tags: [Users]
+      parameters:
+        - $ref: '#/components/parameters/userId'
+      responses:
+        '200':
+          description: Vitórias, derrotas e média de tentativas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserStats'
+
+  /api/users/{id}/achievements:
+    get:
+      summary: Conquistas do usuário
+      description: Streak (Sequência) máximo, menor número de tentativas e tempo mais rápido de vitória.
+      tags: [Users]
+      parameters:
+        - $ref: '#/components/parameters/userId'
+      responses:
+        '200':
+          description: Conquistas desbloqueadas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAchievements'
+
+  /api/users/{id}/summary:
+    get:
+      summary: Resumo completo do usuário
+      description: Stats + achievements + posição atual no ranking global.
+      tags: [Users]
+      parameters:
+        - $ref: '#/components/parameters/userId'
+      responses:
+        '200':
+          description: Perfil completo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSummary'
+
+  # ─── Games ───────────────────────────────────────────────────────────────────
+
+  /api/games:
+    post:
+      summary: Criar nova partida
+      description: |
+        Gera um número-alvo aleatório e persiste o `Game` no banco.
+        O campo `id` retornado deve ser guardado pelo frontend para todas as
+        chamadas subsequentes da sessão de jogo.
+      tags: [Games]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateGameDto'
+            examples:
+              numero_guess_easy:
+                summary: Operação Resgate — Cadete
+                value:
+                  gameType: NUMBER_GUESS
+                  difficulty: EASY
+              card_guess_hard:
+                summary: Mapas Estelares — Comandante
+                value:
+                  gameType: CARD_GUESS
+                  difficulty: HARD
+              missao_livre:
+                summary: Operação Resgate — Missão Livre com range 1000
+                value:
+                  gameType: NUMBER_GUESS
+                  difficulty: HARD
+                  customRange: 1000
+      responses:
+        '201':
+          description: Partida criada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameCreated'
+
+  /api/games/{id}/guess:
+    post:
+      summary: Registrar palpite
+      description: |
+        Válido apenas para `NUMBER_GUESS` e `VS_GUESS`.
+        Incrementa `attempts`, persiste o `Guess` e retorna feedback proporcional ao range.
+        Se o palpite for correto (`won: true`), o jogo é encerrado automaticamente.
+      tags: [Games]
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GuessDto'
+            example:
+              value: 42
+      responses:
+        '201':
+          description: Feedback do palpite
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GuessResult'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/games/{id}/finish:
+    post:
+      summary: Encerrar partida manualmente
+      description: |
+        Usado pelos modos que não registram palpite-a-palpite:
+        `CARD_GUESS`, `CARD_GUESS_VS`, `LOGIC_PUZZLE`, `PRECEDENCE_PUZZLE`.
+        Define `endedAt` e `won` no banco.
+      tags: [Games]
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FinishGameDto'
+            examples:
+              vitoria:
+                summary: Vitória com 3 erros
+                value:
+                  won: true
+                  mistakes: 3
+              derrota:
+                summary: Derrota (timer zerado)
+                value:
+                  won: false
+      responses:
+        '200':
+          description: Partida encerrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameSummary'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/games/{id}/save:
+    post:
+      summary: Salvar resultado no ranking por tipo de game e geral (Hall da Fama)
+      description: |
+        Upsert de `User` por nome → associa o `userId` ao `Game`.
+        Retorna a posição conquistada no ranking global.
+      tags: [Games]
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaveGameDto'
+            example:
+              name: Piloto Alpha
+      responses:
+        '200':
+          description: Salvo com sucesso — posição no ranking retornada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaveResult'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/games/{id}/history:
+    get:
+      summary: Histórico de palpites da partida
+      tags: [Games]
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+      responses:
+        '200':
+          description: Lista de palpites em ordem cronológica
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Guess'
+
+  /api/games/{id}/summary:
+    get:
+      summary: Resumo completo da partida
+      tags: [Games]
+      parameters:
+        - $ref: '#/components/parameters/gameId'
+      responses:
+        '200':
+          description: Dados completos da partida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameSummary'
+
+  # ─── Ranking ─────────────────────────────────────────────────────────────────
+
+  /api/ranking/global:
+    get:
+      summary: Ranking Global
+      description: |
+        Ordenação em cascata:
+        1. `winRate DESC`
+        2. `weightedAttempts ASC` (mediana×0.5 + média×0.3 + moda×0.2)
+        3. `averageAttempts ASC`
+      tags: [Ranking]
+      parameters:
+        - name: limit
+          in: query
+          description: Máximo de entradas (padrão 10)
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 100
+        - name: gameType
+          in: query
+          description: Filtrar por modo de jogo
+          schema:
+            $ref: '#/components/schemas/GameType'
+      responses:
+        '200':
+          description: Lista ranqueada de jogadores
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RankingEntry'
+
+  /api/ranking/user/{id}:
+    get:
+      summary: Posição do usuário no ranking global
+      tags: [Ranking]
+      parameters:
+        - $ref: '#/components/parameters/userId'
+      responses:
+        '200':
+          description: Posição e total de jogadores ranqueados
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRankingPosition'
+
+# ─── Componentes ────────────────────────────────────────────────────────────────
+
+components:
+  parameters:
+    userId:
+      name: id
+      in: path
+      required: true
+      description: CUID do usuário (tipagem de id)
+      schema:
+        type: string
+        example: clxxx1234567890abcdef
+    gameId:
+      name: id
+      in: path
+      required: true
+      description: CUID da partida (tipagem de id)
+      schema:
+        type: string
+        example: clyyy0987654321fedcba
+
+  responses:
+    NotFound:
+      description: Recurso não encontrado
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: integer
+                example: 404
+              message:
+                type: string
+
+  schemas:
+
+    # ── Enums ──────────────────────────────────────────────────────────────────
+
+    Difficulty:
+      type: string
+      enum: [EASY, MEDIUM, HARD]
+      description: |
+        EASY → 🌍 Cadete
+        MEDIUM → 🚀 Piloto
+        HARD → 👨‍🚀 Comandante
+
+    GameType:
+      type: string
+      enum:
+        - NUMBER_GUESS
+        - VS_GUESS
+        - CARD_GUESS
+        - CARD_GUESS_VS
+        - LOGIC_PUZZLE
+        - PRECEDENCE_PUZZLE
+      description: |
+        NUMBER_GUESS      → Operação Resgate (solo)
+        VS_GUESS          → Batalha de Sinais (2 jogadores)
+        CARD_GUESS        → Mapas Estelares (solo)
+        CARD_GUESS_VS     → Duelo de Mapas (1v1)
+        LOGIC_PUZZLE      → Protocolo Lógico (solo)
+        PRECEDENCE_PUZZLE → Hierarquia de Comandos (solo)
+
+    # ── Entidades Prisma ───────────────────────────────────────────────────────
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+
+    Game:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+          nullable: true
+        gameType:
+          $ref: '#/components/schemas/GameType'
+        difficulty:
+          $ref: '#/components/schemas/Difficulty'
+        target:
+          type: integer
+          description: Número-alvo secreto gerado no backend
+        maxRange:
+          type: integer
+          nullable: true
+          description: Range máximo da partida (null = padrão da dificuldade)
+        attempts:
+          type: integer
+        won:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        endedAt:
+          type: string
+          format: date-time
+          nullable: true
+
+    Guess:
+      type: object
+      properties:
+        id:
+          type: string
+        gameId:
+          type: string
+        value:
+          type: integer
+        feedback:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    # ── Data Transform Object (DTOs) de Entrada ────────────────────────────────────────────────────────
+
+    CreateUserDto:
+      type: object
+      required: [email]
+      properties:
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        password:
+          type: string
+          description: Opcional — usado apenas com autenticação JWT ativa (backend)
+
+    UpdateUserDto:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+
+    CreateGameDto:
+      type: object
+      required: [gameType, difficulty]
+      properties:
+        gameType:
+          $ref: '#/components/schemas/GameType'
+        difficulty:
+          $ref: '#/components/schemas/Difficulty'
+        userId:
+          type: string
+          nullable: true
+          description: Se informado, a partida já nasce vinculada ao usuário
+        customRange:
+          type: integer
+          nullable: true
+          description: |
+            Range personalizado para NUMBER_GUESS Missão Livre.
+            Gera alvo em [1, customRange]. Sobrepõe o range padrão da dificuldade.
+
+    GuessDto:
+      type: object
+      required: [value]
+      properties:
+        value:
+          type: integer
+
+    FinishGameDto:
+      type: object
+      required: [won]
+      properties:
+        won:
+          type: boolean
+        mistakes:
+          type: integer
+          nullable: true
+          description: |
+            Número de erros acumulados pelo frontend (ex.: pares errados em CARD_GUESS).
+            Não usado para NUMBER_GUESS / VS_GUESS (o backend conta as tentativas).
+
+    SaveGameDto:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          description: Apelido exibido no Hall da Fama
+
+    # ── Data Transform Object (DTOs) de Saída ──────────────────────────────────────────────────────────
+
+    GameCreated:
+      type: object
+      properties:
+        id:
+          type: string
+        gameType:
+          $ref: '#/components/schemas/GameType'
+        difficulty:
+          $ref: '#/components/schemas/Difficulty'
+        maxRange:
+          type: integer
+          description: Range efetivo da partida (padrão ou customRange)
+
+    GuessResult:
+      type: object
+      properties:
+        feedback:
+          type: string
+          description: |
+            Mensagem proporcional ao range. Exemplos para NUMBER_GUESS:
+            "Sem sinal" | "Interferência estática" | "Sinal detectado"
+            "Frequência muito próxima" | "Sinal estabelecido!"
+        direction:
+          type: string
+          enum: [higher, lower, correct]
+        won:
+          type: boolean
+        attempts:
+          type: integer
+
+    GameSummary:
+      type: object
+      properties:
+        gameId:
+          type: string
+        gameType:
+          $ref: '#/components/schemas/GameType'
+        difficulty:
+          $ref: '#/components/schemas/Difficulty'
+        won:
+          type: boolean
+        attempts:
+          type: integer
+        target:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        endedAt:
+          type: string
+          format: date-time
+          nullable: true
+
+    SaveResult:
+      type: object
+      properties:
+        saved:
+          type: boolean
+        position:
+          type: integer
+          description: Posição conquistada no ranking global após salvar
+        total:
+          type: integer
+          description: Total de jogadores ranqueados
+
+    UserStats:
+      type: object
+      properties:
+        totalGames:
+          type: integer
+        wins:
+          type: integer
+        losses:
+          type: integer
+        winRate:
+          type: number
+          format: float
+          description: wins / totalGames (0–1)
+        averageAttempts:
+          type: number
+          format: float
+
+    UserAchievements:
+      type: object
+      properties:
+        streak:
+          type: integer
+          description: Maior sequência de vitórias consecutivas
+        bestAttempts:
+          type: integer
+          description: Menor número de tentativas em uma vitória
+        fastestTime:
+          type: number
+          format: float
+          description: Tempo mais rápido de conclusão (segundos)
+
+    UserSummary:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+        stats:
+          $ref: '#/components/schemas/UserStats'
+        achievements:
+          $ref: '#/components/schemas/UserAchievements'
+        rankingPosition:
+          $ref: '#/components/schemas/UserRankingPosition'
+
+    RankingEntry:
+      type: object
+      properties:
+        userId:
+          type: string
+        name:
+          type: string
+        wins:
+          type: integer
+        totalGames:
+          type: integer
+        winRate:
+          type: number
+          format: float
+        averageAttempts:
+          type: number
+          format: float
+        medianAttempts:
+          type: number
+          format: float
+        modeAttempts:
+          type: number
+          format: float
+        weightedAttempts:
+          type: number
+          format: float
+          description: mediana×0.5 + média×0.3 + moda×0.2
+        bestAttempts:
+          type: integer
+
+    UserRankingPosition:
+      type: object
+      properties:
+        position:
+          type: integer
+          description: Posição 1-based no ranking global
+        total:
+          type: integer
+          description: Total de jogadores ranqueados
