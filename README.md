@@ -587,7 +587,7 @@ Camada de **lógica de negócio**. Processa os dados recebidos do Controller, ap
 ```ts
 // Arquivo: backend/src/game/ts/game.controller.ts
 
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query } from '@nestjs/common';
 import { GameService } from './game.service';
 import { CreateGameDto } from '../../game/dto/create-game.dto';
 import { CreateUserDto } from '../dto/user.dto';
@@ -597,7 +597,7 @@ import { UpdateUserDto } from '../dto/user_update.dto';
 @Controller('api')
 export class GameController
 {
-  constructor(private readonly gameService: GameService) 
+  constructor(@Inject(GameService) private readonly gameService: GameService)
   {}
 
   @Post('users')
@@ -630,6 +630,7 @@ export class GameController
     return this.gameService.makeGuess(id, dto.value);
   }
 
+  
   @Post('games/:id/finish')
   async encerrarJogo(@Param('id') id: string, @Body() body?: { won?: boolean; mistakes?: number })
   {
@@ -637,9 +638,9 @@ export class GameController
   }
 
   @Post('games/:id/save')
-  async salvarNoRanking(@Param('id') id: string, @Body() body: { name: string })
+  async salvarNoRanking(@Param('id') id: string, @Body() body: { name: string; won?: boolean })
   {
-    return this.gameService.saveGameToRanking(id, body.name);
+    return this.gameService.saveGameToRanking(id, body.name, body.won);
   }
 
   @Get('games/:id/history')
@@ -676,6 +677,13 @@ export class GameController
   async resumoCompletoDoUsuario(@Param('id') id: string)
   {
     return this.gameService.getUserSummary(id);
+  }
+
+  @Get('players/search')
+  async buscarJogadores(@Query('q') q: string)
+  {
+    if (!q || q.length < 2) return [];
+    return this.gameService.searchPlayersByName(q);
   }
 
   @Get('ranking/global')
@@ -715,7 +723,7 @@ export class GameModule
 ```ts
 // Arquivo: backend/src/game/ts/game.service.ts
 
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateGameDto, Difficulty, GameType } from '../dto/create-game.dto';
 
@@ -752,7 +760,7 @@ function getNumberFeedback(diff: number, limit: number): string
 @Injectable()
 export class GameService
 {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(@Inject(PrismaService) private readonly prismaService: PrismaService) {}
 
   async createUser(email: string, name?: string)
   {
@@ -990,7 +998,7 @@ export class GameService
     };
   }
 
-  async saveGameToRanking(gameId: string, name: string)
+  async saveGameToRanking(gameId: string, name: string, won?: boolean)
   {
     const game = await this.prismaService.prisma.game.findUnique
     ({ where: { id: gameId } });
@@ -1006,7 +1014,10 @@ export class GameService
     (
       {
         where: { id: gameId },
-        data:  { userId: user.id },
+        data:  {
+          userId: user.id,
+          ...(won !== undefined && { won }),
+        },
       }
     );
 

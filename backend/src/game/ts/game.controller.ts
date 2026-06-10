@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query } from '@nestjs/common';
 import { GameService } from './game.service';
 import { CreateGameDto } from '../../game/dto/create-game.dto';
 import { CreateUserDto } from '../dto/user.dto';
@@ -8,7 +8,7 @@ import { UpdateUserDto } from '../dto/user_update.dto';
 @Controller('api')
 export class GameController
 {
-  constructor(private readonly gameService: GameService) 
+  constructor(@Inject(GameService) private readonly gameService: GameService)
   {}
 
   @Post('users')

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateGameDto, Difficulty, GameType } from '../dto/create-game.dto';
 
@@ -35,7 +35,7 @@ function getNumberFeedback(diff: number, limit: number): string
 @Injectable()
 export class GameService
 {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(@Inject(PrismaService) private readonly prismaService: PrismaService) {}
 
 
   async createUser(email: string, name?: string)
